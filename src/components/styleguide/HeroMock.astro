@@ -1,0 +1,42 @@
+---
+// A home-page hero in miniature, used to compare directions with real copy.
+import { hireCta, primaryCta } from '../../data/nav';
+import { profile } from '../../data/profile';
+import Button from '../Button.astro';
+
+type Props = { compact?: boolean; headingLevel?: 'h1' | 'h2' };
+const { compact = false, headingLevel = 'h1' } = Astro.props;
+const Heading = headingLevel;
+---
+
+<div class:list={['grid items-center gap-10', !compact && 'md:grid-cols-[1.5fr_1fr] md:gap-16']}>
+  <div>
+    <p class="eyebrow mb-5">{profile.pillars.join(' · ')}</p>
+    <Heading class:list={['text-ink', compact ? 'text-h1' : 'text-display']}>
+      {profile.positioning}
+    </Heading>
+    <p class:list={['mt-6 max-w-xl text-muted', compact ? 'text-base' : 'text-lead']}>
+      {profile.intro}
+    </p>
+    <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+      <Button href={primaryCta.href} size={compact ? 'md' : 'lg'}>
+        {primaryCta.label}
+      </Button>
+      <a href={hireCta.href} class="link text-sm font-medium">
+        {hireCta.label} →
+      </a>
+    </div>
+  </div>
+  {!compact && (
+    <div
+      class="relative mx-auto aspect-[4/5] w-full max-w-xs overflow-hidden rounded-brand border border-line bg-surface"
+      role="img"
+      aria-label="Photo placeholder"
+    >
+      <span class="font-display absolute inset-0 grid place-items-center text-[5rem] text-muted/60">
+        AG
+      </span>
+      <span class="eyebrow absolute bottom-4 left-4">Photo in M2</span>
+    </div>
+  )}
+</div>

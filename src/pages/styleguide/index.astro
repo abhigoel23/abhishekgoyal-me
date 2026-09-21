@@ -1,0 +1,77 @@
+---
+import Button from '../../components/Button.astro';
+import Container from '../../components/Container.astro';
+import HeroMock from '../../components/styleguide/HeroMock.astro';
+import Base from '../../layouts/Base.astro';
+import { brands, brandVars, colorVars, getBrand, type FontVar } from '../../lib/brands';
+
+// The comparison page needs every direction's fonts; its own chrome uses the most neutral direction.
+const allFonts = [
+  ...new Set(brands.flatMap((b) => [b.fonts.display, b.fonts.body, b.fonts.mono])),
+] as FontVar[];
+const scope = (brand: (typeof brands)[number], theme: 'light' | 'dark') =>
+  brandVars(brand) + colorVars(brand[theme]) + 'background:var(--bg);color:var(--ink);';
+---
+
+<Base
+  title="Styleguide · Brand directions"
+  description="Three brand directions for abhishekgoyal.me."
+  brand={getBrand('studio')}
+  noindex
+  extraFonts={allFonts}
+>
+  <Container class="py-16 sm:py-20">
+    <p class="eyebrow mb-3">M1 · Pick one</p>
+    <h1 class="text-h1">Three brand directions</h1>
+    <p class="mt-4 max-w-2xl text-lead text-muted">
+      Same copy, same components, different tokens. Open each for the full specimen: type scale,
+      palette with contrast ratios, buttons, cards, form fields, and light and dark themes.
+    </p>
+
+    <div class="mt-14 grid gap-12">
+      {brands.map((brand) => (
+        <article aria-labelledby={`dir-${brand.id}`} class="grid gap-6 lg:grid-cols-[1fr_20rem]">
+          <div class="overflow-hidden rounded-brand border border-line">
+            <div
+              class="font-sans p-6 sm:p-10"
+              style={scope(brand, 'light')}
+              data-eyebrow={brand.shape.eyebrow}
+            >
+              <HeroMock compact headingLevel="h2" />
+            </div>
+            <div
+              class="font-sans flex flex-wrap items-center gap-x-8 gap-y-3 px-6 py-5 sm:px-10"
+              style={scope(brand, 'dark')}
+              data-eyebrow={brand.shape.eyebrow}
+            >
+              <span class="font-display text-h3">Dark theme</span>
+              <span class="eyebrow">{brand.fonts.labels}</span>
+              <span class="size-4 rounded-full bg-accent" aria-hidden="true" />
+            </div>
+          </div>
+          <div>
+            <h2 id={`dir-${brand.id}`} class="text-h2">
+              {brand.letter}. {brand.name}
+            </h2>
+            <p class="mt-3 text-muted">{brand.summary}</p>
+            <h3 class="mt-6 font-sans text-sm font-semibold tracking-normal">Pros</h3>
+            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">
+              {brand.pros.map((p) => (
+                <li>{p}</li>
+              ))}
+            </ul>
+            <h3 class="mt-4 font-sans text-sm font-semibold tracking-normal">Cons</h3>
+            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-muted">
+              {brand.cons.map((c) => (
+                <li>{c}</li>
+              ))}
+            </ul>
+            <Button href={`/styleguide/${brand.id}`} variant="secondary" class="mt-6">
+              Open {brand.name} specimen
+            </Button>
+          </div>
+        </article>
+      ))}
+    </div>
+  </Container>
+</Base>

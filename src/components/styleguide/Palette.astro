@@ -1,0 +1,53 @@
+---
+// Renders one theme's tokens on that theme's own background, with each colour's contrast against it.
+import { colorVars, type ThemeTokens } from '../../lib/brands';
+import { contrast } from '../../lib/contrast';
+
+type Props = { label: string; tokens: ThemeTokens };
+const { label, tokens } = Astro.props;
+
+const rows: { key: keyof ThemeTokens; name: string; against: keyof ThemeTokens; min: number }[] = [
+  { key: 'ink', name: 'Ink', against: 'bg', min: 7 },
+  { key: 'muted', name: 'Muted', against: 'bg', min: 4.5 },
+  { key: 'accent', name: 'Accent', against: 'bg', min: 4.5 },
+  { key: 'onAccent', name: 'On accent', against: 'accent', min: 4.5 },
+  { key: 'bg', name: 'Background', against: 'ink', min: 7 },
+  { key: 'surface', name: 'Surface', against: 'ink', min: 7 },
+  { key: 'line', name: 'Line', against: 'bg', min: 0 },
+];
+---
+
+<figure
+  class="rounded-brand border border-line p-5"
+  style={colorVars(tokens) + 'background:var(--bg);color:var(--ink)'}
+>
+  <figcaption class="mb-4 text-sm font-semibold">{label}</figcaption>
+  <ul class="grid gap-3">
+    {rows.map(({ key, name, against, min }) => {
+      const ratio = contrast(tokens[key], tokens[against]);
+      return (
+        <li class="flex items-center gap-3 text-sm">
+          <span
+            class="size-9 shrink-0 rounded-brand border border-line"
+            style={`background:${tokens[key]}`}
+          />
+          <span class="flex-1">
+            {name}{' '}
+            <span class="font-mono text-xs" style="color:var(--muted)">
+              {tokens[key]}
+            </span>
+          </span>
+          {min > 0 && (
+            <span
+              class="font-mono text-xs"
+              style="color:var(--muted)"
+              title={`Contrast against ${against}`}
+            >
+              {ratio.toFixed(1)}:1 {ratio >= 7 ? 'AAA' : 'AA'}
+            </span>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+</figure>

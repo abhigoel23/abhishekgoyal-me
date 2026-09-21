@@ -1,0 +1,66 @@
+---
+import { Font } from 'astro:assets';
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { brandVars, colorVars, type Brand, type FontVar } from '../lib/brands';
+
+type Props = {
+  title: string;
+  description: string;
+  brand: Brand;
+  noindex?: boolean;
+  /** Extra font faces to load beyond the brand's own (the styleguide comparison page needs all of them). */
+  extraFonts?: FontVar[];
+};
+const { title, description, brand, noindex = false, extraFonts = [] } = Astro.props;
+
+const preload = [brand.fonts.display, brand.fonts.body];
+const lazy = [...new Set([brand.fonts.mono, ...extraFonts])].filter((f) => !preload.includes(f));
+
+// Light is the default; dark applies when chosen explicitly or when the OS prefers it and nothing was chosen.
+const tokens = `:root{${brandVars(brand)}${colorVars(brand.light)}}
+:root[data-theme='dark']{${colorVars(brand.dark)}}
+@media (prefers-color-scheme: dark){:root:not([data-theme='light']){${colorVars(brand.dark)}}}`;
+---
+
+<html lang="en" data-brand={brand.id} data-eyebrow={brand.shape.eyebrow}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content={brand.light.bg} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={brand.dark.bg} media="(prefers-color-scheme: dark)" />
+    <script is:inline>
+      try {
+        const theme = localStorage.getItem('theme');
+        if (theme === 'light' || theme === 'dark') document.documentElement.dataset.theme = theme;
+      } catch {
+        // Storage blocked: fall back to the OS preference.
+      }
+    </script>
+    <style is:global set:html={tokens}></style>
+    {preload.map((cssVariable) => (
+      <Font cssVariable={cssVariable} preload />
+    ))}
+    {lazy.map((cssVariable) => (
+      <Font cssVariable={cssVariable} />
+    ))}
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="sr-only z-50 rounded-brand bg-accent px-4 py-2 text-on-accent focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      Skip to content
+    </a>
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

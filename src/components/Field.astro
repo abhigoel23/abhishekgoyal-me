@@ -1,0 +1,86 @@
+---
+type Props = {
+  label: string;
+  name: string;
+  type?: 'text' | 'email' | 'textarea' | 'select';
+  options?: readonly string[];
+  hint?: string;
+  error?: string;
+  required?: boolean;
+  autocomplete?: string;
+  value?: string;
+};
+const {
+  label,
+  name,
+  type = 'text',
+  options = [],
+  hint,
+  error,
+  required = false,
+  autocomplete,
+  value,
+} = Astro.props;
+const id = `field-${name}`;
+const describedBy =
+  [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ') || undefined;
+const control = [
+  'mt-2 block w-full rounded-brand border bg-bg px-3.5 py-2.5 text-base text-ink placeholder:text-muted',
+  'focus-visible:outline-2 focus-visible:outline-offset-1',
+  error ? 'border-accent' : 'border-line hover:border-ink/40',
+];
+---
+
+<div>
+  <label for={id} class="block text-sm font-medium">
+    {label}
+    {required ? <span class="text-muted"> (required)</span> : null}
+  </label>
+  {hint && (
+    <p id={`${id}-hint`} class="mt-1 text-sm text-muted">
+      {hint}
+    </p>
+  )}
+  {type === 'textarea' ? (
+    <textarea
+      id={id}
+      name={name}
+      rows={4}
+      required={required}
+      aria-describedby={describedBy}
+      aria-invalid={error ? 'true' : undefined}
+      class:list={control}
+    >{value}</textarea>
+  ) : type === 'select' ? (
+    <select
+      id={id}
+      name={name}
+      required={required}
+      aria-describedby={describedBy}
+      aria-invalid={error ? 'true' : undefined}
+      class:list={control}
+    >
+      <option value="">Choose one</option>
+      {options.map((option) => (
+        <option>{option}</option>
+      ))}
+    </select>
+  ) : (
+    <input
+      id={id}
+      name={name}
+      type={type}
+      value={value}
+      required={required}
+      autocomplete={autocomplete}
+      aria-describedby={describedBy}
+      aria-invalid={error ? 'true' : undefined}
+      class:list={control}
+    />
+  )}
+  {error && (
+    <p id={`${id}-error`} class="mt-1.5 text-sm font-medium text-accent">
+      {error}
+    </p>
+  )}
+</div>

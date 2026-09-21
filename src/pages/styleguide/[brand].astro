@@ -1,0 +1,208 @@
+---
+import Button from '../../components/Button.astro';
+import Card from '../../components/Card.astro';
+import Container from '../../components/Container.astro';
+import Field from '../../components/Field.astro';
+import ProofStrip from '../../components/ProofStrip.astro';
+import Section from '../../components/Section.astro';
+import Tag from '../../components/Tag.astro';
+import HeroMock from '../../components/styleguide/HeroMock.astro';
+import Palette from '../../components/styleguide/Palette.astro';
+import { profile } from '../../data/profile';
+import { projectTypes, sampleWork } from '../../data/styleguide';
+import Base from '../../layouts/Base.astro';
+import { brands, type Brand } from '../../lib/brands';
+
+export function getStaticPaths() {
+  return brands.map((brand) => ({ params: { brand: brand.id }, props: { brand } }));
+}
+
+const { brand } = Astro.props as { brand: Brand };
+const others = brands.filter((b) => b.id !== brand.id);
+
+const typeScale = [
+  { cls: 'text-display font-display', name: 'Display', sample: 'Zero to shipped' },
+  { cls: 'text-h1 font-display', name: 'H1', sample: 'Offline-first by default' },
+  { cls: 'text-h2 font-display', name: 'H2', sample: 'Privacy by design' },
+  { cls: 'text-h3 font-display', name: 'H3', sample: 'Ships solo, end to end' },
+  { cls: 'text-lead', name: 'Lead', sample: profile.intro },
+  {
+    cls: 'text-base',
+    name: 'Body',
+    sample:
+      'Records live on-device via SQLDelight in a shared KMP module, with user-owned export and restore.',
+  },
+  {
+    cls: 'text-sm text-muted',
+    name: 'Small',
+    sample: 'Closed beta with 12–20 households · min SDK 24 · target API 35',
+  },
+  { cls: 'font-mono text-sm', name: 'Mono', sample: 'val sync = SyncEngine(queue, api).start()' },
+];
+---
+
+<Base
+  title={`Styleguide · ${brand.name}`}
+  description={`Direction ${brand.letter}: ${brand.summary}`}
+  brand={brand}
+  noindex
+>
+  <div class="border-b border-line bg-surface">
+    <Container class="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
+      <p>
+        <a href="/styleguide" class="link">
+          All directions
+        </a>
+        <span class="text-muted"> / </span>
+        <strong>
+          {brand.letter}. {brand.name}
+        </strong>
+        <span class="text-muted"> · {brand.fonts.labels}</span>
+      </p>
+      <p class="flex gap-4">
+        {others.map((b) => (
+          <a class="link" href={`/styleguide/${b.id}`}>
+            {b.letter}. {b.name}
+          </a>
+        ))}
+      </p>
+    </Container>
+  </div>
+
+  <Container class="py-16 sm:py-24">
+    <HeroMock />
+    <div class="mt-16">
+      <ProofStrip />
+    </div>
+  </Container>
+
+  <Section
+    id="colour"
+    eyebrow="Tokens"
+    title="Colour"
+    intro="One accent, used sparingly. Every text pair is checked against WCAG AA in a unit test; ratios below are against the background they sit on."
+    tone="surface"
+  >
+    <div class="grid gap-6 md:grid-cols-2">
+      <Palette label="Light" tokens={brand.light} />
+      <Palette label="Dark" tokens={brand.dark} />
+    </div>
+  </Section>
+
+  <Section
+    id="type"
+    eyebrow="Tokens"
+    title="Typography"
+    intro={`${brand.fonts.labels}. Sizes are fluid between 375px and 1280px.`}
+  >
+    <dl class="divide-y divide-line border-y border-line">
+      {typeScale.map((row) => (
+        <div class="grid gap-2 py-6 md:grid-cols-[8rem_1fr] md:gap-8">
+          <dt class="eyebrow pt-1">{row.name}</dt>
+          <dd class:list={[row.cls, 'min-w-0 break-words']}>{row.sample}</dd>
+        </div>
+      ))}
+    </dl>
+  </Section>
+
+  <Section id="components" eyebrow="Primitives" title="Buttons, links and tags" tone="surface">
+    <div class="grid gap-10">
+      <div class="flex flex-wrap items-center gap-4">
+        <Button size="lg">Start a project</Button>
+        <Button variant="secondary" size="lg">
+          Download resume
+        </Button>
+        <Button variant="ghost" size="lg">
+          Read the case study →
+        </Button>
+        <Button disabled>Disabled</Button>
+      </div>
+      <p class="max-w-2xl">
+        Inline links look like{' '}
+        <a class="link" href="/work">
+          this case study
+        </a>
+        , and keyboard focus shows a
+        <kbd class="rounded border border-line bg-bg px-1.5 py-0.5 font-mono text-xs">Tab</kbd> ring
+        in the accent colour.
+      </p>
+      <ul class="flex flex-wrap gap-2" aria-label="Pillars">
+        {profile.pillars.map((p) => (
+          <li>
+            <Tag tone="accent">{p}</Tag>
+          </li>
+        ))}
+        {['Kotlin', 'Compose', 'SwiftUI'].map((t) => (
+          <li>
+            <Tag>{t}</Tag>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </Section>
+
+  <Section
+    id="cards"
+    eyebrow="Primitives"
+    title="Case-study cards"
+    intro="Sample content from the resume. The whole card is one link."
+  >
+    <ul class="grid gap-6 md:grid-cols-3">
+      {sampleWork.map((work) => (
+        <li>
+          <Card {...work} />
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section
+    id="form"
+    eyebrow="Primitives"
+    title="Form fields"
+    intro="Visuals only. The working lead form lands in M3."
+    tone="surface"
+  >
+    <form class="grid max-w-xl gap-6" onsubmit="return false" aria-label="Sample enquiry form">
+      <Field label="Your name" name="name" required autocomplete="name" />
+      <Field
+        label="Email"
+        name="email"
+        type="email"
+        required
+        autocomplete="email"
+        value="not-an-email"
+        error="Enter an email address like name@example.com"
+      />
+      <Field label="What do you need?" name="projectType" type="select" options={projectTypes} />
+      <Field
+        label="Tell me about the project"
+        name="message"
+        type="textarea"
+        hint="A few lines is plenty. What, by when, and what exists today."
+      />
+      <div>
+        <Button type="submit" size="lg">
+          Send enquiry
+        </Button>
+      </div>
+    </form>
+  </Section>
+
+  <Section id="shape" eyebrow="Tokens" title="Spacing and shape">
+    <div class="flex flex-wrap items-end gap-6">
+      {[1, 2, 3, 4, 6, 8, 12, 16].map((n) => (
+        <div class="text-center">
+          <div
+            class="rounded-brand bg-accent"
+            style={`width:${n * 0.25}rem;height:${n * 0.25}rem`}
+          />
+          <p class="mt-2 font-mono text-xs text-muted">{n * 4}px</p>
+        </div>
+      ))}
+      <div class="ml-auto rounded-brand border border-line bg-surface px-5 py-4 text-sm">
+        Corner radius <span class="font-mono">{brand.shape.radius}</span>
+      </div>
+    </div>
+  </Section>
+</Base>

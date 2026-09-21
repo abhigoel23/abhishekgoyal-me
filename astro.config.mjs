@@ -1,10 +1,24 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+import { defineConfig, fontProviders } from 'astro/config';
 import cloudflare from '@astrojs/cloudflare';
 import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+
+/**
+ * @param {string} name
+ * @param {`--${string}`} cssVariable
+ * @param {[string | number, ...(string | number)[]]} weights
+ * @param {string[]} fallbacks
+ * @param {['normal' | 'italic', ...('normal' | 'italic')[]]} [styles]
+ */
+function font(name, cssVariable, weights, fallbacks, styles = ['normal']) {
+  const provider = fontProviders.fontsource();
+  /** @type {['latin']} */
+  const subsets = ['latin'];
+  return { provider, name, cssVariable, weights, styles, fallbacks, subsets };
+}
 
 // https://astro.build/config
 export default defineConfig({
@@ -15,7 +29,21 @@ export default defineConfig({
   // Pages are prerendered by default; only src/pages/api/* opt out (prerender = false).
   // Images are optimised at build time, so no Cloudflare Images binding is needed.
   adapter: cloudflare({ imageService: 'compile' }),
-  integrations: [react(), mdx(), sitemap()],
+  integrations: [
+    react(),
+    mdx(),
+    // /styleguide is an internal design reference: noindex and kept out of the sitemap.
+    sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/styleguide') }),
+  ],
+  // Self-hosted via Fontsource at build time: no Google Fonts request, metric-matched fallbacks.
+  // cssVariable names must match FontVar in src/lib/brands.ts.
+  fonts: [
+    font('Inter', '--font-inter', ['100 900'], ['sans-serif']),
+    font('Fraunces', '--font-fraunces', ['100 900'], ['serif'], ['normal', 'italic']),
+    font('Instrument Serif', '--font-instrument-serif', [400], ['serif'], ['normal', 'italic']),
+    font('Inter Tight', '--font-inter-tight', ['100 900'], ['sans-serif']),
+    font('JetBrains Mono', '--font-jetbrains-mono', ['100 800'], ['monospace']),
+  ],
   vite: {
     plugins: [tailwindcss()],
   },
