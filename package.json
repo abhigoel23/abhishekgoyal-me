@@ -19,6 +19,7 @@
     "deploy": "astro build && wrangler deploy",
     "astro": "astro",
     "resume": "node scripts/build-resume.mjs",
+    "icons": "node scripts/build-icons.mjs",
     "prepare": "husky"
   },
   "dependencies": {
@@ -51,6 +52,7 @@
     "globals": "^17.12.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
+    "opentype.js": "2.0.0",
     "prettier": "^3.9.8",
     "prettier-plugin-astro": "^1.0.1",
     "prettier-plugin-tailwindcss": "^0.8.1",
