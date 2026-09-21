@@ -1,6 +1,6 @@
 # DNS
 
-Both domains are registered at Namecheap. DNS moves to Cloudflare in M0.5 (issues #7, #8). Keep this
+abhishekgoyal.me is registered at Namecheap. DNS moves to Cloudflare in M0.5 (issues #7, #8). Keep this
 file in sync with every record change.
 
 ## abhishekgoyal.me
@@ -31,40 +31,16 @@ which is why `https://abhishekgoyal.me` timed out). A Cloudflare Redirect Rule r
 
 At launch (M4), the apex becomes the Worker's custom domain, and `www` flips to redirect to the apex.
 
-## helperbook.app
-
-There is no website: HelperBook is on the Play Store only. `www` currently shows a **Namecheap parking page**,
-and the apex is an HTTP-only URL forward. Since `.app` is HSTS-preloaded, browsers can't open the apex at all.
-Email uses **Namecheap email forwarding** (`eforward*.registrar-servers.com`).
-
-### Target zone in Cloudflare
-
-| Type | Name  | Content     | Proxy   | Purpose                           |
-| ---- | ----- | ----------- | ------- | --------------------------------- |
-| A    | `@`   | `192.0.2.1` | Proxied | Placeholder for the redirect rule |
-| A    | `www` | `192.0.2.1` | Proxied | Placeholder for the redirect rule |
-
-- **Redirect Rule "to Play Store":** when the hostname is `helperbook.app` or `www.helperbook.app`, do a
-  static redirect to `https://play.google.com/store/apps/details?id=com.helperbook` with status **302**
-  (temporary: it can point to a real landing page later without browsers caching the redirect).
-- **Email:** not used, so the Namecheap forwarding records (MX `eforward*`, SPF `spf.efwd…`) are **not** carried over.
-  If an address is ever needed, use **Cloudflare Email Routing** (free).
-- Add a "no mail" SPF to stop others spoofing the domain: TXT `@` `v=spf1 -all`, plus TXT `_dmarc`
-  `v=DMARC1; p=reject`.
-
 ## Migration checklist
-
-Do one domain at a time, starting with helperbook.app (lower risk: no Workspace mail).
 
 1. [ ] Cloudflare → **Add a domain** → Free plan. Let it scan the records.
 2. [ ] Edit the imported zone until it matches the target table exactly. Delete anything not listed,
-       especially any imported `192.64.119.x` or `parkingpage.namecheap.com` records.
-3. [ ] Add the Redirect Rule(s). Set SSL **Full** and **Always Use HTTPS**.
-4. [ ] abhishekgoyal.me only: send a test email to and from `contact@abhishekgoyal.me` **before** switching.
+       especially any imported `192.64.119.x` records.
+3. [ ] Add the Redirect Rule. Set SSL **Full** and **Always Use HTTPS**.
+4. [ ] Send a test email to and from `contact@abhishekgoyal.me` **before** switching.
 5. [ ] Namecheap → Domain List → Manage → **Nameservers: Custom DNS** → the two Cloudflare nameservers.
 6. [ ] Wait for Cloudflare to show **Active** (usually under an hour; up to 24 h).
 7. [ ] Verify:
    - `curl -I https://abhishekgoyal.me` returns `301` → `https://www.abhishekgoyal.me/`
-   - `curl -I https://helperbook.app` returns `302` → Play Store
    - Email sends and receives, and a received Gmail message shows `spf=pass dkim=pass dmarc=pass`
      under "Show original"
