@@ -57,6 +57,42 @@ export function websiteJsonLd() {
   };
 }
 
+export function faqJsonLd(faqs: readonly { question: string; answer: string }[]) {
+  return {
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+    })),
+  };
+}
+
+export function professionalServiceJsonLd(services: readonly { title: string; summary: string }[]) {
+  return {
+    '@type': 'ProfessionalService',
+    '@id': `${SITE_URL}/services#service`,
+    name: `${profile.name} — mobile engineering`,
+    url: `${SITE_URL}/services`,
+    description: profile.positioning,
+    founder: { '@id': PERSON_ID },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: profile.location.city,
+      addressCountry: 'IN',
+    },
+    areaServed: 'Worldwide',
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Services',
+      itemListElement: services.map((service) => ({
+        '@type': 'Offer',
+        itemOffered: { '@type': 'Service', name: service.title, description: service.summary },
+      })),
+    },
+  };
+}
+
 /** One @graph with the site-wide entities plus any page-specific ones (BlogPosting, FAQPage… in later milestones). */
 export function jsonLdGraph(extra: Record<string, unknown>[] = []) {
   return {

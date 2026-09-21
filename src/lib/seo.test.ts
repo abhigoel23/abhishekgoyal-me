@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import {
   canonicalUrl,
+  faqJsonLd,
   jsonLdGraph,
   ogImagePath,
   pageTitle,
   personJsonLd,
+  professionalServiceJsonLd,
   serializeJsonLd,
 } from './seo';
 
@@ -62,5 +64,22 @@ describe('JSON-LD', () => {
     const out = serializeJsonLd({ name: '</script><script>alert(1)</script>' });
     expect(out).not.toContain('<');
     expect(JSON.parse(out).name).toBe('</script><script>alert(1)</script>');
+  });
+});
+
+describe('services JSON-LD', () => {
+  it('maps FAQs to Question/Answer pairs', () => {
+    const faq = faqJsonLd([{ question: 'Q?', answer: 'A.' }]);
+    expect(faq.mainEntity[0]).toEqual({
+      '@type': 'Question',
+      name: 'Q?',
+      acceptedAnswer: { '@type': 'Answer', text: 'A.' },
+    });
+  });
+
+  it('lists each service as an offer and links the founder', () => {
+    const service = professionalServiceJsonLd([{ title: 'MVP build', summary: 'Idea to store.' }]);
+    expect(service.founder['@id']).toBe('https://abhishekgoyal.me/#person');
+    expect(service.hasOfferCatalog.itemListElement[0].itemOffered.name).toBe('MVP build');
   });
 });

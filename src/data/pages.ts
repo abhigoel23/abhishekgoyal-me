@@ -22,6 +22,12 @@ export const pages = {
       'Case studies from 13 years of mobile engineering: HelperBook, the Pulse offline-sync engine and a video-first hiring app.',
     ogTitle: 'Case studies: mobile products taken from zero to shipped',
   },
+  '/services': {
+    title: 'Services',
+    description:
+      'Mobile engineering services: MVP builds, app rescue and modernisation, Kotlin Multiplatform migration and fractional mobile leadership.',
+    ogTitle: 'MVP builds, app rescues, KMP migrations and fractional mobile leadership',
+  },
   '/styleguide': {
     title: 'Styleguide',
     description:
