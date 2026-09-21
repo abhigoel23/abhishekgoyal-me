@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { site } from '../lib/site';
+import { profile } from '../data/profile';
 ---
 
 <html lang="en">
@@ -8,13 +8,13 @@ import { site } from '../lib/site';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{site.name} — coming soon</title>
-    <meta name="description" content={site.tagline} />
+    <title>{profile.name} — coming soon</title>
+    <meta name="description" content={profile.positioning} />
   </head>
   <body class="grid min-h-dvh place-items-center bg-stone-50 p-6 text-stone-900">
     <main class="max-w-xl text-center">
-      <h1 class="text-4xl font-semibold tracking-tight">{site.name}</h1>
-      <p class="mt-4 text-lg text-stone-600">{site.tagline}</p>
+      <h1 class="text-4xl font-semibold tracking-tight">{profile.name}</h1>
+      <p class="mt-4 text-lg text-stone-600">{profile.positioning}</p>
     </main>
   </body>
 </html>
