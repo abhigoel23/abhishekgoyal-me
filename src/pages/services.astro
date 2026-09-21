@@ -1,0 +1,122 @@
+---
+import Button from '../components/Button.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import Tag from '../components/Tag.astro';
+import { primaryCta } from '../data/nav';
+import { pages } from '../data/pages';
+import { engagements, faqs, overlap, process, services, workingLocation } from '../data/services';
+import Base from '../layouts/Base.astro';
+import { faqJsonLd, professionalServiceJsonLd } from '../lib/seo';
+---
+
+<Base {...pages['/services']} jsonLd={[professionalServiceJsonLd(services), faqJsonLd(faqs)]}>
+  <Container class="py-16 sm:py-24">
+    <p class="eyebrow mb-3">Services</p>
+    <h1 class="text-h1 max-w-3xl">Mobile engineering, from the first plan to the store release</h1>
+    <p class="mt-5 max-w-2xl text-lead text-muted">
+      For founders and product teams who need a mobile app built, rescued or moved to shared code.{' '}
+      {workingLocation} {overlap}
+    </p>
+    <div class="mt-8">
+      <Button href={primaryCta.href} size="lg">
+        {primaryCta.label}
+      </Button>
+    </div>
+  </Container>
+
+  <Container>
+    <ul class="grid gap-6 md:grid-cols-2">
+      {services.map((service) => (
+        <li id={service.id} class="flex flex-col rounded-brand border border-line p-6 sm:p-8">
+          <h2 class="text-h3">{service.title}</h2>
+          <p class="mt-3 text-muted">{service.summary}</p>
+          <h3 class="mt-6 font-sans text-sm font-semibold tracking-normal">What's included</h3>
+          <ul class="mt-3 space-y-2">
+            {service.includes.map((item) => (
+              <li class="flex gap-3">
+                <span aria-hidden="true" class="text-accent">
+                  —
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+          <p class="mt-auto pt-6 text-sm">
+            <a class="link" href={service.proof.href}>
+              Proof: {service.proof.label} →
+            </a>
+          </p>
+        </li>
+      ))}
+    </ul>
+  </Container>
+
+  <Section id="process" eyebrow="How it works" title="Four steps, no surprises">
+    <ol class="grid gap-8 md:grid-cols-4">
+      {process.map((step, i) => (
+        <li>
+          <p class="font-display text-h2 text-accent">{String(i + 1).padStart(2, '0')}</p>
+          <h3 class="mt-2 text-h3">{step.title}</h3>
+          <p class="mt-2 text-muted">{step.body}</p>
+        </li>
+      ))}
+    </ol>
+  </Section>
+
+  <Section
+    id="engagements"
+    eyebrow="Ways to work together"
+    title="Start small, then choose what fits"
+    tone="surface"
+  >
+    <ul class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {engagements.map((engagement) => (
+        <li
+          class:list={[
+            'rounded-brand border bg-bg p-6',
+            engagement.recommended ? 'border-accent' : 'border-line',
+          ]}
+        >
+          {engagement.recommended && (
+            <p class="mb-3">
+              <Tag tone="accent">Start here</Tag>
+            </p>
+          )}
+          <h3 class="text-h3">{engagement.title}</h3>
+          <p class="mt-2 text-muted">{engagement.body}</p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section id="faq" eyebrow="FAQ" title="Questions clients ask">
+    <div class="max-w-3xl divide-y divide-line border-y border-line">
+      {faqs.map((faq) => (
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6 text-lg font-medium [&::-webkit-details-marker]:hidden">
+            <h3 class="font-sans text-lg font-medium tracking-normal">{faq.question}</h3>
+            <span aria-hidden="true" class="text-accent transition-transform group-open:rotate-45">
+              +
+            </span>
+          </summary>
+          <p class="mt-3 max-w-2xl text-muted">{faq.answer}</p>
+        </details>
+      ))}
+    </div>
+  </Section>
+
+  <Container class="pb-8">
+    <div class="rounded-brand bg-surface px-6 py-12 text-center sm:px-12">
+      <h2 class="text-h2">Have an app to build or fix?</h2>
+      <p class="mx-auto mt-3 max-w-xl text-muted">
+        Tell me what exists today and what you need by when.
+      </p>
+      <div class="mt-8">
+        <Button href={primaryCta.href} size="lg">
+          {primaryCta.label}
+        </Button>
+      </div>
+    </div>
+  </Container>
+</Base>
