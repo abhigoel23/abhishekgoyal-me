@@ -78,8 +78,9 @@ jobs:
 
   deploy-preview:
     name: deploy-preview
+    # Deploys stay off until the repo variable DEPLOY_ENABLED=true (set once Cloudflare secrets exist).
     # Same-repo PRs only: fork PRs never receive secrets.
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    if: vars.DEPLOY_ENABLED == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
     needs: [check, test, e2e]
     runs-on: ubuntu-latest
     environment:
@@ -125,7 +126,7 @@ jobs:
 
   deploy-production:
     name: deploy-production
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: vars.DEPLOY_ENABLED == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: [check, test, e2e]
     runs-on: ubuntu-latest
     environment:
