@@ -2,7 +2,7 @@
 // the real case studies arrive as MDX in M2.
 export const sampleWork = [
   {
-    eyebrow: 'Founder & sole engineer · 2026',
+    eyebrow: 'Founder & lead engineer · 2026',
     title: 'HelperBook',
     summary:
       'A local-only Android app for Indian households to track staff attendance, advances and salary. No signup, no server: wage data never leaves the phone.',
