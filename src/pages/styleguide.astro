@@ -8,6 +8,7 @@ import Section from '../components/Section.astro';
 import Tag from '../components/Tag.astro';
 import HeroMock from '../components/styleguide/HeroMock.astro';
 import Palette from '../components/styleguide/Palette.astro';
+import { pages } from '../data/pages';
 import { profile } from '../data/profile';
 import { projectTypes, sampleWork } from '../data/styleguide';
 import Base from '../layouts/Base.astro';
@@ -34,11 +35,7 @@ const typeScale = [
 ];
 ---
 
-<Base
-  title="Styleguide"
-  description="Design tokens and UI primitives for abhishekgoyal.me."
-  noindex
->
+<Base {...pages['/styleguide']} noindex>
   <Container class="pt-16 sm:pt-20">
     <p class="eyebrow mb-3">Design system</p>
     <h1 class="text-h1">Styleguide</h1>

@@ -21,6 +21,12 @@ export function canonicalUrl(pathname: string): string {
   return new URL(path || '/', SITE_URL).href;
 }
 
+/** Where the build puts a page's share image: / → /og/index.png, /work/pulse → /og/work/pulse.png */
+export function ogImagePath(pathname: string): string {
+  const path = new URL(canonicalUrl(pathname)).pathname;
+  return `/og/${path === '/' ? 'index' : path.slice(1)}.png`;
+}
+
 export function personJsonLd() {
   return {
     '@type': 'Person',

@@ -2,10 +2,11 @@
 // Placeholder home page until M2; uses Base so it already gets the SEO tags and design tokens.
 import Container from '../components/Container.astro';
 import { profile } from '../data/profile';
+import { pages } from '../data/pages';
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title={`${profile.name} — ${profile.jobTitle}`} description={profile.positioning}>
+<Base {...pages['/']}>
   <Container width="prose" class="py-24 text-center sm:py-32">
     <h1 class="text-h1">{profile.name}</h1>
     <p class="mt-4 text-lead text-muted">{profile.positioning}</p>

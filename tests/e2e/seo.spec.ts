@@ -1,10 +1,11 @@
 import { expect, test } from '@playwright/test';
+import { pages as registry } from '../../src/data/pages';
 
-// Add each new route here as M2 lands.
-const pages = ['/', '/styleguide'];
+// Every static page is registered in src/data/pages.ts.
+const pages = Object.keys(registry);
 
 for (const path of pages) {
-  test(`${path} has complete SEO metadata`, async ({ page }) => {
+  test(`${path} has complete SEO metadata`, async ({ page, request }) => {
     await page.goto(path);
     const head = page.locator('head');
 
@@ -16,7 +17,15 @@ for (const path of pages) {
       `https://abhishekgoyal.me${path === '/' ? '/' : path}`,
     );
     await expect(head.locator('meta[property="og:title"]')).toHaveCount(1);
-    await expect(head.locator('meta[name="twitter:card"]')).toHaveCount(1);
+    await expect(head.locator('meta[name="twitter:card"]')).toHaveAttribute(
+      'content',
+      'summary_large_image',
+    );
+
+    const ogImage = await head.locator('meta[property="og:image"]').getAttribute('content');
+    const image = await request.get(new URL(ogImage ?? '').pathname);
+    expect(image.ok(), ogImage ?? 'og:image').toBe(true);
+    expect(image.headers()['content-type']).toBe('image/png');
 
     const jsonLd = JSON.parse(
       (await head.locator('script[type="application/ld+json"]').textContent()) ?? '{}',
