@@ -34,6 +34,18 @@ export const pages = {
       'Abhishek Goyal is a mobile engineer in Gurugram with 13 years on Android and iOS, owning products end to end from architecture to release.',
     ogTitle: 'About Abhishek Goyal, mobile engineer in Gurugram',
   },
+  '/hire': {
+    title: 'Hire me',
+    description:
+      'Hiring a mobile engineer? Abhishek Goyal is open to full-time roles owning mobile end to end: remote, in Delhi NCR, or relocating abroad.',
+    ogTitle: 'Hiring a mobile engineer? Resume, availability and how to reach me',
+  },
+  '/resume': {
+    title: 'Resume',
+    description:
+      'Resume of Abhishek Goyal, Founding Mobile Engineer: Android, Kotlin, Compose, KMP, native iOS and React Native. 13 years, 0-to-1 builds.',
+    ogTitle: 'Resume: Founding Mobile Engineer, 13 years on Android and iOS',
+  },
   '/styleguide': {
     title: 'Styleguide',
     description:

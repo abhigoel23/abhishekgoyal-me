@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "astro build && node scripts/resume-pdf.mjs",
     "preview": "wrangler dev",
     "check": "eslint . && prettier --check . && astro check --minimalOutput",
     "lint": "eslint .",
@@ -17,9 +17,9 @@
     "test:e2e": "playwright test",
     "lighthouse": "node scripts/lighthouse.mjs",
     "cf:types": "wrangler types",
-    "deploy": "astro build && wrangler deploy",
+    "deploy": "pnpm build && wrangler deploy",
     "astro": "astro",
-    "resume": "node scripts/build-resume.mjs",
+    "resume": "node scripts/resume-pdf.mjs --private",
     "icons": "node scripts/build-icons.mjs",
     "prepare": "husky"
   },
