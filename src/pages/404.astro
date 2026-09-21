@@ -1,0 +1,51 @@
+---
+// Rendered by the Worker on demand: a prerendered 404.html isn't served for unknown paths.
+export const prerender = false;
+
+import Button from '../components/Button.astro';
+import Container from '../components/Container.astro';
+import { pages } from '../data/pages';
+import Base from '../layouts/Base.astro';
+
+const suggestions = [
+  {
+    href: '/work',
+    label: 'Case studies',
+    body: 'HelperBook, the Pulse sync engine and a video-first hiring app.',
+  },
+  {
+    href: '/services',
+    label: 'Services',
+    body: 'MVP builds, app rescues, KMP migrations, fractional lead.',
+  },
+  { href: '/hire', label: 'Hiring?', body: 'Resume, availability and how to reach me.' },
+];
+---
+
+<Base {...pages['/404']} noindex>
+  <Container class="py-20 sm:py-28">
+    <p class="eyebrow mb-3">Error 404</p>
+    <h1 class="text-h1 max-w-2xl">This page doesn’t exist.</h1>
+    <p class="mt-5 max-w-xl text-lead text-muted">
+      The link may be old, or there’s a typo in the address. One of these is probably what you were
+      after.
+    </p>
+    <ul class="mt-12 grid gap-6 md:grid-cols-3">
+      {suggestions.map((item) => (
+        <li class="rounded-brand border border-line p-6">
+          <h2 class="text-h3">
+            <a class="hover:text-accent" href={item.href}>
+              {item.label} →
+            </a>
+          </h2>
+          <p class="mt-2 text-muted">{item.body}</p>
+        </li>
+      ))}
+    </ul>
+    <div class="mt-12">
+      <Button href="/" variant="secondary">
+        Back to the home page
+      </Button>
+    </div>
+  </Container>
+</Base>
