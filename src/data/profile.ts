@@ -6,7 +6,7 @@ export const profile = {
   email: 'contact@abhishekgoyal.me',
   jobTitle: 'Founding Mobile Engineer',
   headline:
-    'Founding Mobile Engineer — Android / Kotlin / Compose / KMP · Native iOS · 0-to-1 Specialist',
+    'Founding Mobile Engineer — Android / Kotlin / Compose / KMP · Native iOS · React Native · 0-to-1 Specialist',
   positioning: 'I build mobile products from zero to shipped, and own every step in between.',
   intro:
     'Mobile engineer with 13 years on Android and iOS, owning products end to end. Most recently I designed and built HelperBook, a fully offline household-payroll app, and took it to Play Store closed beta.',
@@ -24,6 +24,7 @@ export const profile = {
     'Kotlin Multiplatform',
     'SQLDelight',
     'Swift',
+    'React Native',
     'SwiftUI',
     'Offline-first sync',
     'DPDP-aware design',
