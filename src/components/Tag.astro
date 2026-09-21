@@ -5,7 +5,7 @@ const { tone = 'plain' } = Astro.props;
 
 <span
   class:list={[
-    'inline-flex items-center rounded-(--tag-radius) border px-2.5 py-0.5 font-(family-name:--tag-font) text-xs font-medium',
+    'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
     tone === 'accent' ? 'border-accent/40 text-accent' : 'border-line text-muted',
   ]}
 >

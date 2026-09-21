@@ -38,12 +38,10 @@ export default defineConfig({
     sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/styleguide') }),
   ],
   // Self-hosted via Fontsource at build time: no Google Fonts request, metric-matched fallbacks.
-  // cssVariable names must match FontVar in src/lib/brands.ts.
+  // cssVariable names must match FontVar in src/lib/theme.ts.
   fonts: [
     font('Inter', '--font-inter', ['100 900'], ['sans-serif']),
-    font('Fraunces', '--font-fraunces', ['100 900'], ['serif'], ['normal', 'italic']),
     font('Instrument Serif', '--font-instrument-serif', [400], ['serif'], ['normal', 'italic']),
-    font('Inter Tight', '--font-inter-tight', ['100 900'], ['sans-serif']),
     font('JetBrains Mono', '--font-jetbrains-mono', ['100 800'], ['monospace']),
   ],
   vite: {

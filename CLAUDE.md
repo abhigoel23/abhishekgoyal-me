@@ -21,6 +21,8 @@ pnpm 12 has no `-s` flag; use `--silent`.
 - `astro.config.mjs` — integrations; `session: false`; `imageService: 'compile'`
 - `wrangler.jsonc` — Worker config (bindings added in M3)
 - `src/pages/` — routes, prerendered by default; `src/pages/api/*` opt out with `prerender = false`
+- `src/lib/theme.ts` — design tokens (Studio, ADR 005); `/styleguide` shows them. Components use semantic
+  utilities only (`bg-surface`, `text-muted`, `rounded-brand`), never raw colours
 - `src/lib/` — shared TS; `src/lib/server/` is server-only (M3)
 - `src/components/react/` — React islands only (forms, embeds)
 - `tests/e2e/` — Playwright; unit tests live next to source as `*.test.ts`

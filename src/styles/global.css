@@ -92,49 +92,11 @@
   }
 }
 
-/*
- * Small labels above headings, and tags. Each brand picks a style via data-eyebrow on <html> or on a preview
- * wrapper. The styles travel as inherited custom properties so the nearest data-eyebrow wins.
- */
-@layer base {
-  [data-eyebrow='mono'] {
-    --eyebrow-font: var(--brand-mono);
-    --eyebrow-style: normal;
-    --eyebrow-weight: 400;
-    --eyebrow-size: 0.75rem;
-    --eyebrow-tracking: 0.06em;
-    --eyebrow-case: uppercase;
-    --tag-font: var(--brand-mono);
-    --tag-radius: var(--brand-radius);
-  }
-  [data-eyebrow='sans'] {
-    --eyebrow-font: var(--brand-body);
-    --eyebrow-style: normal;
-    --eyebrow-weight: 600;
-    --eyebrow-size: 0.75rem;
-    --eyebrow-tracking: 0.08em;
-    --eyebrow-case: uppercase;
-    --tag-font: var(--brand-body);
-    --tag-radius: 9999px;
-  }
-  [data-eyebrow='serif-italic'] {
-    --eyebrow-font: var(--brand-display);
-    --eyebrow-style: italic;
-    --eyebrow-weight: 400;
-    --eyebrow-size: 1rem;
-    --eyebrow-tracking: 0;
-    --eyebrow-case: none;
-    --tag-font: var(--brand-body);
-    --tag-radius: 9999px;
-  }
-}
-
+/* Small uppercase labels above headings. */
 @utility eyebrow {
-  font-family: var(--eyebrow-font);
-  font-style: var(--eyebrow-style);
-  font-weight: var(--eyebrow-weight);
-  font-size: var(--eyebrow-size);
-  letter-spacing: var(--eyebrow-tracking);
-  text-transform: var(--eyebrow-case);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--muted);
 }

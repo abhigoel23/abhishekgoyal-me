@@ -3,28 +3,13 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
-import { brandVars, colorVars, type Brand, type FontVar } from '../lib/brands';
+import { dark, fonts, light, themeCss } from '../lib/theme';
 
-type Props = {
-  title: string;
-  description: string;
-  brand: Brand;
-  noindex?: boolean;
-  /** Extra font faces to load beyond the brand's own (the styleguide comparison page needs all of them). */
-  extraFonts?: FontVar[];
-};
-const { title, description, brand, noindex = false, extraFonts = [] } = Astro.props;
-
-const preload = [brand.fonts.display, brand.fonts.body];
-const lazy = [...new Set([brand.fonts.mono, ...extraFonts])].filter((f) => !preload.includes(f));
-
-// Light is the default; dark applies when chosen explicitly or when the OS prefers it and nothing was chosen.
-const tokens = `:root{${brandVars(brand)}${colorVars(brand.light)}}
-:root[data-theme='dark']{${colorVars(brand.dark)}}
-@media (prefers-color-scheme: dark){:root:not([data-theme='light']){${colorVars(brand.dark)}}}`;
+type Props = { title: string; description: string; noindex?: boolean };
+const { title, description, noindex = false } = Astro.props;
 ---
 
-<html lang="en" data-brand={brand.id} data-eyebrow={brand.shape.eyebrow}>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -32,8 +17,8 @@ const tokens = `:root{${brandVars(brand)}${colorVars(brand.light)}}
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="theme-color" content={brand.light.bg} media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content={brand.dark.bg} media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content={light.bg} media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content={dark.bg} media="(prefers-color-scheme: dark)" />
     <script is:inline>
       try {
         const theme = localStorage.getItem('theme');
@@ -42,13 +27,10 @@ const tokens = `:root{${brandVars(brand)}${colorVars(brand.light)}}
         // Storage blocked: fall back to the OS preference.
       }
     </script>
-    <style is:global set:html={tokens}></style>
-    {preload.map((cssVariable) => (
-      <Font cssVariable={cssVariable} preload />
-    ))}
-    {lazy.map((cssVariable) => (
-      <Font cssVariable={cssVariable} />
-    ))}
+    <style is:global set:html={themeCss()}></style>
+    <Font cssVariable={fonts.display} preload />
+    <Font cssVariable={fonts.body} preload />
+    <Font cssVariable={fonts.mono} />
   </head>
   <body class="flex min-h-dvh flex-col">
     <a
