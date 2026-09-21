@@ -1,14 +1,87 @@
 ---
-// Placeholder home page until M2; uses Base so it already gets the SEO tags and design tokens.
+import { getCollection } from 'astro:content';
+import Button from '../components/Button.astro';
+import Card from '../components/Card.astro';
 import Container from '../components/Container.astro';
-import { profile } from '../data/profile';
+import Hero from '../components/Hero.astro';
+import ProofStrip from '../components/ProofStrip.astro';
+import Section from '../components/Section.astro';
+import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
+import { services } from '../data/services';
 import Base from '../layouts/Base.astro';
+
+const featured = (await getCollection('work', ({ data }) => data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
 ---
 
 <Base {...pages['/']}>
-  <Container width="prose" class="py-24 text-center sm:py-32">
-    <h1 class="text-h1">{profile.name}</h1>
-    <p class="mt-4 text-lead text-muted">{profile.positioning}</p>
+  <Container class="py-16 sm:py-24">
+    <Hero />
+    <div class="mt-16 sm:mt-20">
+      <ProofStrip />
+    </div>
+  </Container>
+
+  <Section id="work" eyebrow="Selected work" title="Case studies">
+    <ul class="grid gap-6 md:grid-cols-3">
+      {featured.map((entry) => (
+        <li>
+          <Card
+            eyebrow={`${entry.data.role} · ${entry.data.period}`}
+            title={entry.data.title}
+            summary={entry.data.summary}
+            tags={entry.data.stack.slice(0, 4)}
+            href={`/work/${entry.id}`}
+          />
+        </li>
+      ))}
+    </ul>
+    <p class="mt-8">
+      <a class="link font-medium" href="/work">
+        All case studies →
+      </a>
+    </p>
+  </Section>
+
+  <Section
+    id="services"
+    eyebrow="Services"
+    title="How I can help"
+    intro="For founders and product teams who need a mobile app built, rescued or moved to shared code."
+    tone="surface"
+  >
+    <ul class="grid gap-x-10 gap-y-8 sm:grid-cols-2">
+      {services.map((service) => (
+        <li>
+          <h3 class="text-h3">
+            <a class="hover:text-accent" href={`/services#${service.id}`}>
+              {service.title}
+            </a>
+          </h3>
+          <p class="mt-2 text-muted">{service.summary}</p>
+        </li>
+      ))}
+    </ul>
+    <p class="mt-10">
+      <a class="link font-medium" href="/services">
+        Services, process and FAQ →
+      </a>
+    </p>
+  </Section>
+
+  <Container class="py-16 sm:py-24">
+    <div class="rounded-brand border border-line px-6 py-12 text-center sm:px-12">
+      <h2 class="text-h2">Have an app to build or fix?</h2>
+      <p class="mx-auto mt-3 max-w-xl text-muted">
+        Tell me what exists today and what you need by when.
+      </p>
+      <div class="mt-8">
+        <Button href={primaryCta.href} size="lg">
+          {primaryCta.label}
+        </Button>
+      </div>
+    </div>
   </Container>
 </Base>

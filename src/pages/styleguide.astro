@@ -6,7 +6,7 @@ import Field from '../components/Field.astro';
 import ProofStrip from '../components/ProofStrip.astro';
 import Section from '../components/Section.astro';
 import Tag from '../components/Tag.astro';
-import HeroMock from '../components/styleguide/HeroMock.astro';
+import Hero from '../components/Hero.astro';
 import Palette from '../components/styleguide/Palette.astro';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
@@ -46,7 +46,7 @@ const typeScale = [
   </Container>
 
   <Container class="py-16 sm:py-20">
-    <HeroMock />
+    <Hero headingLevel="h2" />
     <div class="mt-16">
       <ProofStrip />
     </div>
