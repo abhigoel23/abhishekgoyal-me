@@ -1,0 +1,116 @@
+---
+import { Image } from 'astro:assets';
+import photo from '../assets/profile/abhishek-goyal.jpg';
+import Button from '../components/Button.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import { aboutIntro, values } from '../data/about';
+import { career, education } from '../data/career';
+import { primaryCta } from '../data/nav';
+import { pages } from '../data/pages';
+import { profile } from '../data/profile';
+import Base from '../layouts/Base.astro';
+
+const links = [
+  { label: 'LinkedIn', href: profile.links.linkedin },
+  { label: 'GitHub', href: profile.links.github },
+  { label: 'HelperBook on Google Play', href: profile.links.helperbook },
+  { label: profile.email, href: `mailto:${profile.email}` },
+];
+const aboutPage = { '@type': 'AboutPage', mainEntity: { '@id': `${profile.url}/#person` } };
+---
+
+<Base {...pages['/about']} type="profile" jsonLd={[aboutPage]}>
+  <Container class="py-16 sm:py-24">
+    <div class="grid items-start gap-12 md:grid-cols-[1.5fr_1fr] md:gap-16">
+      <div>
+        <p class="eyebrow mb-3">About</p>
+        <h1 class="text-h1">Hi, I’m Abhishek.</h1>
+        {aboutIntro.map((paragraph, i) => (
+          <p class:list={['max-w-2xl', i === 0 ? 'mt-6 text-lead' : 'mt-4 text-muted']}>
+            {paragraph}
+          </p>
+        ))}
+        <ul class="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+          {links.map((link) => (
+            <li>
+              <a class="link" href={link.href}>
+                {link.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <Image
+        src={photo}
+        alt={`${profile.name}, arms crossed, smiling at the camera`}
+        widths={[320, 480, 640, 853]}
+        sizes="(min-width: 768px) 320px, 80vw"
+        loading="eager"
+        fetchpriority="high"
+        class="mx-auto aspect-[4/5] w-full max-w-xs rounded-brand border border-line object-cover object-top"
+      />
+    </div>
+  </Container>
+
+  <Section
+    id="values"
+    eyebrow="What I care about"
+    title="Four things that show up in all my work"
+    tone="surface"
+  >
+    <ul class="grid gap-8 sm:grid-cols-2">
+      {values.map((value) => (
+        <li>
+          <h3 class="text-h3">{value.title}</h3>
+          <p class="mt-2 text-muted">{value.body}</p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section id="path" eyebrow="The path so far" title="13 years, newest first">
+    <ol class="max-w-3xl border-l border-line">
+      {career.map((job) => (
+        <li class="relative pb-10 pl-8 last:pb-0">
+          <span
+            aria-hidden="true"
+            class="absolute top-2 -left-[5px] size-2.5 rounded-full bg-accent"
+          />
+          <p class="eyebrow">
+            {job.period} · {job.location}
+          </p>
+          <h3 class="mt-1 text-h3">
+            {job.role}, {job.company}
+          </h3>
+          <p class="mt-2 text-muted">{job.about}</p>
+          {'href' in job && (
+            <p class="mt-2 text-sm">
+              <a class="link" href={job.href}>
+                Case study →
+              </a>
+            </p>
+          )}
+        </li>
+      ))}
+    </ol>
+    <p class="mt-10 max-w-3xl text-sm text-muted">Education: {education}</p>
+  </Section>
+
+  <Container class="pb-8">
+    <div class="rounded-brand border border-line px-6 py-12 text-center sm:px-12">
+      <h2 class="text-h2">Want to work together?</h2>
+      <p class="mx-auto mt-3 max-w-xl text-muted">
+        Whether it’s a project or a full-time role, I’d like to hear about it.
+      </p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+        <Button href={primaryCta.href} size="lg">
+          {primaryCta.label}
+        </Button>
+        <a class="link text-sm font-medium" href="/hire">
+          Hiring full-time? →
+        </a>
+      </div>
+    </div>
+  </Container>
+</Base>

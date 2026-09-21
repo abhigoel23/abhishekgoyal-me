@@ -28,6 +28,12 @@ export const pages = {
       'Mobile engineering services: MVP builds, app rescue and modernisation, Kotlin Multiplatform migration and fractional mobile leadership.',
     ogTitle: 'MVP builds, app rescues, KMP migrations and fractional mobile leadership',
   },
+  '/about': {
+    title: 'About',
+    description:
+      'Abhishek Goyal is a mobile engineer in Gurugram with 13 years on Android and iOS, owning products end to end from architecture to release.',
+    ogTitle: 'About Abhishek Goyal, mobile engineer in Gurugram',
+  },
   '/styleguide': {
     title: 'Styleguide',
     description:
