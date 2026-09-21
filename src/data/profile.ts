@@ -8,6 +8,8 @@ export const profile = {
   headline:
     'Founding Mobile Engineer — Android / Kotlin / Compose / KMP · Native iOS · 0-to-1 Specialist',
   positioning: 'I build mobile products from zero to shipped. Often as the only engineer.',
+  intro:
+    'Mobile engineer with 13 years on Android and iOS, usually as the only mobile engineer on the product. Most recently I designed and built HelperBook, a fully offline household-payroll app, and took it to Play Store closed beta on my own.',
   location: { city: 'Gurugram', country: 'India' },
   pillars: ['0-to-1', 'Offline-first', 'Privacy by design', 'Ships solo'],
   stats: [

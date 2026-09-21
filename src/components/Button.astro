@@ -1,0 +1,40 @@
+---
+type Props = {
+  href?: string;
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'md' | 'lg';
+  type?: 'button' | 'submit';
+  disabled?: boolean;
+  class?: string;
+};
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  disabled = false,
+  class: className,
+} = Astro.props;
+
+const classes = [
+  'inline-flex items-center justify-center gap-2 rounded-brand font-medium whitespace-nowrap transition-colors',
+  'disabled:cursor-not-allowed disabled:opacity-50',
+  size === 'lg' ? 'min-h-12 px-6 text-base' : 'min-h-11 px-5 text-sm',
+  {
+    primary: 'bg-accent text-on-accent hover:bg-ink hover:text-bg',
+    secondary: 'border border-ink/80 text-ink hover:bg-ink hover:text-bg',
+    ghost: 'text-accent underline-offset-4 hover:underline',
+  }[variant],
+  className,
+];
+---
+
+{href && !disabled ? (
+  <a href={href} class:list={classes}>
+    <slot />
+  </a>
+) : (
+  <button type={type} disabled={disabled} class:list={classes}>
+    <slot />
+  </button>
+)}
