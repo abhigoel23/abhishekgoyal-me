@@ -4,15 +4,15 @@ summary: The offline-first mobile engine behind an enterprise inspection platfor
 role: Head of Mobility / Lead Mobile Engineer
 period: Jan 2021 – May 2025
 client: Aim North Technologies (Pulse Business Solutions)
-platform: Android and iOS (native)
-stack: [Kotlin, Swift, SQLite, GitHub Actions, Fastlane]
+platform: Android and iOS, native then React Native
+stack: [Kotlin, Swift, React Native, SQLite, GitHub Actions, Fastlane]
 order: 2
 ---
 
 ## The job
 
-I was the sole mobile engineer for the Pulse enterprise inspection platform, owning Android and iOS end to
-end. I architected the mobile engine from an early prototype to **100+ B2B enterprise clients**.
+I owned mobile for the Pulse enterprise inspection platform, Android and iOS end to end, and was its sole
+mobile engineer until the 2025 React Native rewrite. I architected the mobile engine from an early prototype to **100+ B2B enterprise clients**.
 
 ## A sync contract first
 
@@ -24,15 +24,20 @@ semantics and failure behaviour. Then I implemented both native clients against 
 Auditors inspect sites with no connectivity, so the data layer is offline-first:
 
 - a **dynamic form builder** for inspection forms
-- a **background media upload queue** for photos taken in the field
-- a **local SQLite cache** as the source of truth on the device
+- a **background media upload queue**
+- a **local SQLite cache**
 
 **No data-loss incidents were reported in 4.5 years of field use.**
 
 ## Two native clients, one engineer
 
-I wrote and shipped the Swift/iOS client to the App Store alongside Android, keeping feature parity across
-4.5 years of releases. The field UIs are usable by non-technical staff with no training.
+I wrote and shipped the Swift/iOS client to the App Store alongside Android, with feature parity between
+the two. The field UIs are usable by non-technical staff with no training.
+
+## One codebase: the React Native rewrite
+
+In 2025 I led a full rewrite of both native apps into a single **React Native** codebase. I architected it
+and built it alongside the team, and we completed it in six months.
 
 ## Releases that stopped being events
 
