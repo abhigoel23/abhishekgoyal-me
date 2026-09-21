@@ -78,7 +78,7 @@ export const process = [
   },
   {
     title: 'Handover',
-    body: 'Code in your repository from day one, CI in place and the decisions written down, so your team can take over.',
+    body: 'The code transferred to your repository at each paid milestone, CI in place and the decisions written down, so your team can take over.',
   },
 ];
 
@@ -130,7 +130,8 @@ export const faqs = [
   },
   {
     question: 'Who owns the code?',
-    answer: 'You do. The code lives in your repository from the first commit.',
+    answer:
+      'You do, once each milestone is paid. I work in my repository, give you read access from the start so you can see every commit, and transfer the code to yours at each paid milestone.',
   },
   {
     question: 'How do we start?',
