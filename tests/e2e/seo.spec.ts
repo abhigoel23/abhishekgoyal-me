@@ -1,8 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { pages as registry } from '../../src/data/pages';
-
-// Every static page is registered in src/data/pages.ts.
-const pages = Object.keys(registry);
+import { routes as pages } from './routes';
 
 for (const path of pages) {
   test(`${path} has complete SEO metadata`, async ({ page, request }) => {

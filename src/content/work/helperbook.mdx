@@ -1,0 +1,53 @@
+---
+title: HelperBook
+summary: 'A local-only Android app for Indian households to track staff attendance, advances and salary settlements. No signup, no server: wage data never leaves the phone.'
+role: Founder & lead engineer
+period: Feb 2026 – present
+client: My own product
+platform: Android (Kotlin Multiplatform shared module)
+stack: [Kotlin, Jetpack Compose, KMP, SQLDelight, kotlinx-serialization, R8, Crashlytics]
+order: 1
+links:
+  - label: HelperBook on Google Play
+    href: https://play.google.com/store/apps/details?id=com.helperbook
+screens:
+  - src: ../../assets/work/helperbook/today.png
+    alt: Today screen with Present, Absent and Half-day buttons for a helper, and a "Salary in 8 days" reminder.
+  - src: ../../assets/work/helperbook/calendar.png
+    alt: Monthly attendance calendar with present, absent and half-days marked, and a note that unmarked days count as present.
+  - src: ../../assets/work/helperbook/money.png
+    alt: Statement screen listing salary, advance and deduction entries with a running balance.
+  - src: ../../assets/work/helperbook/settings.png
+    alt: Settings screen with current and past helpers, an English/Hindi language switch and a daily reminder toggle.
+screensNote: Names, wages and balances are blurred. These are real household records, which is the point.
+---
+
+## The brief I gave myself
+
+Households that employ helpers need to track attendance, advances and the month-end settlement. I wanted
+an app that does that without asking anyone to trust a server with wage data. I own every part of it:
+product, architecture, UI, Hindi localisation and store submission.
+
+## Local-only, by design
+
+There is no signup and no server. Records live on the device in **SQLDelight**, inside a shared **Kotlin
+Multiplatform** module, and users own their data through export and restore.
+
+Keeping wage data off any server keeps the app outside data-fiduciary scope under India's DPDP Act, and it
+gives households a reason to enter real numbers.
+
+## Product rules live in the data model
+
+- **Unmarked days default to present**, so a worker is never underpaid because someone forgot to tap.
+- **Half-days deduct exactly half.** No rounding surprises at month end.
+- **Settlement statements are bilingual** (English and Hindi), so the employer and the helper can both read
+  every line.
+
+## Release engineering
+
+A signed AAB with R8 rules for SQLDelight and kotlinx-serialization, Crashlytics with no names or amounts in
+the logs, Play Data Safety declarations and a staged-rollout plan.
+
+## Where it is now
+
+In closed beta on Google Play with 12–20 households. Jetpack Compose, min SDK 24, target API 35.

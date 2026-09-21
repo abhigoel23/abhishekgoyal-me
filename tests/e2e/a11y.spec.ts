@@ -1,9 +1,9 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
-import { pages } from '../../src/data/pages';
+import { routes } from './routes';
 
 // WCAG 2.1 A/AA rules, in both themes (colour contrast differs). Serious and critical issues fail the test.
-for (const path of Object.keys(pages)) {
+for (const path of routes) {
   for (const colorScheme of ['light', 'dark'] as const) {
     test(`${path} has no serious accessibility violations (${colorScheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme });
