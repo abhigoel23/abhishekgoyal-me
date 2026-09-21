@@ -82,9 +82,10 @@ const aboutPage = { '@type': 'AboutPage', mainEntity: { '@id': `${profile.url}/#
           </p>
           <h3 class="mt-1 text-h3">
             {job.role}, {job.company}
+            {job.note && ` (${job.note})`}
           </h3>
           <p class="mt-2 text-muted">{job.about}</p>
-          {'href' in job && (
+          {job.href && (
             <p class="mt-2 text-sm">
               <a class="link" href={job.href}>
                 Case study →
@@ -94,7 +95,9 @@ const aboutPage = { '@type': 'AboutPage', mainEntity: { '@id': `${profile.url}/#
         </li>
       ))}
     </ol>
-    <p class="mt-10 max-w-3xl text-sm text-muted">Education: {education}</p>
+    <p class="mt-10 max-w-3xl text-sm text-muted">
+      Education: {education.degree}, {education.school}
+    </p>
   </Section>
 
   <Container class="pb-8">

@@ -1,0 +1,78 @@
+---
+import Button from '../components/Button.astro';
+import Container from '../components/Container.astro';
+import Section from '../components/Section.astro';
+import Tag from '../components/Tag.astro';
+import { atAGlance, availability, highlights, setups } from '../data/hire';
+import { pages } from '../data/pages';
+import { profile } from '../data/profile';
+import Base from '../layouts/Base.astro';
+
+const email = `mailto:${profile.email}?subject=${encodeURIComponent('Full-time role')}`;
+---
+
+<Base {...pages['/hire']} type="profile">
+  <Container class="py-16 sm:py-24">
+    <p class="eyebrow mb-3">For employers</p>
+    <h1 class="text-h1 max-w-3xl">Hiring a mobile engineer?</h1>
+    <p class="mt-5 max-w-2xl text-lead">{availability}</p>
+    <ul class="mt-6 flex flex-wrap gap-2" aria-label="Open to">
+      {setups.map((setup) => (
+        <li>
+          <Tag tone="accent">{setup}</Tag>
+        </li>
+      ))}
+    </ul>
+    <div class="mt-10 flex flex-wrap items-center gap-4">
+      <Button href="/resume.pdf" size="lg">
+        Download resume (PDF)
+      </Button>
+      <Button href="/resume" variant="secondary" size="lg">
+        View resume online
+      </Button>
+      <a class="link font-medium" href={email}>
+        Email me about a role →
+      </a>
+    </div>
+  </Container>
+
+  <Section id="glance" eyebrow="At a glance" title="What I bring" tone="surface">
+    <dl class="grid max-w-4xl gap-x-10 gap-y-6 sm:grid-cols-[12rem_1fr]">
+      {atAGlance.map((row) => (
+        <>
+          <dt class="eyebrow pt-0.5">{row.label}</dt>
+          <dd class="-mt-4 sm:mt-0">{row.value}</dd>
+        </>
+      ))}
+    </dl>
+  </Section>
+
+  <Section id="highlights" eyebrow="Proof" title="Three things I’ve shipped">
+    <ul class="grid gap-6 md:grid-cols-3">
+      {highlights.map((item) => (
+        <li class="flex flex-col rounded-brand border border-line p-6">
+          <p>{item.text}</p>
+          <p class="mt-auto pt-5 text-sm">
+            <a class="link" href={item.href}>
+              Read the case study →
+            </a>
+          </p>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Container class="pb-8">
+    <div class="rounded-brand border border-line px-6 py-12 text-center sm:px-12">
+      <h2 class="text-h2">Have a role in mind?</h2>
+      <p class="mx-auto mt-3 max-w-xl text-muted">
+        Send the job description or a link, and a line about the team.
+      </p>
+      <div class="mt-8">
+        <Button href={email} size="lg">
+          Email me about a role
+        </Button>
+      </div>
+    </div>
+  </Container>
+</Base>

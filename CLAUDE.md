@@ -13,6 +13,9 @@ deployed as one Cloudflare Worker (static assets + `/api/*`). Roadmap: GitHub Mi
 | Lint + format + types | `pnpm check`                                                       |
 | Unit tests            | `pnpm test` (Vitest, `src/**/*.test.ts`)                           |
 | E2E smoke             | `pnpm test:e2e` (Playwright; `BASE_URL=` to target a deployed URL) |
+| Lighthouse gate       | `pnpm lighthouse` (after `pnpm build`)                             |
+| Private resume PDF    | `RESUME_PHONE="+91 …" pnpm resume` (after `pnpm build`)            |
+| Favicons              | `pnpm icons`                                                       |
 
 pnpm 12 has no `-s` flag; use `--silent`.
 
@@ -23,6 +26,7 @@ pnpm 12 has no `-s` flag; use `--silent`.
 - `src/pages/` — routes, prerendered by default; `src/pages/api/*` opt out with `prerender = false`
 - `src/lib/theme.ts` — design tokens (Studio, ADR 005); `/styleguide` shows them. Components use semantic
   utilities only (`bg-surface`, `text-muted`, `rounded-brand`), never raw colours
+- `src/data/career.ts` + `resume.ts` — resume source; `pnpm build` prints `/resume` to `resume.pdf` (1 page or fail)
 - `src/lib/` — shared TS; `src/lib/server/` is server-only (M3)
 - `src/components/react/` — React islands only (forms, embeds)
 - `tests/e2e/` — Playwright; unit tests live next to source as `*.test.ts`
