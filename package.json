@@ -18,6 +18,7 @@
     "cf:types": "wrangler types",
     "deploy": "astro build && wrangler deploy",
     "astro": "astro",
+    "resume": "node scripts/build-resume.mjs",
     "prepare": "husky"
   },
   "dependencies": {

@@ -1,0 +1,264 @@
+<!doctype html>
+<!--
+  Resume source. Build the PDF with `pnpm resume` (prints A4 via Playwright/Chromium).
+  M2 folds this content into src/data/profile.ts and the site's /resume page.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Abhishek Goyal — Resume</title>
+    <style>
+      @page {
+        size: A4;
+        margin: 9mm 12mm 8mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 8.9pt;
+        line-height: 1.32;
+        color: #1c1f23;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 20pt;
+        letter-spacing: 0;
+      }
+      .headline {
+        margin: 2pt 0 3pt;
+        font-weight: 600;
+        color: #1f4e79;
+        font-size: 10pt;
+      }
+      .contact {
+        color: #4a5058;
+      }
+      h2 {
+        margin: 7pt 0 3pt;
+        padding-bottom: 2pt;
+        border-bottom: 0.75pt solid #b8c4d0;
+        font-size: 9.6pt;
+        text-transform: uppercase;
+        letter-spacing: 0; /* normal spacing keeps headings intact for ATS parsers */
+        color: #1f4e79;
+      }
+      p {
+        margin: 0;
+      }
+      .stack {
+        display: grid;
+        grid-template-columns: 26mm 1fr;
+        gap: 1pt 6pt;
+      }
+      .stack dt {
+        font-weight: 600;
+      }
+      .stack dd {
+        margin: 0;
+      }
+      .job {
+        margin-top: 5pt;
+        break-inside: avoid;
+      }
+      .job-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 8pt;
+        font-weight: 700;
+      }
+      .job-meta {
+        font-weight: 400;
+        color: #5b626b;
+        white-space: nowrap;
+      }
+      .job-sub {
+        color: #4a5058;
+        margin-top: 1pt;
+      }
+      ul {
+        margin: 2pt 0 0;
+        padding-left: 11pt;
+      }
+      li {
+        margin: 0.8pt 0;
+      }
+      li strong {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Abhishek Goyal</h1>
+      <p class="headline">
+        Senior Android Engineer — Kotlin · Jetpack Compose · KMP · Native iOS · 0-to-1 specialist
+      </p>
+      <p class="contact">
+        Gurugram, India · +91 8447588904 · contact@abhishekgoyal.me · abhishekgoyal.me ·
+        github.com/abhigoel23<br />
+        linkedin.com/in/abhishek-goyal-16848216 · HelperBook:
+        play.google.com/store/apps/details?id=com.helperbook
+      </p>
+    </header>
+
+    <h2>Summary</h2>
+    <p>
+      Mobile engineer with 13 years of experience, specialising in being the only mobile engineer on
+      a product. Sole engineer on four greenfield Android builds, most recently HelperBook, a fully
+      offline household-payroll app I designed, built, and took to Play Store closed beta alone.
+      Previously owned Android <em>and</em> App Store iOS for an enterprise inspection platform that
+      grew to 100+ B2B clients on an offline-first sync engine I architected. Comfortable owning
+      architecture, media pipelines, release engineering, and product calls at once.
+    </p>
+
+    <h2>Core stack</h2>
+    <dl class="stack">
+      <dt>Android</dt>
+      <dd>
+        Kotlin · Jetpack Compose · Coroutines &amp; Flow · Kotlin Multiplatform · SQLDelight · Room
+        · Hilt · Clean Architecture (MVVM/MVI) · Retrofit / Ktor
+      </dd>
+      <dt>iOS</dt>
+      <dd>Swift · SwiftUI · shipped a production App Store client solo</dd>
+      <dt>Media &amp; real-time</dt>
+      <dd>CameraX · Media3 / ExoPlayer · WebSockets · native speech recognition · audio capture</dd>
+      <dt>Data &amp; privacy</dt>
+      <dd>
+        Local-first / offline-first sync · API contract design · Play Data Safety · DPDP-aware
+        design · PII-free crash reporting
+      </dd>
+      <dt>Delivery</dt>
+      <dd>
+        Play Console (tracks, staged rollout) · GitHub Actions · Fastlane · R8 · Cursor and Claude
+        Code for scaffolding, tests, and refactors
+      </dd>
+    </dl>
+
+    <h2>Experience</h2>
+
+    <section class="job">
+      <div class="job-head">
+        <span>Founder &amp; Sole Engineer — HelperBook</span
+        ><span class="job-meta">Feb 2026 – Present · Gurugram</span>
+      </div>
+      <p class="job-sub">
+        Local-only Android app for Indian households to track staff attendance, advances, and salary
+        settlements. Product, architecture, UI, Hindi localisation, and store submission, all solo.
+      </p>
+      <ul>
+        <li>
+          <strong>No signup, no server:</strong> records live on-device via SQLDelight in a shared
+          KMP module, with user-owned export/restore. Keeping wage data off any server keeps the app
+          outside data-fiduciary scope under DPDP, and gives households a reason to enter real
+          numbers.
+        </li>
+        <li>
+          <strong>Product rules in the data model:</strong> unmarked days default to present so a
+          worker is never underpaid; half-days deduct exactly half; settlement statements are
+          generated bilingually (English/Hindi) so employer and helper can both read every line.
+        </li>
+        <li>
+          <strong>Release engineering:</strong> signed AAB with R8 rules for SQLDelight and
+          kotlinx-serialization, Crashlytics with no names or amounts in logs, Data Safety
+          declarations, staged-rollout plan. Closed beta with 12–20 households; Compose, min SDK 24,
+          target API 35.
+        </li>
+      </ul>
+    </section>
+
+    <section class="job">
+      <div class="job-head">
+        <span>Contract Android Engineer — Video-first hiring platform</span
+        ><span class="job-meta">Jul 2025 – Jan 2026 · Remote · client under NDA</span>
+      </div>
+      <ul>
+        <li>
+          Built 100% of the Android client from concept to production release: 30+ screens across
+          candidate and recruiter flows on a modular Compose + MVVM + Hilt + Flow codebase the app
+          still runs on.
+        </li>
+        <li>
+          Candidate video responses end to end: lifecycle-safe CameraX capture, upload, and Media3 /
+          ExoPlayer playback for recruiter screening feeds; on-device speech transcription with
+          offline caching.
+        </li>
+      </ul>
+    </section>
+
+    <section class="job">
+      <div class="job-head">
+        <span>Lead Mobile Engineer — Aim North Technologies (Pulse Business Solutions)</span
+        ><span class="job-meta">Jan 2021 – May 2025 · Noida</span>
+      </div>
+      <p class="job-sub">
+        Sole mobile engineer for the Pulse enterprise inspection platform: Android and iOS end to
+        end.
+      </p>
+      <ul>
+        <li>
+          Architected the mobile engine from early prototype to
+          <strong>100+ B2B enterprise clients</strong>; designed the sync contract (payloads, upload
+          semantics, failure behaviour) with the backend and web teams, then implemented both native
+          clients against it.
+        </li>
+        <li>
+          Engineered the offline-first data layer (dynamic form builder, background media upload
+          queue, local SQLite cache) for auditors working without connectivity; no data-loss
+          incidents reported in 4.5 years of field use.
+        </li>
+        <li>
+          Wrote and shipped the Swift/iOS client to the App Store alongside Android, keeping feature
+          parity across 4.5 years of releases; field UIs usable by non-technical staff with no
+          training.
+        </li>
+        <li>
+          Introduced the release process (GitHub Actions + Fastlane): a predictable bi-weekly
+          cadence and same-day hotfixes, replacing manual builds.
+        </li>
+      </ul>
+    </section>
+
+    <section class="job">
+      <div class="job-head">
+        <span>Senior Software Engineer — Retail Quotient Research</span
+        ><span class="job-meta">May 2018 – Jan 2021 · Mumbai</span>
+      </div>
+      <ul>
+        <li>
+          Enterprise Android apps serving <strong>10,000+ daily active users</strong>, tuned for low
+          memory and fast cold start; shipped 8 major product cycles with founders, PMs, and
+          designers.
+        </li>
+        <li>
+          Owned chart-heavy reporting dashboards rendering large result sets, kept responsive on the
+          low-end devices field teams actually carried.
+        </li>
+      </ul>
+    </section>
+
+    <section class="job">
+      <div class="job-head">
+        <span>Software Engineer — Startup Techies / LSA Software / INID Digimedia</span
+        ><span class="job-meta">Apr 2013 – Apr 2018 · Noida</span>
+      </div>
+      <ul>
+        <li>
+          <strong>EzHealth Track:</strong> offline-first tablet app for doctors with bidirectional
+          sync. <strong>SafeON / iCouch:</strong> voice-activated safety tracking and socket-based
+          group chat. <strong>Eatlo:</strong> social food-sharing app with custom multi-touch canvas
+          and Google Maps.
+        </li>
+      </ul>
+    </section>
+
+    <h2>Education</h2>
+    <p><strong>Bachelor of Computer Applications (BCA)</strong> — Amity University</p>
+  </body>
+</html>

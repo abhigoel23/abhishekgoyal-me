@@ -35,3 +35,6 @@ coverage/
 
 # personal Claude Code permissions
 .claude/settings.local.json
+
+# generated resume PDF
+resume/out/
