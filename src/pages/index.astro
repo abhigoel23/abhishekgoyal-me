@@ -1,20 +1,13 @@
 ---
-import '../styles/global.css';
+// Placeholder home page until M2; uses Base so it already gets the SEO tags and design tokens.
+import Container from '../components/Container.astro';
 import { profile } from '../data/profile';
+import Base from '../layouts/Base.astro';
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <title>{profile.name} — coming soon</title>
-    <meta name="description" content={profile.positioning} />
-  </head>
-  <body class="grid min-h-dvh place-items-center bg-stone-50 p-6 text-stone-900">
-    <main class="max-w-xl text-center">
-      <h1 class="text-4xl font-semibold tracking-tight">{profile.name}</h1>
-      <p class="mt-4 text-lg text-stone-600">{profile.positioning}</p>
-    </main>
-  </body>
-</html>
+<Base title={`${profile.name} — ${profile.jobTitle}`} description={profile.positioning}>
+  <Container width="prose" class="py-24 text-center sm:py-32">
+    <h1 class="text-h1">{profile.name}</h1>
+    <p class="mt-4 text-lead text-muted">{profile.positioning}</p>
+  </Container>
+</Base>
