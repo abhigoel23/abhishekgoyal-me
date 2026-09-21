@@ -1,0 +1,4 @@
+# Keep workers.dev hosts (production preview + per-PR previews) out of search indexes.
+# The custom domain abhishekgoyal.me is unaffected.
+https://:host.abhigoel23.workers.dev/*
+  X-Robots-Tag: noindex, nofollow
