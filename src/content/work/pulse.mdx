@@ -1,0 +1,40 @@
+---
+title: Pulse offline-sync engine
+summary: The offline-first mobile engine behind an enterprise inspection platform that grew to 100+ B2B clients. No data-loss incidents reported in 4.5 years of field use.
+role: Head of Mobility / Lead Mobile Engineer
+period: Jan 2021 – May 2025
+client: Aim North Technologies (Pulse Business Solutions)
+platform: Android and iOS (native)
+stack: [Kotlin, Swift, SQLite, GitHub Actions, Fastlane]
+order: 2
+---
+
+## The job
+
+I was the sole mobile engineer for the Pulse enterprise inspection platform, owning Android and iOS end to
+end. I architected the mobile engine from an early prototype to **100+ B2B enterprise clients**.
+
+## A sync contract first
+
+I designed the sync contract with the backend and web teams: payloads, upload
+semantics and failure behaviour. Then I implemented both native clients against it.
+
+## Built for auditors without signal
+
+Auditors inspect sites with no connectivity, so the data layer is offline-first:
+
+- a **dynamic form builder** for inspection forms
+- a **background media upload queue** for photos taken in the field
+- a **local SQLite cache** as the source of truth on the device
+
+**No data-loss incidents were reported in 4.5 years of field use.**
+
+## Two native clients, one engineer
+
+I wrote and shipped the Swift/iOS client to the App Store alongside Android, keeping feature parity across
+4.5 years of releases. The field UIs are usable by non-technical staff with no training.
+
+## Releases that stopped being events
+
+I introduced the release process with GitHub Actions and Fastlane: a predictable bi-weekly cadence and
+same-day hotfixes, replacing manual builds.

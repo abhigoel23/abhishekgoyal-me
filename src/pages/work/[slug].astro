@@ -1,0 +1,124 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import Button from '../../components/Button.astro';
+import Container from '../../components/Container.astro';
+import Tag from '../../components/Tag.astro';
+import { primaryCta } from '../../data/nav';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+  return work.map((entry, i) => ({
+    params: { slug: entry.id },
+    props: { entry, next: work[(i + 1) % work.length] },
+  }));
+}
+
+type Props = { entry: CollectionEntry<'work'>; next: CollectionEntry<'work'> };
+const { entry, next } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+
+const facts = [
+  ['Role', d.role],
+  ['When', d.period],
+  ['For', d.client],
+  ['Platform', d.platform],
+];
+const caseStudyJsonLd = {
+  '@type': 'CreativeWork',
+  name: d.title,
+  description: d.summary,
+  author: { '@id': 'https://abhishekgoyal.me/#person' },
+};
+---
+
+<Base
+  title={`${d.title} — case study`}
+  description={d.summary}
+  type="article"
+  jsonLd={[caseStudyJsonLd]}
+>
+  <Container class="pt-12 sm:pt-16">
+    <p class="text-sm">
+      <a class="link" href="/work">
+        ← All case studies
+      </a>
+    </p>
+    <p class="eyebrow mt-10 mb-3">
+      {d.role} · {d.period}
+    </p>
+    <h1 class="text-h1 max-w-3xl">{d.title}</h1>
+    <p class="mt-5 max-w-2xl text-lead text-muted">{d.summary}</p>
+
+    <dl class="mt-12 grid gap-6 border-y border-line py-8 sm:grid-cols-2 lg:grid-cols-4">
+      {facts.map(([label, value]) => (
+        <div>
+          <dt class="eyebrow">{label}</dt>
+          <dd class="mt-1.5">{value}</dd>
+        </div>
+      ))}
+    </dl>
+    <ul class="mt-6 flex flex-wrap gap-2" aria-label="Stack">
+      {d.stack.map((item) => (
+        <li>
+          <Tag>{item}</Tag>
+        </li>
+      ))}
+    </ul>
+  </Container>
+
+  <Container class="py-12 sm:py-16">
+    <article class="prose">
+      <Content />
+    </article>
+    {d.links.length > 0 && (
+      <p class="mt-10 flex flex-wrap gap-4">
+        {d.links.map((link) => (
+          <Button href={link.href} variant="secondary">
+            {link.label} ↗
+          </Button>
+        ))}
+      </p>
+    )}
+  </Container>
+
+  {d.screens.length > 0 && (
+    <section aria-labelledby="screens-title" class="bg-surface py-14 sm:py-20">
+      <Container>
+        <h2 id="screens-title" class="text-h2">
+          Screens
+        </h2>
+        <ul class="mt-8 grid grid-cols-2 gap-5 md:grid-cols-4">
+          {d.screens.map((screen) => (
+            <li>
+              <Image
+                src={screen.src}
+                alt={screen.alt}
+                widths={[240, 360, 540]}
+                sizes="(min-width: 768px) 260px, 45vw"
+                class="h-auto w-full rounded-[1.25rem] border border-line"
+              />
+            </li>
+          ))}
+        </ul>
+        {d.screensNote && <p class="mt-6 text-sm text-muted">{d.screensNote}</p>}
+      </Container>
+    </section>
+  )}
+
+  <Container class="py-16 sm:py-20">
+    <div class="flex flex-col gap-8 border-t border-line pt-10 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="eyebrow mb-2">Next case study</p>
+        <a href={`/work/${next.id}`} class="font-display text-h2 hover:text-accent">
+          {next.data.title} →
+        </a>
+      </div>
+      <Button href={primaryCta.href} size="lg">
+        {primaryCta.label}
+      </Button>
+    </div>
+  </Container>
+</Base>

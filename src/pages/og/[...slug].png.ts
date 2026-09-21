@@ -3,6 +3,7 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
 import type { APIRoute, GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
 import satori from 'satori';
 import { pages } from '../../data/pages';
 import { profile } from '../../data/profile';
@@ -12,11 +13,18 @@ import { light } from '../../lib/theme';
 const WIDTH = 1200;
 const HEIGHT = 630;
 
-export const getStaticPaths = (() =>
-  Object.entries(pages).map(([path, page]) => ({
-    params: { slug: ogImagePath(path).slice('/og/'.length, -'.png'.length) },
+export const getStaticPaths = (async () => {
+  const slug = (path: string) => ogImagePath(path).slice('/og/'.length, -'.png'.length);
+  const staticPages = Object.entries(pages).map(([path, page]) => ({
+    params: { slug: slug(path) },
     props: { title: 'ogTitle' in page ? page.ogTitle : page.title },
-  }))) satisfies GetStaticPaths;
+  }));
+  const caseStudies = (await getCollection('work')).map((entry) => ({
+    params: { slug: slug(`/work/${entry.id}`) },
+    props: { title: entry.data.title },
+  }));
+  return [...staticPages, ...caseStudies];
+}) satisfies GetStaticPaths;
 
 // Satori takes a React-like element tree; this keeps it readable without JSX.
 type Style = Record<string, string | number>;
