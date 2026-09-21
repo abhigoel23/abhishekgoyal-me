@@ -2,6 +2,13 @@ import { expect, test } from '@playwright/test';
 
 const directions = ['editorial', 'studio', 'engineer'];
 
+test('pages are served without a trailing-slash redirect', async ({ request }) => {
+  for (const path of ['/styleguide', '/styleguide/studio']) {
+    const response = await request.get(path, { maxRedirects: 0 });
+    expect(response.status(), path).toBe(200);
+  }
+});
+
 test('comparison page lists every direction and stays out of search', async ({ page }) => {
   await page.goto('/styleguide');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);

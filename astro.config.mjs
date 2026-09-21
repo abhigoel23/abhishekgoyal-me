@@ -24,6 +24,8 @@ function font(name, cssVariable, weights, fallbacks, styles = ['normal']) {
 export default defineConfig({
   site: 'https://abhishekgoyal.me',
   trailingSlash: 'never',
+  // Emit /page.html (not /page/index.html) so Workers static assets serve /page without a 307 to /page/.
+  build: { format: 'file' },
   // No server sessions: stops the adapter provisioning a SESSION KV namespace we don't use.
   session: false,
   // Pages are prerendered by default; only src/pages/api/* opt out (prerender = false).
