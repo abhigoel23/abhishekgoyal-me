@@ -1,0 +1,23 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule: { interval: monthly }
+    open-pull-requests-limit: 5
+    groups:
+      astro: { patterns: ['astro', '@astrojs/*'] }
+      lint-and-test:
+        patterns:
+          ['eslint*', '@eslint/*', 'typescript-eslint', 'prettier*', 'vitest', '@playwright/test']
+      react: { patterns: ['react', 'react-dom', '@types/react*'] }
+    ignore:
+      # Blocked until the toolchain supports them (see CLAUDE.md).
+      - dependency-name: typescript
+        versions: ['>=7']
+      - dependency-name: eslint
+        versions: ['>=10']
+      - dependency-name: '@eslint/js'
+        versions: ['>=10']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }

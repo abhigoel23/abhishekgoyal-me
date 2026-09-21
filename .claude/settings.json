@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./dist/**)",
+      "Read(./.astro/**)",
+      "Read(./node_modules/**)",
+      "Read(./.wrangler/**)",
+      "Read(./playwright-report/**)",
+      "Read(./test-results/**)",
+      "Read(./pnpm-lock.yaml)",
+      "Read(./.dev.vars)",
+      "Read(./.env)"
+    ]
+  }
+}

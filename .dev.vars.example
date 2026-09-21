@@ -1,0 +1,3 @@
+# Copy to .dev.vars (git-ignored) for local development.
+# Secrets are added in M3 (lead capture); each one is documented where it is introduced.
+ENVIRONMENT=local

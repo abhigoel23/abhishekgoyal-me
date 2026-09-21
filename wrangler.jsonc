@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "abhishekgoyal-me",
+  "compatibility_date": "2026-09-01",
+  "compatibility_flags": ["nodejs_compat"],
+  // `main` and the ASSETS binding are filled in by @astrojs/cloudflare.
+  // D1, Queue, rate-limit and cron bindings are added in M3 (lead capture).
+  "observability": { "enabled": true },
+  "preview_urls": true,
+  "workers_dev": true,
+}

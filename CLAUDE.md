@@ -1,0 +1,47 @@
+# abhishekgoyal.me
+
+Personal-brand site for Abhishek Goyal (mobile engineer), with lead capture. Astro 7 + React islands,
+deployed as one Cloudflare Worker (static assets + `/api/*`). Roadmap: GitHub Milestones M0–M6.
+
+## Commands (pnpm 12, Node 26; Homebrew binaries: prefix shells with `eval "$(/opt/homebrew/bin/brew shellenv)"`)
+
+| Task                  | Command                                                            |
+| --------------------- | ------------------------------------------------------------------ |
+| Dev server            | `pnpm dev`                                                         |
+| Build                 | `pnpm build`                                                       |
+| Run built Worker      | `pnpm preview` (`wrangler dev`, :8787 by default)                  |
+| Lint + format + types | `pnpm check`                                                       |
+| Unit tests            | `pnpm test` (Vitest, `src/**/*.test.ts`)                           |
+| E2E smoke             | `pnpm test:e2e` (Playwright; `BASE_URL=` to target a deployed URL) |
+
+pnpm 12 has no `-s` flag; use `--silent`.
+
+## File map
+
+- `astro.config.mjs` — integrations; `session: false`; `imageService: 'compile'`
+- `wrangler.jsonc` — Worker config (bindings added in M3)
+- `src/pages/` — routes, prerendered by default; `src/pages/api/*` opt out with `prerender = false`
+- `src/lib/` — shared TS; `src/lib/server/` is server-only (M3)
+- `src/components/react/` — React islands only (forms, embeds)
+- `tests/e2e/` — Playwright; unit tests live next to source as `*.test.ts`
+- `docs/` — ARCHITECTURE, RUNBOOK, CONTENT, ANALYTICS, DNS, `decisions/` (ADRs)
+
+## Conventions
+
+- Branch `feat|fix|chore/<slug>`; every PR closes an Issue; CI must be green to merge to `main`.
+- Default to `.astro` components; use React only when a component needs client-side state.
+- Content and copy live in data files (`src/data/profile.ts`, MDX), never hardcoded in components.
+- Every claim on the site must match the resume; no invented metrics.
+- Secrets only in `.dev.vars` (git-ignored) or Worker/GitHub secrets. Never commit or print them.
+
+## Don't
+
+- Don't read `dist/`, `.astro/`, `node_modules/`, `.wrangler/`, or the lockfile (denied in `.claude/settings.json`).
+- Don't bump TypeScript to 7 or ESLint to 10 yet: typescript-eslint, `@astrojs/check`, and the React/a11y ESLint plugins don't support them.
+- Don't use Astro's `getViteConfig` for Vitest: it boots workerd and breaks unit tests.
+
+## Agents (`.claude/agents/`)
+
+Route work to the cheapest agent that can do it verifiably: `scout`, `ci-triage`, `fixer` (Haiku) ·
+`content-drafter`, `builder`, `test-writer` (Sonnet). Security-sensitive code (`src/pages/api/*`,
+`src/lib/server/*`, migrations) and reviewing agent diffs stay with the main session.
