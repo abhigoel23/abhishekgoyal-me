@@ -10,17 +10,17 @@ It moves to the Cloudflare Worker at launch (M4).
 
 ### Target zone in Cloudflare
 
-| Type  | Name                | Content                                                                | Proxy    | Purpose                                                                                  |
-| ----- | ------------------- | ---------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------- |
-| A     | `@`                 | `192.0.2.1`                                                            | Proxied  | Placeholder so the apex → www redirect rule runs                                         |
-| CNAME | `www`               | `dpxp3d37iqwxe.cloudfront.net`                                         | DNS only | Current site (CloudFront, own certificate)                                               |
-| CNAME | `_4b827a…` (full)   | `_6e4a5348328ebc779…` (full)                                           | DNS only | AWS ACM validation for the CloudFront cert                                               |
-| CNAME | `_ca938b…` (full)   | `_ff7540e9bb931d3302…` (full)                                          | DNS only | AWS ACM validation for the CloudFront cert                                               |
-| MX    | `@`                 | `smtp.google.com` (priority 1)                                         | —        | Google Workspace inbound mail                                                            |
-| TXT   | `@`                 | `google-site-verification=SiKHHj1WvOrjQ6cfOi4n8g4hgFAnyxLLgTG3M3Axpl4` | —        | Google domain verification                                                               |
-| TXT   | `google._domainkey` | `v=DKIM1;k=rsa;p=MIIB…` (unchanged; copy from the import)              | —        | Google Workspace DKIM signing                                                            |
-| TXT   | `@`                 | `v=spf1 include:_spf.google.com ~all`                                  | —        | **New.** SPF: was missing, which hurts deliverability                                    |
-| TXT   | `_dmarc`            | `v=DMARC1; p=none; rua=mailto:contact@abhishekgoyal.me`                | —        | **New.** DMARC in monitor mode; tighten to `quarantine` after 2–4 weeks of clean reports |
+| Type  | Name                                    | Content                                                                | Proxy    | Purpose                                                                                  |
+| ----- | --------------------------------------- | ---------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------- |
+| A     | `@`                                     | `192.0.2.1`                                                            | Proxied  | Placeholder so the apex → www redirect rule runs                                         |
+| CNAME | `www`                                   | `dpxp3d37iqwxe.cloudfront.net`                                         | DNS only | Current site (CloudFront, own certificate)                                               |
+| CNAME | `_4b827a17faf94ed1dcfba0fa68783cb4`     | `_6e4a5348328ebc77989610c310b93dea.jkddzztszm.acm-validations.aws`     | DNS only | AWS ACM validation (apex) for the CloudFront cert                                        |
+| CNAME | `_ca938b3ece78951a9031a9c357744d51.www` | `_ff7540e9bb931d33029a3f5cfd2e5187.jkddzztszm.acm-validations.aws`     | DNS only | AWS ACM validation (www) for the CloudFront cert                                         |
+| MX    | `@`                                     | `smtp.google.com` (priority 1)                                         | —        | Google Workspace inbound mail                                                            |
+| TXT   | `@`                                     | `google-site-verification=SiKHHj1WvOrjQ6cfOi4n8g4hgFAnyxLLgTG3M3Axpl4` | —        | Google domain verification                                                               |
+| TXT   | `google._domainkey`                     | `v=DKIM1;k=rsa;p=MIIB…` (unchanged; copy from the import)              | —        | Google Workspace DKIM signing                                                            |
+| TXT   | `@`                                     | `v=spf1 include:_spf.google.com ~all`                                  | —        | **New.** SPF: was missing, which hurts deliverability                                    |
+| TXT   | `_dmarc`                                | `v=DMARC1; p=none; rua=mailto:contact@abhishekgoyal.me`                | —        | **New.** DMARC in monitor mode; tighten to `quarantine` after 2–4 weeks of clean reports |
 
 **Not carried over:** the Namecheap _URL Redirect_ on `@` (it resolved to `192.64.119.248` and is HTTP-only,
 which is why `https://abhishekgoyal.me` timed out). A Cloudflare Redirect Rule replaces it:
@@ -47,9 +47,10 @@ Email uses **Namecheap email forwarding** (`eforward*.registrar-servers.com`).
 - **Redirect Rule "to Play Store":** when the hostname is `helperbook.app` or `www.helperbook.app`, do a
   static redirect to `https://play.google.com/store/apps/details?id=com.helperbook` with status **302**
   (temporary: it can point to a real landing page later without browsers caching the redirect).
-- **Email:** Namecheap's forwarding stops working once the nameservers leave Namecheap. If any
-  `@helperbook.app` address is in use (e.g. the Play Store support email), recreate it with **Cloudflare Email
-  Routing** (free). Cloudflare adds its own MX/SPF records when you enable it.
+- **Email:** not used, so the Namecheap forwarding records (MX `eforward*`, SPF `spf.efwd…`) are **not** carried over.
+  If an address is ever needed, use **Cloudflare Email Routing** (free).
+- Add a "no mail" SPF to stop others spoofing the domain: TXT `@` `v=spf1 -all`, plus TXT `_dmarc`
+  `v=DMARC1; p=reject`.
 
 ## Migration checklist
 
