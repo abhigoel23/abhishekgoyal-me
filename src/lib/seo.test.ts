@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { canonicalUrl, jsonLdGraph, pageTitle, personJsonLd, serializeJsonLd } from './seo';
+import {
+  canonicalUrl,
+  jsonLdGraph,
+  ogImagePath,
+  pageTitle,
+  personJsonLd,
+  serializeJsonLd,
+} from './seo';
 
 describe('pageTitle', () => {
   it('appends the name to page titles', () => {
@@ -24,6 +31,17 @@ describe('canonicalUrl', () => {
     ['/work/helperbook', 'https://abhishekgoyal.me/work/helperbook'],
   ])('%s → %s', (path, expected) => {
     expect(canonicalUrl(path)).toBe(expected);
+  });
+});
+
+describe('ogImagePath', () => {
+  it.each([
+    ['/', '/og/index.png'],
+    ['/styleguide', '/og/styleguide.png'],
+    ['/work/helperbook/', '/og/work/helperbook.png'],
+    ['/services.html', '/og/services.png'],
+  ])('%s → %s', (path, expected) => {
+    expect(ogImagePath(path)).toBe(expected);
   });
 });
 

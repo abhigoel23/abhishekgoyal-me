@@ -30,7 +30,9 @@ export default defineConfig({
   session: false,
   // Pages are prerendered by default; only src/pages/api/* opt out (prerender = false).
   // Images are optimised at build time, so no Cloudflare Images binding is needed.
-  adapter: cloudflare({ imageService: 'compile' }),
+  // Prerender in Node, not workerd: the share images (src/pages/og) use Satori + native resvg and read font
+  // files at build time. On-demand routes (src/pages/api/*) still always run in workerd.
+  adapter: cloudflare({ imageService: 'compile', prerenderEnvironment: 'node' }),
   integrations: [
     react(),
     mdx(),
