@@ -2,6 +2,7 @@
 // deep health check, and alert on anything wrong.
 import { sendAlert, type AlertTransport } from './alert';
 import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
+import { checkTelegram } from './notifications';
 import { deliverLead, type LeadStep, type StepHandlers } from './outbox';
 import { readSheetTitle } from './sheets';
 
@@ -81,7 +82,10 @@ export async function runHealthChecks(checks: HealthChecks) {
   return Object.fromEntries(entries) as Record<string, string>;
 }
 
-/** Deep checks with real credentials (read-only). #59 adds Resend. */
+/**
+ * Deep checks with real credentials (read-only). Resend isn't checked here: a sending-only key can't
+ * call any read endpoint, so a broken key shows up as failed notify steps and their alerts instead.
+ */
 export function deepChecks(env: Env): HealthChecks {
   return {
     sheets: async () => {
@@ -93,6 +97,10 @@ export function deepChecks(env: Env): HealthChecks {
         SHEETS_SCOPE,
       );
       await readSheetTitle(token, env.SHEET_ID);
+    },
+    telegram: async () => {
+      if (!env.TELEGRAM_BOT_TOKEN) throw new Error('not configured');
+      await checkTelegram(env.TELEGRAM_BOT_TOKEN);
     },
   };
 }
