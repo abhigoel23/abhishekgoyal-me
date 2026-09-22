@@ -14,7 +14,10 @@
     "ENVIRONMENT": "production",
     // GA4 web stream measurement ID, public. Production sends to the live Measurement Protocol endpoint.
     "GA_MEASUREMENT_ID": "G-PHG39RRGSZ",
-    // SHEET_ID and GOOGLE_SA_EMAIL arrive with the production Sheet and service account (#78).
+    // Production Sheet ("abhishekgoyal.me leads"), shared as Editor with its own service account only,
+    // so the staging key can't reach it.
+    "SHEET_ID": "1kajbfdXYs5Kwi9eCw_Cs6-DcLNdOgzh9l6sH2EifdkA",
+    "GOOGLE_SA_EMAIL": "leads-writer-prod@abhishekgoyal-me.iam.gserviceaccount.com",
   },
   // /api/lead returns 503 until TURNSTILE_SECRET is set, so these bindings can go live before the
   // delivery secrets do. TURNSTILE_SECRET is loaded last (docs/RUNBOOK.md).

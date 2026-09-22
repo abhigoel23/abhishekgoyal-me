@@ -6,10 +6,6 @@ import { bookCall, nextSteps } from '../data/lead';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
 import Base from '../layouts/Base.astro';
-
-// Cloudflare's public test site key: always passes, no Turnstile UI. A real key ships in M4 (production
-// secrets), set as PUBLIC_TURNSTILE_SITE_KEY. Staging already uses a Cloudflare test key pair.
-const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
 ---
 
 <Base {...pages['/contact']}>
@@ -31,7 +27,7 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000000000000
     </noscript>
 
     <div class="mt-12 grid gap-12 lg:grid-cols-[1fr_20rem]">
-      <LeadForm client:visible siteKey={siteKey} />
+      <LeadForm client:visible />
 
       <aside aria-labelledby="next-steps-title">
         <h2 id="next-steps-title" class="text-h3">
