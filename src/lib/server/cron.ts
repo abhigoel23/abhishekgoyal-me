@@ -4,7 +4,7 @@ import { sendAlert, type AlertTransport } from './alert';
 import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
 import { checkTelegram } from './notifications';
 import { deliverLead, type LeadStep, type StepHandlers } from './outbox';
-import { readSheetTitle } from './sheets';
+import { purgeLeadRows, readSheetTitle } from './sheets';
 
 export const RETENTION_MONTHS = 18;
 // Rows younger than this may still be in the queue's own retries; leave them to it.
@@ -105,19 +105,46 @@ export function deepChecks(env: Env): HealthChecks {
   };
 }
 
+/** Deletes expired rows from the Leads Sheet (the D1 purge can't reach it). Undefined if unconfigured. */
+export function sheetRetention(env: Env) {
+  const { GOOGLE_SA_EMAIL: email, GOOGLE_SA_KEY: key, SHEET_ID: sheetId } = env;
+  if (!email || !key || !sheetId) return undefined;
+  return async (cutoffIso: string) => {
+    const token = await getAccessToken({ email, privateKeyPem: key }, SHEETS_SCOPE);
+    return purgeLeadRows(token, sheetId, cutoffIso);
+  };
+}
+
 export async function dailyMaintenance(
   db: D1Database,
   handlers: StepHandlers,
   checks: HealthChecks,
   transports: AlertTransport[],
+  purgeSheet?: (cutoffIso: string) => Promise<number>,
   now = new Date(),
 ) {
   const synced = await resync(db, handlers, now);
   const purged = await purge(db, now);
+  let sheetRowsPurged: number | string = 'not configured';
+  if (purgeSheet) {
+    try {
+      sheetRowsPurged = await purgeSheet(retentionCutoff(now));
+    } catch (error) {
+      sheetRowsPurged = 'failed';
+      await sendAlert(
+        { subject: 'Sheet retention cleanup failed', lines: [String(error).slice(0, 300)] },
+        transports,
+      );
+    }
+  }
   const health = await runHealthChecks(checks);
   const unhealthy = Object.entries(health).filter(([, status]) => status !== 'ok');
 
-  console.log('daily maintenance', { synced: synced.attempted, purged, health });
+  console.log('daily maintenance', {
+    synced: synced.attempted,
+    purged: { ...purged, sheetRows: sheetRowsPurged },
+    health,
+  });
   if (unhealthy.length) {
     await sendAlert(
       { subject: 'Health check failed', lines: unhealthy.map(([n, s]) => `${n}: ${s}`) },
