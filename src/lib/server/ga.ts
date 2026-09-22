@@ -19,6 +19,12 @@ export function generateLeadEvent(lead: LeadRow) {
           budget_band: lead.budget ?? 'none',
           lead_source: lead.utm_source ?? (lead.referrer ? 'referral' : 'direct'),
           engagement_time_msec: 1,
+          // Without session_id the conversion isn't attributed to the visit that produced it.
+          ...(lead.ga_session_id ? { session_id: lead.ga_session_id } : {}),
+          // Measurement Protocol events reach DebugView only when they carry debug_mode.
+          ...(lead.ga_debug === '1' ? { debug_mode: 1 } : {}),
+          // The GA internal-traffic filter matches on this parameter, not on an IP address.
+          ...(lead.ga_internal === '1' ? { traffic_type: 'internal' } : {}),
         },
       },
     ],

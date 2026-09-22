@@ -35,6 +35,9 @@ export const COLUMNS = [
   'utm_campaign',
   'referrer',
   'ga_client_id',
+  'ga_session_id',
+  'ga_debug',
+  'ga_internal',
   'consent_at',
   'idempotency_key',
 ] as const;

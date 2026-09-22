@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { gaClientId, track } from '../track';
+import { gaClientId, gaSessionId, track } from '../track';
 import { generateLeadEvent, sendGenerateLead } from './ga';
 import type { LeadRow } from './leadStore';
 
@@ -18,6 +18,13 @@ const lead = {
 
 const config = { measurementId: 'G-TEST', apiSecret: 's3cret', environment: 'production' };
 
+const tagged = {
+  ...lead,
+  ga_session_id: '1790098349',
+  ga_debug: '1',
+  ga_internal: '1',
+} as unknown as LeadRow;
+
 describe('gaClientId', () => {
   it('extracts the client id from the _ga cookie', () => {
     expect(gaClientId('theme=dark; _ga=GA1.1.123456789.1726990000; x=1')).toBe(
@@ -25,6 +32,20 @@ describe('gaClientId', () => {
     );
     expect(gaClientId('_ga_ABC=GS1.1.x; foo=bar')).toBeUndefined();
     expect(gaClientId('')).toBeUndefined();
+  });
+});
+
+describe('gaSessionId', () => {
+  it('reads the session id from the stream cookie', () => {
+    const cookie =
+      'theme=dark; _ga=GA1.1.1.2; _ga_PHG39RRGSZ=GS1.1.1790098349.1.0.1790098349.0.0.0';
+    expect(gaSessionId('G-PHG39RRGSZ', cookie)).toBe('1790098349');
+  });
+
+  it('is undefined without GA, for another stream, or for an odd id', () => {
+    expect(gaSessionId('G-PHG39RRGSZ', '_ga=GA1.1.1.2')).toBeUndefined();
+    expect(gaSessionId('G-OTHER', '_ga_PHG39RRGSZ=GS1.1.1790098349.1')).toBeUndefined();
+    expect(gaSessionId('G-BAD.(', '_ga_PHG39RRGSZ=GS1.1.1790098349.1')).toBeUndefined();
   });
 });
 
@@ -55,6 +76,22 @@ describe('generateLeadEvent', () => {
       lead_path: 'project',
       budget_band: 'inr-4-12l',
       lead_source: 'linkedin',
+    });
+  });
+
+  it('omits the session, debug and traffic params when the browser sent nothing', () => {
+    const params = generateLeadEvent(lead).events[0]!.params;
+    expect(params).not.toHaveProperty('session_id');
+    expect(params).not.toHaveProperty('debug_mode');
+    expect(params).not.toHaveProperty('traffic_type');
+  });
+
+  it('joins the GA session and marks debug and internal traffic when they are set', () => {
+    expect(generateLeadEvent(tagged).events[0]!.params).toMatchObject({
+      session_id: '1790098349',
+      debug_mode: 1,
+      traffic_type: 'internal',
+      engagement_time_msec: 1,
     });
   });
 });

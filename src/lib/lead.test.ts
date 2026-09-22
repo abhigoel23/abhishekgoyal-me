@@ -84,6 +84,32 @@ describe('leadSchema', () => {
     expect(leadSchema.parse({ ...project, ga_client_id: '123.456' }).ga_client_id).toBe('123.456');
   });
 
+  it('drops malformed GA session ids and flags', () => {
+    const parsed = leadSchema.parse({
+      ...project,
+      ga_session_id: 'now',
+      ga_debug: 'yes',
+      ga_internal: true,
+    });
+    expect(parsed.ga_session_id).toBeUndefined();
+    expect(parsed.ga_debug).toBeUndefined();
+    expect(parsed.ga_internal).toBeUndefined();
+  });
+
+  it('keeps a valid GA session id and flags', () => {
+    const parsed = leadSchema.parse({
+      ...project,
+      ga_session_id: '1790098349',
+      ga_debug: '1',
+      ga_internal: '1',
+    });
+    expect(parsed).toMatchObject({
+      ga_session_id: '1790098349',
+      ga_debug: '1',
+      ga_internal: '1',
+    });
+  });
+
   it('strips unknown keys', () => {
     expect(leadSchema.parse({ ...role, is_admin: true })).not.toHaveProperty('is_admin');
   });

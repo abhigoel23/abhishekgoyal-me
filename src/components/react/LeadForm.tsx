@@ -13,9 +13,11 @@ import {
   timelines,
   workModes,
 } from '../../data/lead';
+import { GA_MEASUREMENT_ID } from '../../data/analytics';
 import { turnstileSiteKey } from '../../data/turnstile';
 import { leadSchema } from '../../lib/lead';
-import { gaClientId, track } from '../../lib/track';
+import { readFlag } from '../../lib/consent';
+import { gaClientId, gaSessionId, track } from '../../lib/track';
 
 type Path = '' | 'project' | 'role';
 type Currency = (typeof currencies)[number]['value'];
@@ -425,6 +427,9 @@ export default function LeadForm() {
       consent: values.consent,
       ...attribution,
       ga_client_id: gaClientId(),
+      ga_session_id: gaSessionId(GA_MEASUREMENT_ID),
+      ga_debug: readFlag('debug'),
+      ga_internal: readFlag('internal'),
       'cf-turnstile-response': tokenRef.current,
       website: values.website,
       started_at: startedAtRef.current,
