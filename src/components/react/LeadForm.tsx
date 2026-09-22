@@ -352,7 +352,9 @@ export default function LeadForm({ siteKey }: Props) {
   // markup match (no hydration mismatch), then this nudges the form once the browser APIs are available.
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const requested = params.get('path');
+    // A radio clicked before hydration (slow network) is already checked in the DOM; keep that choice.
+    const clicked = document.querySelector<HTMLInputElement>('input[name="path"]:checked')?.value;
+    const requested = clicked ?? params.get('path');
     if (requested === 'role' || requested === 'project') setValue('path', requested);
     if (typeof navigator !== 'undefined' && navigator.language?.includes('IN')) {
       setValue('currency', 'INR');
