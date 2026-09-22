@@ -62,7 +62,13 @@ async function sheetsFetch(token: string, url: string, init: RequestInit = {}, f
 // Writes the header row if the tab is empty. Checked once per isolate.
 const headerChecked = new Set<string>();
 
-async function ensureHeader(token: string, sheetId: string, tab: string, fetcher = fetch) {
+async function ensureHeader(
+  token: string,
+  sheetId: string,
+  tab: string,
+  headers: string[],
+  fetcher = fetch,
+) {
   const key = `${sheetId}|${tab}`;
   if (headerChecked.has(key)) return;
   const range = encodeURIComponent(`${tab}!1:1`);
@@ -73,11 +79,29 @@ async function ensureHeader(token: string, sheetId: string, tab: string, fetcher
     await sheetsFetch(
       token,
       `${API}/${sheetId}/values/${range}?valueInputOption=RAW`,
-      { method: 'PUT', body: JSON.stringify({ values: [LEAD_HEADERS] }) },
+      { method: 'PUT', body: JSON.stringify({ values: [headers] }) },
       fetcher,
     );
   }
   headerChecked.add(key);
+}
+
+async function appendRow(
+  token: string,
+  sheetId: string,
+  tab: string,
+  headers: string[],
+  row: string[],
+  fetcher: typeof fetch,
+) {
+  await ensureHeader(token, sheetId, tab, headers, fetcher);
+  const range = encodeURIComponent(`${tab}!A1`);
+  await sheetsFetch(
+    token,
+    `${API}/${sheetId}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
+    { method: 'POST', body: JSON.stringify({ values: [row] }) },
+    fetcher,
+  );
 }
 
 export async function appendLead(
@@ -86,15 +110,40 @@ export async function appendLead(
   lead: LeadRow,
   fetcher: typeof fetch = fetch,
 ) {
-  const tab = 'Leads';
-  await ensureHeader(token, sheetId, tab, fetcher);
-  const range = encodeURIComponent(`${tab}!A1`);
-  await sheetsFetch(
-    token,
-    `${API}/${sheetId}/values/${range}:append?valueInputOption=RAW&insertDataOption=INSERT_ROWS`,
-    { method: 'POST', body: JSON.stringify({ values: [leadToRow(lead)] }) },
-    fetcher,
-  );
+  await appendRow(token, sheetId, 'Leads', LEAD_HEADERS, leadToRow(lead), fetcher);
+}
+
+/** One row per Cal.com event (created, rescheduled, cancelled), so the tab reads as a history. */
+export type BookingEventRow = {
+  booking_id: string;
+  event: string;
+  start_time: string;
+  name: string;
+  email: string;
+  event_type: string;
+  received_at: string;
+};
+
+const BOOKING_COLUMNS: [header: string, cell: (b: BookingEventRow) => string][] = [
+  ['Booking ID', (b) => b.booking_id],
+  ['Received (UTC)', (b) => b.received_at],
+  ['Event', (b) => b.event],
+  ['Call starts (UTC)', (b) => b.start_time],
+  ['Name', (b) => b.name],
+  ['Email', (b) => b.email],
+  ['Event type', (b) => b.event_type],
+];
+
+export const BOOKING_HEADERS = BOOKING_COLUMNS.map(([header]) => header);
+
+export async function appendBooking(
+  token: string,
+  sheetId: string,
+  booking: BookingEventRow,
+  fetcher: typeof fetch = fetch,
+) {
+  const row = BOOKING_COLUMNS.map(([, cell]) => sanitizeCell(cell(booking)));
+  await appendRow(token, sheetId, 'Bookings', BOOKING_HEADERS, row, fetcher);
 }
 
 // Read-only check for /api/health (#61): proves the token works and the Sheet is shared with us.
@@ -131,17 +180,18 @@ export function expiredRowRuns(received: string[][], cutoffIso: string): [number
 }
 
 /**
- * Retention for the Sheet copy (privacy policy: 18 months). Deletes Leads rows by their "Received (UTC)"
+ * Retention for the Sheet copy (privacy policy: 18 months). Deletes rows by their "Received (UTC)"
  * date, so it works regardless of D1, sorting or filters, and is safe to repeat. Returns rows deleted.
  */
-export async function purgeLeadRows(
+async function purgeRows(
   token: string,
   sheetId: string,
+  tab: string,
+  headers: string[],
   cutoffIso: string,
-  fetcher: typeof fetch = fetch,
+  fetcher: typeof fetch,
 ) {
-  const tab = 'Leads';
-  const column = String.fromCharCode(65 + LEAD_HEADERS.indexOf('Received (UTC)'));
+  const column = String.fromCharCode(65 + headers.indexOf('Received (UTC)'));
   const range = encodeURIComponent(`${tab}!${column}:${column}`);
   const data = (await sheetsFetch(token, `${API}/${sheetId}/values/${range}`, {}, fetcher)) as {
     values?: string[][];
@@ -173,3 +223,17 @@ export async function purgeLeadRows(
   );
   return runs.reduce((n, [start, end]) => n + end - start, 0);
 }
+
+export const purgeLeadRows = (
+  token: string,
+  sheetId: string,
+  cutoffIso: string,
+  fetcher: typeof fetch = fetch,
+) => purgeRows(token, sheetId, 'Leads', LEAD_HEADERS, cutoffIso, fetcher);
+
+export const purgeBookingRows = (
+  token: string,
+  sheetId: string,
+  cutoffIso: string,
+  fetcher: typeof fetch = fetch,
+) => purgeRows(token, sheetId, 'Bookings', BOOKING_HEADERS, cutoffIso, fetcher);

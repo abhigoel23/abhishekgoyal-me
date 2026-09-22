@@ -3,8 +3,9 @@
 import { sendAlert, type AlertTransport } from './alert';
 import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
 import { checkTelegram } from './notifications';
-import { deliverLead, type LeadStep, type StepHandlers } from './outbox';
-import { purgeLeadRows, readSheetTitle } from './sheets';
+import { BOOKING_STEPS, getBookingEvent, type BookingHandlers } from './bookings';
+import { deliverLead, runSteps, type RefKind, type StepHandlers } from './outbox';
+import { purgeBookingRows, purgeLeadRows, readSheetTitle } from './sheets';
 
 export const RETENTION_MONTHS = 18;
 // Rows younger than this may still be in the queue's own retries; leave them to it.
@@ -17,31 +18,41 @@ export function retentionCutoff(now: Date): string {
   return cutoff.toISOString();
 }
 
-/** Lead IDs with a pending or failed step that has a handler, oldest first. */
-export async function leadsToResync(db: D1Database, steps: LeadStep[], now: Date) {
+/** Refs (lead IDs or booking events) with a pending or failed step that has a handler, oldest first. */
+export async function refsToResync(db: D1Database, kind: RefKind, steps: string[], now: Date) {
   if (!steps.length) return [];
   const before = new Date(now.getTime() - RESYNC_MIN_AGE_MS).toISOString();
   const { results } = await db
     .prepare(
       `SELECT ref_id, MIN(updated_at) AS oldest FROM outbox_status
-       WHERE ref_kind = 'lead' AND status IN ('pending', 'failed') AND updated_at < ?
+       WHERE ref_kind = ? AND status IN ('pending', 'failed') AND updated_at < ?
          AND step IN (${steps.map(() => '?').join(', ')})
        GROUP BY ref_id ORDER BY oldest LIMIT ${RESYNC_BATCH}`,
     )
-    .bind(before, ...steps)
+    .bind(kind, before, ...steps)
     .all<{ ref_id: string }>();
   return results.map((r) => r.ref_id);
 }
 
-export async function resync(db: D1Database, handlers: StepHandlers, now: Date) {
-  const steps = Object.keys(handlers) as LeadStep[];
-  const ids = await leadsToResync(db, steps, now);
+export async function resync(
+  db: D1Database,
+  leadHandlers: StepHandlers,
+  bookingHandlers: BookingHandlers,
+  now: Date,
+) {
   const stillFailing: string[] = [];
-  for (const id of ids) {
-    const { failed } = await deliverLead(db, id, handlers);
-    if (failed.length) stillFailing.push(`${id}: ${failed.join(', ')}`);
+  const leadIds = await refsToResync(db, 'lead', Object.keys(leadHandlers), now);
+  for (const id of leadIds) {
+    const { failed } = await deliverLead(db, id, leadHandlers);
+    if (failed.length) stillFailing.push(`lead ${id}: ${failed.join(', ')}`);
   }
-  return { attempted: ids.length, stillFailing };
+  const bookingRefs = await refsToResync(db, 'booking', Object.keys(bookingHandlers), now);
+  for (const ref of bookingRefs) {
+    const event = await getBookingEvent(db, ref);
+    const { failed } = await runSteps(db, 'booking', ref, event, BOOKING_STEPS, bookingHandlers);
+    if (failed.length) stillFailing.push(`booking ${ref}: ${failed.join(', ')}`);
+  }
+  return { attempted: leadIds.length + bookingRefs.length, stillFailing };
 }
 
 /** Deletes leads and bookings older than the retention period, with their outbox rows. */
@@ -56,8 +67,10 @@ export async function purge(db: D1Database, now: Date) {
       .bind(cutoff),
     db
       .prepare(
+        // Booking refs are "<booking uid>:<event>".
         `DELETE FROM outbox_status WHERE ref_kind = 'booking'
-         AND ref_id IN (SELECT booking_id FROM bookings WHERE created_at < ?)`,
+         AND substr(ref_id, 1, instr(ref_id, ':') - 1) IN
+           (SELECT booking_id FROM bookings WHERE created_at < ?)`,
       )
       .bind(cutoff),
     db.prepare('DELETE FROM leads WHERE created_at < ?').bind(cutoff),
@@ -111,19 +124,23 @@ export function sheetRetention(env: Env) {
   if (!email || !key || !sheetId) return undefined;
   return async (cutoffIso: string) => {
     const token = await getAccessToken({ email, privateKeyPem: key }, SHEETS_SCOPE);
-    return purgeLeadRows(token, sheetId, cutoffIso);
+    return (
+      (await purgeLeadRows(token, sheetId, cutoffIso)) +
+      (await purgeBookingRows(token, sheetId, cutoffIso))
+    );
   };
 }
 
 export async function dailyMaintenance(
   db: D1Database,
   handlers: StepHandlers,
+  bookingHandlers: BookingHandlers,
   checks: HealthChecks,
   transports: AlertTransport[],
   purgeSheet?: (cutoffIso: string) => Promise<number>,
   now = new Date(),
 ) {
-  const synced = await resync(db, handlers, now);
+  const synced = await resync(db, handlers, bookingHandlers, now);
   const purged = await purge(db, now);
   let sheetRowsPurged: number | string = 'not configured';
   if (purgeSheet) {
@@ -153,7 +170,7 @@ export async function dailyMaintenance(
   }
   if (synced.stillFailing.length) {
     await sendAlert(
-      { subject: 'Lead delivery still failing after re-sync', lines: synced.stillFailing },
+      { subject: 'Delivery still failing after re-sync', lines: synced.stillFailing },
       transports,
     );
   }

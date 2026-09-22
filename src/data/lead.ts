@@ -99,3 +99,13 @@ export const thanksCopy = {
   project: 'I read every enquiry myself and will reply about your project within 2 working days.',
   role: 'I read every message myself and will reply about the role within 2 working days.',
 } as const;
+
+// Intro-call booking on Cal.com (#60). A plain link rather than Cal's embed script: no third-party JS
+// on our pages until the visitor chooses to book, and it works without JavaScript.
+export const bookCall = {
+  href: 'https://cal.com/abhishek-goyal/intro-call',
+  label: 'Book a 20-minute intro call',
+  note: 'Opens Cal.com in a new tab.',
+  contactLead: 'Prefer to talk first?',
+  thanksLead: 'Want to talk sooner? Pick a time that suits you.',
+} as const;

@@ -2,13 +2,19 @@
 import { handle } from '@astrojs/cloudflare/handler';
 import { sendAlert } from './lib/server/alert';
 import { dailyMaintenance, deepChecks, sheetRetention } from './lib/server/cron';
-import { alertTransports, leadHandlers, type LeadMessage } from './lib/server/delivery';
-import { deliverLead, retryDelaySeconds } from './lib/server/outbox';
+import {
+  alertTransports,
+  bookingHandlers,
+  deliver,
+  leadHandlers,
+  type DeliveryMessage,
+} from './lib/server/delivery';
+import { retryDelaySeconds } from './lib/server/outbox';
 
 export default {
   fetch: (request, env, ctx) => handle(request, env, ctx),
 
-  // One message per lead. A failed step retries with backoff; after max_retries the message goes to
+  // One message per lead or booking event. A failed step retries with backoff; after max_retries the message goes to
   // the dead-letter queue, while D1 keeps the lead and its outbox rows for the cron to re-sync.
   async queue(batch, env) {
     if (batch.queue.endsWith('-dlq')) {
@@ -16,8 +22,8 @@ export default {
       // cron re-syncs its undelivered steps.
       await sendAlert(
         {
-          subject: `${batch.messages.length} lead(s) moved to the dead-letter queue`,
-          lines: batch.messages.map((m) => `lead ${m.body.id}`),
+          subject: `${batch.messages.length} message(s) moved to the dead-letter queue`,
+          lines: batch.messages.map((m) => `${m.body.kind} ${m.body.id}`),
         },
         alertTransports(env),
       );
@@ -29,14 +35,13 @@ export default {
       return;
     }
     const db = env.DB;
-    const handlers = leadHandlers(env);
     for (const message of batch.messages) {
       const body = message.body;
       try {
-        const { failed } = await deliverLead(db, body.id, handlers);
+        const { failed } = await deliver(db, body, env);
         if (failed.length) {
-          console.error('lead delivery failed', {
-            leadId: body.id,
+          console.error('delivery failed', {
+            ...body,
             failed,
             attempt: message.attempts,
           });
@@ -45,7 +50,7 @@ export default {
           message.ack();
         }
       } catch (error) {
-        console.error('lead delivery error', { leadId: body.id, error: String(error) });
+        console.error('delivery error', { ...body, error: String(error) });
         message.retry({ delaySeconds: retryDelaySeconds(message.attempts) });
       }
     }
@@ -58,9 +63,10 @@ export default {
     await dailyMaintenance(
       env.DB,
       leadHandlers(env),
+      bookingHandlers(env),
       deepChecks(env),
       alertTransports(env),
       sheetRetention(env),
     );
   },
-} satisfies ExportedHandler<Env, LeadMessage>;
+} satisfies ExportedHandler<Env, DeliveryMessage>;

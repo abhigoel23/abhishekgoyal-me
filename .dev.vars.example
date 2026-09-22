@@ -19,3 +19,7 @@ RESEND_API_KEY=
 # are prefixed [staging].
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
+
+# Cal.com (#60): the webhook signing secret (`openssl rand -hex 32`), also pasted into Cal.com →
+# Settings → Developer → Webhooks for the /api/booking subscriber.
+CAL_WEBHOOK_SECRET=

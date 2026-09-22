@@ -1,0 +1,20 @@
+---
+// "Book an intro call" link to Cal.com. Opens in a new tab so an unsent /contact form isn't lost.
+import { bookCall } from '../data/lead';
+
+type Props = { class?: string };
+const { class: className } = Astro.props;
+---
+
+<div class:list={['grid justify-items-start gap-2', className]}>
+  <a
+    href={bookCall.href}
+    target="_blank"
+    rel="noopener noreferrer"
+    class="inline-flex min-h-11 items-center justify-center gap-2 rounded-brand border border-ink/80 px-5 text-sm font-medium whitespace-nowrap text-ink transition-colors hover:bg-ink hover:text-bg"
+  >
+    {bookCall.label}
+    <span aria-hidden="true">↗</span>
+  </a>
+  <p class="text-sm text-muted">{bookCall.note}</p>
+</div>
