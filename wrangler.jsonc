@@ -17,7 +17,12 @@
   // (abhishekgoyal-me-staging) so they never touch production data (ADR 006).
   "env": {
     "staging": {
-      "vars": { "ENVIRONMENT": "staging" },
+      "vars": {
+        "ENVIRONMENT": "staging",
+        // Test Sheet ("abhishekgoyal.me leads (test)"), shared with the service account as Editor.
+        "SHEET_ID": "18UYVwKcH5pJlZY5orlg8_U7PjwmS0fUK_drr_rIAEaI",
+        "GOOGLE_SA_EMAIL": "leads-writer@abhishekgoyal-me.iam.gserviceaccount.com",
+      },
       "d1_databases": [
         {
           "binding": "DB",

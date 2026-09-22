@@ -6,3 +6,8 @@ ENVIRONMENT=local
 # Turnstile (#56). Cloudflare's public test secret: always passes. Real keys: Cloudflare dashboard →
 # Turnstile → add widget. Staging keeps the test secret; production gets its own in M4.
 TURNSTILE_SECRET=1x0000000000000000000000000000000AA
+
+# Google Sheets (#58). The service account's private key (the "private_key" field of its JSON key file).
+# SHEET_ID and GOOGLE_SA_EMAIL are plain vars in wrangler.jsonc. Leave empty locally unless you're
+# testing Sheets delivery; the queue then marks the sheets step failed and retries.
+GOOGLE_SA_KEY=

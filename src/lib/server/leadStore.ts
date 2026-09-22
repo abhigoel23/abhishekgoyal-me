@@ -14,7 +14,7 @@ export async function idempotencyKey(lead: Pick<Lead, 'email' | 'path'>, now: Da
 
 export type SaveResult = { leadId: string; duplicate: boolean };
 
-const COLUMNS = [
+export const COLUMNS = [
   'lead_id',
   'created_at',
   'path',
@@ -38,6 +38,13 @@ const COLUMNS = [
   'consent_at',
   'idempotency_key',
 ] as const;
+
+/** A `leads` row as read back from D1 (absent optional fields are NULL). */
+export type LeadRow = Record<(typeof COLUMNS)[number], string | null>;
+
+export async function getLead(db: D1Database, leadId: string) {
+  return db.prepare('SELECT * FROM leads WHERE lead_id = ?').bind(leadId).first<LeadRow>();
+}
 
 export async function saveLead(db: D1Database, lead: Lead, now: Date): Promise<SaveResult> {
   const key = await idempotencyKey(lead, now);
