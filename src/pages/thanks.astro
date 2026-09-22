@@ -2,7 +2,8 @@
 // Static: nothing here depends on the server. The ?path= query only picks which line of copy to show,
 // swapped in by the inline script below so the page still works from a bookmark or a shared link.
 import Container from '../components/Container.astro';
-import { nextSteps, thanksCopy } from '../data/lead';
+import BookCall from '../components/BookCall.astro';
+import { bookCall, nextSteps, thanksCopy } from '../data/lead';
 import { pages } from '../data/pages';
 import Base from '../layouts/Base.astro';
 ---
@@ -27,7 +28,10 @@ import Base from '../layouts/Base.astro';
       ))}
     </ol>
 
-    {/* Cal.com "book a 20-minute intro call" embed lands here once that flow ships (issue #60). */}
+    <div class="mt-10 max-w-xl">
+      <p class="text-muted">{bookCall.thanksLead}</p>
+      <BookCall class="mt-4" />
+    </div>
   </Container>
 </Base>
 

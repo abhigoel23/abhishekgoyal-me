@@ -1,7 +1,8 @@
 ---
+import BookCall from '../components/BookCall.astro';
 import Container from '../components/Container.astro';
 import LeadForm from '../components/react/LeadForm';
-import { nextSteps } from '../data/lead';
+import { bookCall, nextSteps } from '../data/lead';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
 import Base from '../layouts/Base.astro';
@@ -46,6 +47,8 @@ const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x0000000000000000
             </li>
           ))}
         </ol>
+        <p class="mt-8 font-medium">{bookCall.contactLead}</p>
+        <BookCall class="mt-3" />
       </aside>
     </div>
   </Container>
