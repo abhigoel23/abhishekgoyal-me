@@ -5,6 +5,11 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      drill_rollback:
+        description: 'Rollback drill: deploy, then fail the smoke test on purpose so auto-rollback runs'
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -195,6 +200,10 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - uses: actions/download-artifact@v4
         with: { name: dist }
+      # Before the deploy, so new code never runs against an old schema. Migrations only add things
+      # (ADR 003): a rollback reverts code, not schema, and the previous version must still work.
+      - name: Apply D1 migrations
+        run: pnpm exec wrangler d1 migrations apply DB --remote
       - id: deploy
         name: Deploy
         # Smoke-test PRODUCTION_URL once the custom domain is live (M4); until then use the
@@ -213,6 +222,10 @@ jobs:
         run: |
           pnpm exec playwright install --with-deps chromium
           BASE_URL="${{ steps.deploy.outputs.url }}" pnpm test:e2e
+          if [ "${{ inputs.drill_rollback }}" = "true" ]; then
+            echo "::warning::Rollback drill: failing the smoke test on purpose"
+            exit 1
+          fi
       - name: Roll back on failed smoke test
         if: failure() && steps.smoke.conclusion == 'failure'
         run: |

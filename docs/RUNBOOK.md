@@ -105,6 +105,22 @@ pnpm exec wrangler rollback --message "why"
 ```
 
 Add `--env staging` for staging. A rollback doesn't undo D1 migrations; write a new migration instead.
+That's why deploy-production applies migrations before deploying, and why migrations only add things
+(ADR 003): the version you roll back to must still work on the new schema.
+
+**Rollback drill:** Actions → CI/CD → Run workflow on `main` with _drill_rollback_ ticked. It deploys,
+runs the smoke test, then fails on purpose, so the rollback step runs. Check that `wrangler deployments
+list` shows the rollback, and that the site still serves.
+
+**Restore D1 data** (a bad migration or a mistaken delete). D1 Time Travel keeps 30 days:
+
+```bash
+pnpm exec wrangler d1 time-travel info DB --timestamp "2026-09-22T10:00:00Z"
+pnpm exec wrangler d1 time-travel restore DB --timestamp "2026-09-22T10:00:00Z"
+```
+
+A restore replaces the whole database, including leads that arrived after that time. Export them first
+(`wrangler d1 export DB --remote --output leads.sql`) and re-run delivery for them afterwards.
 
 ## Add a form field end to end
 
