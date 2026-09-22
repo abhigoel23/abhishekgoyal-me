@@ -15,6 +15,7 @@
     "typecheck": "pnpm --silent cf:types && astro check --minimalOutput",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "test:lead": "CLOUDFLARE_ENV=staging pnpm build && playwright test -c playwright.lead.config.ts",
     "lighthouse": "node scripts/lighthouse.mjs",
     "cf:types": "wrangler types --env-file .dev.vars.example > /dev/null",
     "deploy": "pnpm build && wrangler deploy",
