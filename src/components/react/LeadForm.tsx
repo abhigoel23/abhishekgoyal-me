@@ -13,6 +13,7 @@ import {
   timelines,
   workModes,
 } from '../../data/lead';
+import { turnstileSiteKey } from '../../data/turnstile';
 import { leadSchema } from '../../lib/lead';
 import { gaClientId, track } from '../../lib/track';
 
@@ -322,9 +323,7 @@ function RadioGroup({
   );
 }
 
-export type Props = { siteKey: string };
-
-export default function LeadForm({ siteKey }: Props) {
+export default function LeadForm() {
   const startedAtRef = useRef(Date.now());
   const turnstileHostRef = useRef<HTMLDivElement | null>(null);
   const widgetIdRef = useRef<string | undefined>(undefined);
@@ -380,7 +379,7 @@ export default function LeadForm({ siteKey }: Props) {
         const host = turnstileHostRef.current;
         if (cancelled || !host || !window.turnstile || widgetIdRef.current) return;
         widgetIdRef.current = window.turnstile.render(host, {
-          sitekey: siteKey,
+          sitekey: turnstileSiteKey(window.location.hostname),
           action: 'lead',
           callback: (token) => {
             tokenRef.current = token;
@@ -397,7 +396,7 @@ export default function LeadForm({ siteKey }: Props) {
     return () => {
       cancelled = true;
     };
-  }, [hasPath, siteKey]);
+  }, [hasPath]);
 
   const resetTurnstile = () => {
     tokenRef.current = '';

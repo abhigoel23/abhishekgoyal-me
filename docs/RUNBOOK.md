@@ -64,6 +64,9 @@ remote rows. Those follow at the next daily run.
      | pnpm exec wrangler versions secret put GOOGLE_SA_KEY --env staging
    ```
 
+   Production is the same without `--env staging`. Use `versions secret put` there too after a rollback:
+   plain `wrangler secret put` refuses while the latest uploaded version isn't the deployed one.
+
 3. `versions secret put` creates a new version but doesn't deploy it. The next PR deploys it to staging,
    or deploy now with `pnpm exec wrangler versions deploy <version-id>@100% --env staging`.
 4. Revoke the old value at the provider, and update `.dev.vars` if you use it locally.
@@ -71,15 +74,15 @@ remote rows. Those follow at the next daily run.
 Creating a new Google key needs the "Disable service account key creation" org policy set to _Not enforced_
 on the `abhishekgoyal-me` project (IAM & Admin → Organization Policies). Set it back to _Inherit_ afterwards.
 
-| Secret               | Where it comes from                                           |
-| -------------------- | ------------------------------------------------------------- |
-| `TURNSTILE_SECRET`   | Cloudflare → Turnstile (staging uses the public test secret)  |
-| `GOOGLE_SA_KEY`      | GCP → IAM → Service accounts → `leads-writer` → Keys          |
-| `RESEND_API_KEY`     | resend.com → API Keys (sending access, abhishekgoyal.me only) |
-| `TELEGRAM_BOT_TOKEN` | @BotFather                                                    |
-| `TELEGRAM_CHAT_ID`   | `getUpdates` after messaging the bot                          |
-| `CAL_WEBHOOK_SECRET` | `openssl rand -hex 32`, also pasted into the Cal.com webhook  |
-| `GA_MP_API_SECRET`   | GA4 → Admin → Data streams → Measurement Protocol API secrets |
+| Secret               | Where it comes from                                                                                |
+| -------------------- | -------------------------------------------------------------------------------------------------- |
+| `TURNSTILE_SECRET`   | Cloudflare → Turnstile (staging uses the public test secret)                                       |
+| `GOOGLE_SA_KEY`      | GCP → IAM → Service accounts → `leads-writer` (staging) or `leads-writer-prod` (production) → Keys |
+| `RESEND_API_KEY`     | resend.com → API Keys (sending access, abhishekgoyal.me only)                                      |
+| `TELEGRAM_BOT_TOKEN` | @BotFather                                                                                         |
+| `TELEGRAM_CHAT_ID`   | `getUpdates` after messaging the bot                                                               |
+| `CAL_WEBHOOK_SECRET` | `openssl rand -hex 32`, also pasted into the Cal.com webhook                                       |
+| `GA_MP_API_SECRET`   | GA4 → Admin → Data streams → Measurement Protocol API secrets                                      |
 
 ## Someone asks to delete their data
 
