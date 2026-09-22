@@ -22,7 +22,7 @@
         {
           "binding": "DB",
           "database_name": "abhishekgoyal-me-staging",
-          "database_id": "TBD",
+          "database_id": "9952fa1d-bbc8-4dc6-8de1-68e944471541",
           "migrations_dir": "migrations",
         },
       ],
