@@ -1,3 +1,8 @@
-# Copy to .dev.vars (git-ignored) for local development.
-# Secrets are added in M3 (lead capture); each one is documented where it is introduced.
+# Copy to .dev.vars (git-ignored) for local development. `pnpm cf:types` reads THIS file to type the
+# Worker's secrets, so add every new secret here (with a safe local value) when you introduce it.
+# Staging and production values are set with `wrangler secret put NAME --env staging` (production in M4).
 ENVIRONMENT=local
+
+# Turnstile (#56). Cloudflare's public test secret: always passes. Real keys: Cloudflare dashboard →
+# Turnstile → add widget. Staging keeps the test secret; production gets its own in M4.
+TURNSTILE_SECRET=1x0000000000000000000000000000000AA
