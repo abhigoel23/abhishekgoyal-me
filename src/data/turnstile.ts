@@ -6,7 +6,7 @@ export const TEST_SITE_KEY = '1x00000000000000000000AA';
 
 // The production widget ("abhishekgoyal.me"), in Managed mode. Its allowed hostnames must match
 // PRODUCTION_HOSTS; the matching secret is the production Worker's TURNSTILE_SECRET.
-export const PRODUCTION_SITE_KEY = 'TODO';
+export const PRODUCTION_SITE_KEY = '0x4AAAAAAFAJ7OMe-va70rPq';
 
 export const PRODUCTION_HOSTS = [
   'abhishekgoyal.me',
