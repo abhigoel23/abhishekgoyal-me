@@ -1,5 +1,5 @@
-// Client-side analytics. A no-op until GA4 loads, which only happens after the visitor consents (the
-// consent bar ships in M4). Parameters are coarse labels (path, CTA name, budget band), never PII.
+// Client-side analytics. A no-op until GA4 loads, which only happens after the visitor accepts in the
+// consent bar (src/components/ConsentBar.astro), and only on the production hosts. Parameters are coarse labels (path, CTA name, budget band), never PII.
 // generate_lead is NOT sent from here: the server sends it once the lead is saved (src/lib/server/ga.ts),
 // so ad blockers can't drop it and a failed submit can't count as a conversion.
 

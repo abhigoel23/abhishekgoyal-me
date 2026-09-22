@@ -8,6 +8,8 @@ type Props = {
   class?: string;
   /** Analytics label for CTA clicks (src/components/Analytics.astro). */
   cta?: string;
+  /** Hooks for page scripts, e.g. `data-consent="granted"`. */
+  [data: `data-${string}`]: string;
 };
 const {
   href,
@@ -17,6 +19,7 @@ const {
   disabled = false,
   class: className,
   cta,
+  ...attrs
 } = Astro.props;
 
 const classes = [
@@ -33,11 +36,11 @@ const classes = [
 ---
 
 {href && !disabled ? (
-  <a href={href} class:list={classes} data-cta={cta}>
+  <a href={href} class:list={classes} data-cta={cta} {...attrs}>
     <slot />
   </a>
 ) : (
-  <button type={type} disabled={disabled} class:list={classes}>
+  <button type={type} disabled={disabled} class:list={classes} {...attrs}>
     <slot />
   </button>
 )}

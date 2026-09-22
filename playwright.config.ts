@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { declinedConsent } from './tests/consent-state';
 
 // BASE_URL lets CI run the same smoke tests against a preview or production URL.
 const baseURL = process.env.BASE_URL ?? 'http://localhost:4321';
@@ -7,7 +8,7 @@ export default defineConfig({
   testDir: 'tests/e2e',
   reporter: process.env.CI ? [['line'], ['html', { open: 'never' }]] : 'line',
   retries: process.env.CI ? 1 : 0,
-  use: { baseURL, trace: 'retain-on-failure' },
+  use: { baseURL, trace: 'retain-on-failure', storageState: declinedConsent(baseURL) },
   projects: [
     { name: 'desktop', use: { ...devices['Desktop Chrome'] } },
     { name: 'mobile', use: { ...devices['Pixel 7'] } },
