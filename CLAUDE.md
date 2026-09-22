@@ -22,7 +22,9 @@ pnpm 12 has no `-s` flag; use `--silent`.
 ## File map
 
 - `astro.config.mjs` — integrations; `session: false`; `imageService: 'compile'`
-- `wrangler.jsonc` — Worker config (bindings added in M3)
+- `wrangler.jsonc` — Worker config; `env.staging` has the lead bindings and serves PR previews (ADR 006). Build
+  for it with `CLOUDFLARE_ENV=staging pnpm build`; `pnpm cf:types` regenerates the git-ignored `Env` types
+- `src/worker.ts` — Worker entry: Astro `fetch`, plus the lead `queue` consumer and daily `scheduled` cron
 - `src/pages/` — routes, prerendered by default; `src/pages/api/*` opt out with `prerender = false`
 - `src/lib/theme.ts` — design tokens (Studio, ADR 005); `/styleguide` shows them. Components use semantic
   utilities only (`bg-surface`, `text-muted`, `rounded-brand`), never raw colours

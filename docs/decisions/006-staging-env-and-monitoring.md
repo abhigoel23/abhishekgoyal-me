@@ -1,0 +1,5 @@
+# 006 — PR previews run on a staging Worker; no Sentry
+
+**Status:** accepted · 2026-09-22
+
+Worker preview URLs are versions of the same Worker, so they share its D1 database, queue and secrets. Once leads exist, testing a PR preview would write to the real database and the real Sheet. PR previews therefore upload to a separate Worker, `abhishekgoyal-me-staging` (`env.staging` in `wrangler.jsonc`). It has its own D1 database, queue and dead-letter queue, rate limiter, cron, test Sheet, Turnstile test keys and Telegram test chat. The Cloudflare adapter picks the environment at build time, so the preview job builds with `CLOUDFLARE_ENV=staging`, not from the production `dist`. Production bindings are added in M4. For error monitoring, Sentry was dropped: Workers Logs are already on, and dead-letter-queue messages and failed health checks alert by email and Telegram. That avoids another account, secret and SDK, as well as the PII scrubbing Sentry would need. The trade-offs are two sets of bindings and secrets to keep in step, and no grouped error inbox.
