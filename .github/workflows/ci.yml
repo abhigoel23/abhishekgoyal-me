@@ -113,8 +113,11 @@ jobs:
       - uses: actions/setup-node@v5
         with: { node-version-file: .nvmrc, cache: pnpm }
       - run: pnpm install --frozen-lockfile
-      - uses: actions/download-artifact@v4
-        with: { name: dist }
+      # Previews run on the staging Worker (own D1, queue and secrets; ADR 006). The adapter picks the
+      # Cloudflare environment at build time, so this job builds for staging instead of reusing `dist`.
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm build
+        env: { CLOUDFLARE_ENV: staging }
       - id: upload
         name: Upload preview version
         env:
@@ -126,9 +129,7 @@ jobs:
           test -n "$url" || { echo "::error::Preview URL not found in wrangler output"; exit 1; }
           echo "url=$url" >> "$GITHUB_OUTPUT"
       - name: Smoke test preview
-        run: |
-          pnpm exec playwright install --with-deps chromium
-          BASE_URL="${{ steps.upload.outputs.url }}" pnpm test:e2e
+        run: BASE_URL="${{ steps.upload.outputs.url }}" pnpm test:e2e
       - name: Comment preview URL
         uses: actions/github-script@v8
         with:
