@@ -1,0 +1,55 @@
+// Server-side GA4 conversion via the Measurement Protocol (the lead's `ga` delivery step). Sent only
+// when the form carried a GA client id, which exists only if the visitor consented to analytics.
+// No PII: path, budget band and source only.
+import type { LeadRow } from './leadStore';
+import type { StepResult } from './outbox';
+
+export type GaConfig = { measurementId: string; apiSecret: string; environment: string };
+
+export function generateLeadEvent(lead: LeadRow) {
+  return {
+    client_id: lead.ga_client_id!,
+    events: [
+      {
+        name: 'generate_lead',
+        params: {
+          // A random UUID, not PII: joins a GA conversion to its row in the Leads Sheet.
+          lead_id: lead.lead_id,
+          lead_path: lead.path ?? '',
+          budget_band: lead.budget ?? 'none',
+          lead_source: lead.utm_source ?? (lead.referrer ? 'referral' : 'direct'),
+          engagement_time_msec: 1,
+        },
+      },
+    ],
+  };
+}
+
+export async function sendGenerateLead(
+  lead: LeadRow,
+  config: GaConfig,
+  fetcher: typeof fetch = fetch,
+): Promise<StepResult> {
+  if (!lead.ga_client_id) return 'skipped';
+  const production = config.environment === 'production';
+  // Outside production, use the validation endpoint: GA checks the payload but records nothing, so
+  // staging never pollutes the real reports.
+  const endpoint = production
+    ? 'https://www.google-analytics.com/mp/collect'
+    : 'https://www.google-analytics.com/debug/mp/collect';
+  const url = `${endpoint}?${new URLSearchParams({
+    measurement_id: config.measurementId,
+    api_secret: config.apiSecret,
+  })}`;
+  const res = await fetcher(url, { method: 'POST', body: JSON.stringify(generateLeadEvent(lead)) });
+  if (!res.ok) throw new Error(`GA ${res.status}`);
+  if (!production) {
+    const { validationMessages = [] } = (await res.json()) as {
+      validationMessages?: { description: string }[];
+    };
+    if (validationMessages.length) {
+      throw new Error(`GA validation: ${validationMessages.map((m) => m.description).join('; ')}`);
+    }
+  }
+  return 'done';
+}

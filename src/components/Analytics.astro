@@ -1,0 +1,19 @@
+---
+// CTA click tracking: any element with data-cta="<name>" sends cta_click (or book_call_click). A no-op
+// until GA has loaded with consent (see src/lib/track.ts).
+---
+
+<script>
+  import { track } from '../lib/track';
+
+  document.addEventListener('click', (event) => {
+    const el = event.target instanceof Element ? event.target.closest('[data-cta]') : null;
+    const cta = el?.getAttribute('data-cta');
+    if (!cta) return;
+    track(
+      cta === 'book_call'
+        ? { name: 'book_call_click', params: { cta } }
+        : { name: 'cta_click', params: { cta } },
+    );
+  });
+</script>

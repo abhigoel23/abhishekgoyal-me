@@ -6,6 +6,8 @@ type Props = {
   type?: 'button' | 'submit';
   disabled?: boolean;
   class?: string;
+  /** Analytics label for CTA clicks (src/components/Analytics.astro). */
+  cta?: string;
 };
 const {
   href,
@@ -14,6 +16,7 @@ const {
   type = 'button',
   disabled = false,
   class: className,
+  cta,
 } = Astro.props;
 
 const classes = [
@@ -30,7 +33,7 @@ const classes = [
 ---
 
 {href && !disabled ? (
-  <a href={href} class:list={classes}>
+  <a href={href} class:list={classes} data-cta={cta}>
     <slot />
   </a>
 ) : (
