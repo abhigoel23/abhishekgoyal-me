@@ -5,10 +5,7 @@ import Section from '../components/Section.astro';
 import Tag from '../components/Tag.astro';
 import { atAGlance, availability, highlights, setups } from '../data/hire';
 import { pages } from '../data/pages';
-import { profile } from '../data/profile';
 import Base from '../layouts/Base.astro';
-
-const email = `mailto:${profile.email}?subject=${encodeURIComponent('Full-time role')}`;
 ---
 
 <Base {...pages['/hire']} type="profile">
@@ -30,8 +27,8 @@ const email = `mailto:${profile.email}?subject=${encodeURIComponent('Full-time r
       <Button href="/resume" variant="secondary" size="lg">
         View resume online
       </Button>
-      <a class="link font-medium" href={email}>
-        Email me about a role →
+      <a class="link font-medium" href="/contact?path=role">
+        Request an interview →
       </a>
     </div>
   </Container>
@@ -69,8 +66,8 @@ const email = `mailto:${profile.email}?subject=${encodeURIComponent('Full-time r
         Send the job description or a link, and a line about the team.
       </p>
       <div class="mt-8">
-        <Button href={email} size="lg">
-          Email me about a role
+        <Button href="/contact?path=role" size="lg">
+          Request an interview
         </Button>
       </div>
     </div>

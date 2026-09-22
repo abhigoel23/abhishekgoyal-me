@@ -46,6 +46,17 @@ export const pages = {
       'Resume of Abhishek Goyal, Founding Mobile Engineer: Android, Kotlin, Compose, KMP, native iOS and React Native. 13 years, 0-to-1 builds.',
     ogTitle: 'Resume: Founding Mobile Engineer, 13 years on Android and iOS',
   },
+  '/contact': {
+    title: 'Contact',
+    description:
+      'Start a project or ask about a full-time role. Tell Abhishek Goyal what you need and hear back within 2 working days.',
+    ogTitle: 'Start a project, or ask about a full-time role',
+  },
+  '/thanks': {
+    title: 'Thanks',
+    description:
+      'Your message is in. Abhishek Goyal replies to every enquiry within 2 working days.',
+  },
   '/privacy': {
     title: 'Privacy',
     description:

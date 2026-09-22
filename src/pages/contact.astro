@@ -1,0 +1,52 @@
+---
+import Container from '../components/Container.astro';
+import LeadForm from '../components/react/LeadForm';
+import { nextSteps } from '../data/lead';
+import { pages } from '../data/pages';
+import { profile } from '../data/profile';
+import Base from '../layouts/Base.astro';
+
+// Cloudflare's public test site key: always passes, no Turnstile UI. A real key ships in M4 (production
+// secrets), set as PUBLIC_TURNSTILE_SITE_KEY. Staging already uses a Cloudflare test key pair.
+const siteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || '1x00000000000000000000AA';
+---
+
+<Base {...pages['/contact']}>
+  <Container class="py-16 sm:py-24">
+    <p class="eyebrow mb-3">Get in touch</p>
+    <h1 class="text-h1 max-w-2xl">Start a project, or ask about a role</h1>
+    <p class="mt-5 max-w-xl text-lead text-muted">
+      Tell me a little about what you need. I read every message myself.
+    </p>
+
+    <noscript>
+      <p class="mt-10 max-w-xl rounded-brand border border-line bg-surface px-5 py-4">
+        This form needs JavaScript. Email me at{' '}
+        <a class="link" href={`mailto:${profile.email}`}>
+          {profile.email}
+        </a>{' '}
+        instead.
+      </p>
+    </noscript>
+
+    <div class="mt-12 grid gap-12 lg:grid-cols-[1fr_20rem]">
+      <LeadForm client:visible siteKey={siteKey} />
+
+      <aside aria-labelledby="next-steps-title">
+        <h2 id="next-steps-title" class="text-h3">
+          What happens next
+        </h2>
+        <ol class="mt-4 grid gap-3 text-muted">
+          {nextSteps.map((step) => (
+            <li class="flex gap-3">
+              <span aria-hidden="true" class="text-accent">
+                →
+              </span>
+              <span>{step}</span>
+            </li>
+          ))}
+        </ol>
+      </aside>
+    </div>
+  </Container>
+</Base>

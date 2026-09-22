@@ -1,0 +1,29 @@
+---
+// First-touch attribution for the lead form: source page, UTM params and cross-site referrer.
+// Stored once per session so a later visit to /contact (without those query params) still carries
+// the touch that brought the visitor here. src/components/react/LeadForm.tsx reads this on submit.
+---
+
+<script is:inline>
+  try {
+    if (!sessionStorage.getItem('lead-attribution')) {
+      const params = new URLSearchParams(location.search);
+      const referrer =
+        document.referrer && new URL(document.referrer).origin !== location.origin
+          ? document.referrer
+          : '';
+      sessionStorage.setItem(
+        'lead-attribution',
+        JSON.stringify({
+          source_page: location.pathname,
+          utm_source: params.get('utm_source') || '',
+          utm_medium: params.get('utm_medium') || '',
+          utm_campaign: params.get('utm_campaign') || '',
+          referrer,
+        }),
+      );
+    }
+  } catch {
+    // Storage blocked (private mode, settings): attribution is best-effort only.
+  }
+</script>

@@ -36,8 +36,14 @@ export default defineConfig({
   integrations: [
     react(),
     mdx(),
-    // /styleguide is an internal design reference: noindex and kept out of the sitemap.
-    sitemap({ filter: (page) => !new URL(page).pathname.startsWith('/styleguide') }),
+    // /styleguide is an internal design reference and /thanks a post-submit confirmation: both noindex,
+    // both kept out of the sitemap.
+    sitemap({
+      filter: (page) => {
+        const path = new URL(page).pathname;
+        return !path.startsWith('/styleguide') && path !== '/thanks';
+      },
+    }),
   ],
   // Self-hosted via Fontsource at build time: no Google Fonts request, metric-matched fallbacks.
   // cssVariable names must match FontVar in src/lib/theme.ts.

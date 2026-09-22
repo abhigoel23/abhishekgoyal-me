@@ -1,0 +1,43 @@
+---
+// Static: nothing here depends on the server. The ?path= query only picks which line of copy to show,
+// swapped in by the inline script below so the page still works from a bookmark or a shared link.
+import Container from '../components/Container.astro';
+import { nextSteps, thanksCopy } from '../data/lead';
+import { pages } from '../data/pages';
+import Base from '../layouts/Base.astro';
+---
+
+<Base {...pages['/thanks']} noindex>
+  <Container class="py-20 sm:py-28">
+    <p class="eyebrow mb-3">Sent</p>
+    <h1 class="text-h1 max-w-2xl">{thanksCopy.heading}</h1>
+    <p class="mt-5 max-w-xl text-lead text-muted" data-thanks-body>
+      {thanksCopy.default}
+    </p>
+
+    <ol class="mt-10 grid max-w-xl gap-3 text-muted">
+      {/* The first step (reply time) is already the line above. */}
+      {nextSteps.slice(1).map((step) => (
+        <li class="flex gap-3">
+          <span aria-hidden="true" class="text-accent">
+            →
+          </span>
+          <span>{step}</span>
+        </li>
+      ))}
+    </ol>
+
+    {/* Cal.com "book a 20-minute intro call" embed lands here once that flow ships (issue #60). */}
+  </Container>
+</Base>
+
+<script is:inline define:vars={{ project: thanksCopy.project, role: thanksCopy.role }}>
+  try {
+    const path = new URLSearchParams(location.search).get('path');
+    const copy = path === 'project' ? project : path === 'role' ? role : null;
+    const body = copy && document.querySelector('[data-thanks-body]');
+    if (body) body.textContent = copy;
+  } catch {
+    // Query parsing failed: the default copy stays.
+  }
+</script>
