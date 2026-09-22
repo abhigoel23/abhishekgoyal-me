@@ -29,7 +29,9 @@ pnpm 12 has no `-s` flag; use `--silent`.
 - `src/lib/theme.ts` — design tokens (Studio, ADR 005); `/styleguide` shows them. Components use semantic
   utilities only (`bg-surface`, `text-muted`, `rounded-brand`), never raw colours
 - `src/data/career.ts` + `resume.ts` — resume source; `pnpm build` prints `/resume` to `resume.pdf` (1 page or fail)
-- `src/lib/` — shared TS; `src/lib/server/` is server-only (M3)
+- `src/lib/` — shared TS; `src/lib/server/` is server-only (M3). `src/lib/lead.ts` is the lead zod schema
+  (client + server); form options live in `src/data/lead.ts`
+- `migrations/` — D1 schema. Apply: `pnpm exec wrangler d1 migrations apply DB --env staging --local|--remote`
 - `src/components/react/` — React islands only (forms, embeds)
 - `tests/e2e/` — Playwright; unit tests live next to source as `*.test.ts`
 - `docs/` — ARCHITECTURE, RUNBOOK, CONTENT, ANALYTICS, DNS, `decisions/` (ADRs)

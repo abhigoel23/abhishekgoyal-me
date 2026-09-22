@@ -36,7 +36,8 @@
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
-    "wrangler": "^4.135.0"
+    "wrangler": "^4.135.0",
+    "zod": "^4.6.5"
   },
   "allowScripts": {
     "esbuild": true
