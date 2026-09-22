@@ -11,3 +11,11 @@ TURNSTILE_SECRET=1x0000000000000000000000000000000AA
 # SHEET_ID and GOOGLE_SA_EMAIL are plain vars in wrangler.jsonc. Leave empty locally unless you're
 # testing Sheets delivery; the queue then marks the sheets step failed and retries.
 GOOGLE_SA_KEY=
+
+# Resend (#59): an API key with "Sending access" restricted to abhishekgoyal.me (resend.com → API Keys).
+# Outside production, auto-replies go to the inbox instead of the visitor.
+RESEND_API_KEY=
+# Telegram (#59): bot token from @BotFather, and the chat id of your chat with the bot. Staging messages
+# are prefixed [staging].
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=

@@ -41,6 +41,15 @@ export function leadToRow(lead: LeadRow): string[] {
   return LEAD_COLUMNS.map(([, cell]) => sanitizeCell(cell(lead)));
 }
 
+/** Labelled, unsanitised fields for plain-text email. Skips empties and the manual CRM columns. */
+export function leadFields(lead: LeadRow): [string, string][] {
+  return LEAD_COLUMNS.filter(([header]) => header !== 'Status' && header !== 'Notes')
+    .map(([header, cell]): [string, string] => [header, cell(lead) ?? ''])
+    .filter(([, value]) => value !== '');
+}
+
+export { label as optionLabel };
+
 async function sheetsFetch(token: string, url: string, init: RequestInit = {}, fetcher = fetch) {
   const res = await fetcher(url, {
     ...init,
