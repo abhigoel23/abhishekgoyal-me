@@ -111,3 +111,65 @@ export async function readSheetTitle(
   )) as { properties: { title: string } };
   return data.properties.title;
 }
+
+const ISO_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+
+/** 0-based row indexes (header excluded) whose "Received (UTC)" is before the cutoff, as descending runs. */
+export function expiredRowRuns(received: string[][], cutoffIso: string): [number, number][] {
+  const expired = received
+    .map((row, i) => [i, row[0] ?? ''] as const)
+    .filter(([i, v]) => i > 0 && ISO_TIMESTAMP.test(v) && v < cutoffIso)
+    .map(([i]) => i);
+  const runs: [number, number][] = [];
+  for (const i of expired) {
+    const last = runs[runs.length - 1];
+    if (last && last[1] === i) last[1] = i + 1;
+    else runs.push([i, i + 1]);
+  }
+  // Delete from the bottom up so earlier deletions don't shift the later ranges.
+  return runs.reverse();
+}
+
+/**
+ * Retention for the Sheet copy (privacy policy: 18 months). Deletes Leads rows by their "Received (UTC)"
+ * date, so it works regardless of D1, sorting or filters, and is safe to repeat. Returns rows deleted.
+ */
+export async function purgeLeadRows(
+  token: string,
+  sheetId: string,
+  cutoffIso: string,
+  fetcher: typeof fetch = fetch,
+) {
+  const tab = 'Leads';
+  const column = String.fromCharCode(65 + LEAD_HEADERS.indexOf('Received (UTC)'));
+  const range = encodeURIComponent(`${tab}!${column}:${column}`);
+  const data = (await sheetsFetch(token, `${API}/${sheetId}/values/${range}`, {}, fetcher)) as {
+    values?: string[][];
+  };
+  const runs = expiredRowRuns(data.values ?? [], cutoffIso);
+  if (!runs.length) return 0;
+
+  const meta = (await sheetsFetch(
+    token,
+    `${API}/${sheetId}?fields=sheets.properties(sheetId,title)`,
+    {},
+    fetcher,
+  )) as { sheets: { properties: { sheetId: number; title: string } }[] };
+  const gid = meta.sheets.find((s) => s.properties.title === tab)?.properties.sheetId;
+  if (gid === undefined) throw new Error(`Tab "${tab}" not found`);
+
+  await sheetsFetch(
+    token,
+    `${API}/${sheetId}:batchUpdate`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        requests: runs.map(([startIndex, endIndex]) => ({
+          deleteDimension: { range: { sheetId: gid, dimension: 'ROWS', startIndex, endIndex } },
+        })),
+      }),
+    },
+    fetcher,
+  );
+  return runs.reduce((n, [start, end]) => n + end - start, 0);
+}

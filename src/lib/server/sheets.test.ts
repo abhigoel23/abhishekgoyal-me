@@ -3,7 +3,7 @@ import { clearTokenCache, getAccessToken, signJwt, SHEETS_SCOPE } from './google
 import type { LeadRow } from './leadStore';
 import { retryDelaySeconds } from './outbox';
 import { sanitizeCell } from './sanitize';
-import { appendLead, LEAD_HEADERS, leadToRow } from './sheets';
+import { appendLead, expiredRowRuns, LEAD_HEADERS, leadToRow, purgeLeadRows } from './sheets';
 
 const NOW = new Date('2026-09-22T10:00:00Z');
 
@@ -149,5 +149,54 @@ describe('appendLead', () => {
 describe('retryDelaySeconds', () => {
   it('backs off exponentially from a minute, capped at an hour', () => {
     expect([1, 2, 3, 4, 10].map(retryDelaySeconds)).toEqual([60, 120, 240, 480, 3600]);
+  });
+});
+
+describe('Sheet retention', () => {
+  const cutoff = '2025-03-22T00:00:00.000Z';
+  const column = [
+    ['Received (UTC)'], // header, never deleted
+    ['2025-01-01T00:00:00.000Z'], // 1 expired
+    ['2025-02-01T00:00:00.000Z'], // 2 expired
+    ['2026-01-01T00:00:00.000Z'], // 3 kept
+    ['2025-03-21T23:59:59.999Z'], // 4 expired
+    ['hand-typed note'], // 5 kept: not a timestamp
+    [], // 6 kept: empty
+  ];
+
+  it('finds expired rows as bottom-up runs, keeping the header and non-timestamps', () => {
+    expect(expiredRowRuns(column, cutoff)).toEqual([
+      [4, 5],
+      [1, 3],
+    ]);
+  });
+
+  it('deletes the runs from the Leads tab in one batchUpdate', async () => {
+    const calls: { url: string; body?: string }[] = [];
+    const fetcher = vi.fn<typeof fetch>(async (url, init) => {
+      calls.push({ url: String(url), body: init?.body as string | undefined });
+      if (String(url).includes('/values/')) return Response.json({ values: column });
+      if (String(url).includes('fields=sheets')) {
+        return Response.json({ sheets: [{ properties: { sheetId: 7, title: 'Leads' } }] });
+      }
+      return Response.json({});
+    });
+    expect(await purgeLeadRows('tok', 'SHEET', cutoff, fetcher)).toBe(3);
+    expect(calls[0]!.url).toContain(encodeURIComponent('Leads!B:B'));
+    const { requests } = JSON.parse(calls[2]!.body!);
+    expect(
+      requests.map((r: { deleteDimension: { range: object } }) => r.deleteDimension.range),
+    ).toEqual([
+      { sheetId: 7, dimension: 'ROWS', startIndex: 4, endIndex: 5 },
+      { sheetId: 7, dimension: 'ROWS', startIndex: 1, endIndex: 3 },
+    ]);
+  });
+
+  it('makes no write calls when nothing has expired', async () => {
+    const fetcher = vi.fn<typeof fetch>(async () =>
+      Response.json({ values: [['Received (UTC)']] }),
+    );
+    expect(await purgeLeadRows('tok', 'SHEET', cutoff, fetcher)).toBe(0);
+    expect(fetcher).toHaveBeenCalledTimes(1);
   });
 });
