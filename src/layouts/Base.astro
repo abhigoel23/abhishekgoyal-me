@@ -3,6 +3,7 @@ import { Font } from 'astro:assets';
 import '../styles/global.css';
 import Analytics from '../components/Analytics.astro';
 import Attribution from '../components/Attribution.astro';
+import ConsentBar from '../components/ConsentBar.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import SEO, { type Props as SeoProps } from '../components/SEO.astro';
@@ -44,6 +45,7 @@ type Props = SeoProps;
     >
       Skip to content
     </a>
+    <ConsentBar />
     <Header />
     <main id="main" class="flex-1">
       <slot />

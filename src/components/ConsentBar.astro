@@ -1,0 +1,151 @@
+---
+// GA4 consent, Basic Consent Mode v2: gtag isn't requested at all until the visitor accepts, and only
+// on the production hosts. Accept and Decline carry equal weight (no dark pattern). The footer's
+// "Cookie settings" button reopens the bar so consent can be withdrawn as easily as it was given.
+import { consentCopy } from '../data/analytics';
+import Button from './Button.astro';
+import Container from './Container.astro';
+---
+
+<div
+  id="consent-bar"
+  role="region"
+  aria-label={consentCopy.label}
+  hidden
+  class="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-surface"
+>
+  <Container class="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:gap-6">
+    <p class="flex-1 text-sm text-ink">
+      {consentCopy.text}{' '}
+      <a class="link" href="/privacy#analytics-and-cookies">
+        {consentCopy.privacy}
+      </a>
+    </p>
+    <div class="flex gap-3">
+      <Button variant="secondary" class="flex-1 sm:min-w-28 sm:flex-none" data-consent="denied">
+        {consentCopy.decline}
+      </Button>
+      <Button variant="secondary" class="flex-1 sm:min-w-28 sm:flex-none" data-consent="granted">
+        {consentCopy.accept}
+      </Button>
+    </div>
+  </Container>
+</div>
+
+<script>
+  import { CONSENT_MAX_AGE_DAYS, GA_MEASUREMENT_ID } from '../data/analytics';
+  import {
+    CONSENT_KEY,
+    INTERNAL_KEY,
+    gaCookieNames,
+    internalFromQuery,
+    readConsent,
+    shouldLoadGa,
+    writeConsent,
+    type ConsentChoice,
+  } from '../lib/consent';
+
+  type Gtag = (...args: unknown[]) => void;
+  const w = window as unknown as { dataLayer?: unknown[]; gtag?: Gtag };
+
+  // Storage can be blocked (private modes, strict settings): then the bar simply asks every visit.
+  const storage = {
+    get: (key: string) => {
+      try {
+        return localStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    },
+    set: (key: string, value: string) => {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // Not remembered; nothing else to do.
+      }
+    },
+    remove: (key: string) => {
+      try {
+        localStorage.removeItem(key);
+      } catch {
+        // Nothing stored.
+      }
+    },
+  };
+
+  const internal = internalFromQuery(location.search);
+  if (internal === true) storage.set(INTERNAL_KEY, '1');
+  if (internal === false) storage.remove(INTERNAL_KEY);
+
+  function loadGa() {
+    if (w.gtag || !shouldLoadGa(location.hostname, 'granted')) return;
+    w.dataLayer = w.dataLayer || [];
+    // gtag.js reads the Arguments object itself, not an array.
+    w.gtag = function gtag() {
+      // eslint-disable-next-line prefer-rest-params
+      w.dataLayer!.push(arguments);
+    };
+    const denied = 'denied';
+    w.gtag('consent', 'default', {
+      analytics_storage: denied,
+      ad_storage: denied,
+      ad_user_data: denied,
+      ad_personalization: denied,
+    });
+    // Only analytics is ever granted; the three ad types stay denied.
+    w.gtag('consent', 'update', { analytics_storage: 'granted' });
+    w.gtag('js', new Date());
+    w.gtag('config', GA_MEASUREMENT_ID, {
+      allow_google_signals: false,
+      allow_ad_personalization_signals: false,
+      cookie_expires: CONSENT_MAX_AGE_DAYS * 24 * 60 * 60,
+      ...(storage.get(INTERNAL_KEY) === '1' ? { traffic_type: 'internal' } : {}),
+    });
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
+  }
+
+  function removeGaCookies() {
+    const domains = ['', location.hostname, `.${location.hostname.replace(/^www\./, '')}`];
+    for (const name of gaCookieNames(document.cookie)) {
+      for (const domain of domains) {
+        document.cookie = `${name}=; Max-Age=0; path=/${domain ? `; domain=${domain}` : ''}`;
+      }
+    }
+  }
+
+  const bar = document.getElementById('consent-bar');
+
+  function choose(choice: ConsentChoice) {
+    storage.set(CONSENT_KEY, writeConsent(choice, Date.now()));
+    if (bar) bar.hidden = true;
+    if (choice === 'granted') {
+      loadGa();
+    } else {
+      // Withdrawn after accepting: stop GA storage for this page and delete its cookies.
+      w.gtag?.('consent', 'update', { analytics_storage: 'denied' });
+      removeGaCookies();
+    }
+  }
+
+  const choice = readConsent(storage.get(CONSENT_KEY), Date.now());
+  if (choice === 'granted') loadGa();
+  else if (choice === 'denied') removeGaCookies();
+  else if (bar) bar.hidden = false;
+
+  bar?.addEventListener('click', (event) => {
+    const button = event.target instanceof Element ? event.target.closest('[data-consent]') : null;
+    const value = button?.getAttribute('data-consent');
+    if (value === 'granted' || value === 'denied') choose(value);
+  });
+
+  for (const opener of document.querySelectorAll('[data-consent-open]')) {
+    opener.addEventListener('click', () => {
+      if (!bar) return;
+      bar.hidden = false;
+      bar.querySelector<HTMLElement>('[data-consent]')?.focus();
+    });
+  }
+</script>

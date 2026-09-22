@@ -49,7 +49,7 @@ and I keep them with your enquiry.
 
 | Service              | What it does                                                                                                 |
 | -------------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Cloudflare**       | Hosts the site, stores enquiries and bookings in its database, and runs Turnstile                            |
+| **Cloudflare**       | Hosts the site, stores enquiries and bookings, runs Turnstile, and counts visits without cookies             |
 | **Google Workspace** | My email, and a Google Sheet that holds a working copy of enquiries and bookings                             |
 | **Resend**           | Sends me an email about each enquiry, and sends you a short confirmation                                     |
 | **Telegram**         | Pings my phone about new enquiries and bookings, with **no personal details**: only the type, budget or time |
@@ -67,10 +67,17 @@ you ask me to delete your data, I remove it from the database, the Sheet and my 
 
 ## Analytics and cookies
 
-- **Analytics.** Google Analytics runs only after you accept it. It never receives your name, email or
-  message. When an enquiry is saved, the site tells Google Analytics that an enquiry happened, with only its
-  type, budget range and where the visit came from. If you don't accept, nothing is sent and no analytics
-  cookies are set.
+- **Google Analytics.** A bar at the bottom of the page asks first. Nothing from Google loads until you
+  press **Accept**, and pressing **Decline** (or ignoring the bar) means nothing is sent. If you accept,
+  Google Analytics sets two cookies, `_ga` and `_ga_<id>`, that expire after 6 months. It counts pages
+  viewed and clicks on buttons such as "Start a project", and never receives your name, email or message.
+  When an enquiry is saved, the site tells Google Analytics that an enquiry happened, with only its type,
+  budget range and where the visit came from. Ad features and Google signals are switched off.
+- **Changing your mind.** Use **Cookie settings** at the bottom of any page. Declining after you accepted
+  deletes the Google Analytics cookies. Your choice is saved in your browser's storage for 6 months, then
+  the bar asks again.
+- **Visit counts without cookies.** Cloudflare Web Analytics counts page views without cookies and without
+  identifying you, so I can see roughly how many people visit even when analytics are declined.
 - **Your theme choice.** Saved in your browser's storage if you switch between light and dark mode. It never
   leaves your device.
 - **Where you arrived from.** The page you landed on and any campaign tags are kept in your browser's

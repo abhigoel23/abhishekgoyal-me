@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import { declinedConsent } from './tests/consent-state';
 
 // Lead-capture e2e (#63). Runs ONLY against a local staging build with a throwaway D1 and no real
 // secrets, so successful submissions never reach the real Sheet, inbox or Telegram. Never point this
@@ -13,7 +14,11 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   // Tests share one local D1; keep them in order so row counts are predictable.
   workers: 1,
-  use: { baseURL: `http://localhost:${PORT}`, trace: 'retain-on-failure' },
+  use: {
+    baseURL: `http://localhost:${PORT}`,
+    trace: 'retain-on-failure',
+    storageState: declinedConsent(`http://localhost:${PORT}`),
+  },
   projects: [{ name: 'desktop', use: { ...devices['Desktop Chrome'] } }],
   webServer: {
     command: [
