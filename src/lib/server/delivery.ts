@@ -1,5 +1,6 @@
 // Wires the delivery steps to their integrations for the queue consumer (src/worker.ts). Each step reads
 // only the config it needs, so a missing secret fails that step alone.
+import type { AlertTransport } from './alert';
 import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
 import type { StepHandlers } from './outbox';
 import { appendLead } from './sheets';
@@ -21,4 +22,10 @@ export function leadHandlers(env: Env): StepHandlers {
     },
     // notify, autoreply, telegram: #59 · ga: #62
   };
+}
+
+/** Where operational alerts go besides Workers Logs. Email and Telegram arrive in #59. */
+export function alertTransports(env: Env): AlertTransport[] {
+  void env;
+  return [];
 }

@@ -41,6 +41,8 @@
             "retry_delay": 60,
             "dead_letter_queue": "leads-staging-dlq",
           },
+          // Dead letters alert and are dropped; D1 keeps the lead for the daily re-sync.
+          { "queue": "leads-staging-dlq", "max_batch_size": 10 },
         ],
       },
       // Per-IP limit for /api/lead. Periods can only be 10 or 60 seconds; namespace_id is unique per account.
