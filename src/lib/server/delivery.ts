@@ -8,6 +8,7 @@ import {
   getBookingEvent,
   type BookingHandlers,
 } from './bookings';
+import { sendGenerateLead } from './ga';
 import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
 import { alertText, notificationSteps, sendEmail, sendTelegram } from './notifications';
 import { deliverLead, runSteps, type StepHandlers } from './outbox';
@@ -34,7 +35,18 @@ export function leadHandlers(env: Env): StepHandlers {
       return 'done';
     },
     ...notificationSteps(env),
-    // ga: #62
+    ga: async (lead) => {
+      // No client id means no analytics consent: nothing to send.
+      if (!lead.ga_client_id) return 'skipped';
+      if (!env.GA_MEASUREMENT_ID || !env.GA_MP_API_SECRET) {
+        throw new Error('GA not configured (GA_MEASUREMENT_ID, GA_MP_API_SECRET)');
+      }
+      return sendGenerateLead(lead, {
+        measurementId: env.GA_MEASUREMENT_ID,
+        apiSecret: env.GA_MP_API_SECRET,
+        environment: env.ENVIRONMENT || 'local',
+      });
+    },
   };
 }
 

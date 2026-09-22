@@ -24,10 +24,10 @@ const Heading = headingLevel;
     <Heading class="text-display text-ink">{profile.positioning}</Heading>
     <p class="mt-6 max-w-xl text-lead text-muted">{profile.intro}</p>
     <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
-      <Button href={primaryCta.href} size="lg">
+      <Button href={primaryCta.href} size="lg" cta="hero_start_project">
         {primaryCta.label}
       </Button>
-      <a href={hireCta.href} class="link text-sm font-medium">
+      <a href={hireCta.href} class="link text-sm font-medium" data-cta="hero_hire">
         {hireCta.label} →
       </a>
     </div>

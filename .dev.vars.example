@@ -23,3 +23,8 @@ TELEGRAM_CHAT_ID=
 # Cal.com (#60): the webhook signing secret (`openssl rand -hex 32`), also pasted into Cal.com →
 # Settings → Developer → Webhooks for the /api/booking subscriber.
 CAL_WEBHOOK_SECRET=
+
+# GA4 (#62). GA_MEASUREMENT_ID ("G-…") is public and lives in wrangler.jsonc vars; the Measurement
+# Protocol secret is GA4 → Admin → Data streams → (stream) → Measurement Protocol API secrets.
+# Outside production the server uses GA's validation endpoint, so nothing is recorded.
+GA_MP_API_SECRET=

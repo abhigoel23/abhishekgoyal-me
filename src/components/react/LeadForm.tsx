@@ -14,6 +14,7 @@ import {
   workModes,
 } from '../../data/lead';
 import { leadSchema } from '../../lib/lead';
+import { gaClientId, track } from '../../lib/track';
 
 type Path = '' | 'project' | 'role';
 type Currency = (typeof currencies)[number]['value'];
@@ -403,6 +404,17 @@ export default function LeadForm({ siteKey }: Props) {
     if (widgetIdRef.current && window.turnstile) window.turnstile.reset(widgetIdRef.current);
   };
 
+  // Funnel events: which path was chosen, and the first time someone starts filling it in.
+  const startedRef = useRef(false);
+  useEffect(() => {
+    if (hasPath) track({ name: 'form_step', params: { lead_path: path } });
+  }, [hasPath, path]);
+  const onFirstInput = () => {
+    if (startedRef.current || !hasPath) return;
+    startedRef.current = true;
+    track({ name: 'form_start', params: { lead_path: path } });
+  };
+
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null);
     const attribution = readAttribution();
@@ -413,6 +425,7 @@ export default function LeadForm({ siteKey }: Props) {
       company: values.company,
       consent: values.consent,
       ...attribution,
+      ga_client_id: gaClientId(),
       'cf-turnstile-response': tokenRef.current,
       website: values.website,
       started_at: startedAtRef.current,
@@ -464,7 +477,13 @@ export default function LeadForm({ siteKey }: Props) {
   const budgetOptions = budgetBands[currency];
 
   return (
-    <form noValidate onSubmit={onSubmit} className="grid max-w-xl gap-6" aria-label="Contact form">
+    <form
+      noValidate
+      onSubmit={onSubmit}
+      onInput={onFirstInput}
+      className="grid max-w-xl gap-6"
+      aria-label="Contact form"
+    >
       <RadioGroup
         legend={formCopy.pathLegend}
         options={leadPaths}
