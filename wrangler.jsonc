@@ -7,16 +7,53 @@
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat"],
   "observability": { "enabled": true },
-  "preview_urls": true,
+  // Off for production: a version preview would run with production bindings. PR previews use staging.
+  "preview_urls": false,
   "workers_dev": true,
-  "vars": { "ENVIRONMENT": "production" },
-  // Production D1, queue, rate-limit and cron bindings are added in M4 (launch).
+  "vars": {
+    "ENVIRONMENT": "production",
+    // GA4 web stream measurement ID, public. Production sends to the live Measurement Protocol endpoint.
+    "GA_MEASUREMENT_ID": "G-PHG39RRGSZ",
+    // SHEET_ID and GOOGLE_SA_EMAIL arrive with the production Sheet and service account (#78).
+  },
+  // /api/lead returns 503 until TURNSTILE_SECRET is set, so these bindings can go live before the
+  // delivery secrets do. TURNSTILE_SECRET is loaded last (docs/RUNBOOK.md).
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "abhishekgoyal-me",
+      "database_id": "e0ede87b-510f-4670-b64a-e24807859c7a",
+      "migrations_dir": "migrations",
+    },
+  ],
+  "queues": {
+    "producers": [{ "binding": "LEAD_QUEUE", "queue": "leads" }],
+    "consumers": [
+      {
+        "queue": "leads",
+        "max_batch_size": 10,
+        "max_retries": 5,
+        "retry_delay": 60,
+        "dead_letter_queue": "leads-dlq",
+      },
+      // Dead letters alert and are dropped; D1 keeps the lead for the daily re-sync.
+      { "queue": "leads-dlq", "max_batch_size": 10 },
+    ],
+  },
+  // Per-IP limit for /api/lead. namespace_id is unique per account (staging uses 1001).
+  "ratelimits": [
+    { "name": "RATE_LIMITER", "namespace_id": "1002", "simple": { "limit": 5, "period": 60 } },
+  ],
+  // Daily at 03:30 UTC (09:00 IST): health check, outbox re-sync, retention purge.
+  "triggers": { "crons": ["30 3 * * *"] },
 
   // The environment is picked at BUILD time: `CLOUDFLARE_ENV=staging pnpm build`. Bindings are not
   // inherited from the top level, so every binding is listed here. PR previews upload to this Worker
   // (abhishekgoyal-me-staging) so they never touch production data (ADR 006).
   "env": {
     "staging": {
+      // PR previews are version preview URLs on this Worker (deploy-preview in ci.yml).
+      "preview_urls": true,
       "vars": {
         "ENVIRONMENT": "staging",
         // Test Sheet ("abhishekgoyal.me leads (test)"), shared with the service account as Editor.
