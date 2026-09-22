@@ -1,5 +1,6 @@
 // Lead form options. Values are stored in D1 and the Sheet, so change a value only with a migration plan;
 // labels can change freely. Budget bands were set by Abhishek (2026-09-22).
+import { profile } from './profile';
 import { services } from './services';
 
 export const leadPaths = [
@@ -46,3 +47,55 @@ export const workModes = [
   { value: 'hybrid-ncr', label: 'Hybrid or on-site in Delhi NCR' },
   { value: 'relocation', label: 'Relocation abroad' },
 ] as const;
+
+// Copy for the /contact form (src/components/react/LeadForm.tsx). Kept in data, not the component.
+export const formCopy = {
+  pathLegend: 'What brings you here?',
+  pathError: 'Please choose one',
+  labels: {
+    name: 'Your name',
+    email: 'Email',
+    company: 'Company',
+    service: 'What do you need?',
+    currency: 'Currency',
+    budget: 'Budget',
+    timeline: 'Timeline',
+    message: 'Tell me about the project',
+    roleMessage: 'Anything else? (optional)',
+    roleTitle: 'Role title',
+    workMode: 'How is the role set up?',
+    jobUrl: 'Job link (optional)',
+    honeypot: 'Leave this empty',
+  },
+  // Rendered as: `{consentPrefix}` + a link labelled `{consentLinkText}` + `.`
+  consentPrefix: 'I agree to be contacted about this enquiry. See the ',
+  consentLinkText: 'privacy policy',
+  hints: {
+    message: 'A few lines is plenty: what you need, by when, and what exists today.',
+    jobUrl: 'A link to the job post or listing, if there is one.',
+  },
+  submit: 'Send enquiry',
+  submitting: 'Sending…',
+  errors: {
+    rateLimited: 'Too many attempts, try again in a minute.',
+    unavailable: `The form isn't available right now. Email ${profile.email} instead.`,
+    rejected: `That submission couldn't be sent. Email ${profile.email} instead.`,
+    verificationFailed: 'Verification failed, please try again.',
+    generic: `Something went wrong. Email ${profile.email} instead.`,
+  },
+} as const;
+
+// "What happens next" list, shown beside the form and reused on /thanks.
+export const nextSteps = [
+  'I read every message myself and reply within 2 working days.',
+  'If it looks like a fit, we set up a 20-minute intro call.',
+] as const;
+
+// /thanks copy. `default` shows before a small inline script reads ?path= and swaps in the project/role
+// line (both say the same thing either way, so there's no flash of wrong content).
+export const thanksCopy = {
+  heading: 'Thanks — your message is in.',
+  default: 'I read every message myself and reply within 2 working days.',
+  project: 'I read every enquiry myself and will reply about your project within 2 working days.',
+  role: 'I read every message myself and will reply about the role within 2 working days.',
+} as const;

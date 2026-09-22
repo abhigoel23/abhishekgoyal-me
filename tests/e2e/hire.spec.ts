@@ -11,9 +11,9 @@ test('hire page links to the resume page, the PDF and email', async ({ page }) =
     'href',
     '/resume',
   );
-  await expect(page.getByRole('link', { name: /Email me about a role/ }).first()).toHaveAttribute(
+  await expect(page.getByRole('link', { name: /Request an interview/ }).first()).toHaveAttribute(
     'href',
-    /^mailto:/,
+    '/contact?path=role',
   );
 });
 

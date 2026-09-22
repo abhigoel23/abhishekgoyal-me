@@ -16,9 +16,9 @@ test('home page renders the hero, photo and case studies', async ({ page }) => {
   await expect(page.locator('#work a[href^="/work/"]')).toHaveCount(3);
 });
 
-test('the primary CTA opens an email until the M3 contact form exists', async ({ page }) => {
+test('the primary CTA opens the contact form', async ({ page }) => {
   await page.goto('/');
   await expect(
     page.locator('main').getByRole('link', { name: 'Start a project' }).first(),
-  ).toHaveAttribute('href', /^mailto:contact@abhishekgoyal\.me/);
+  ).toHaveAttribute('href', '/contact');
 });
