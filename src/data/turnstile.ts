@@ -1,7 +1,8 @@
 // Turnstile site keys are public. The key is picked by hostname in the browser, not at build time, so
 // the one build CI tests (on localhost) is the same build that deploys to production.
 
-// Cloudflare's test key: always passes, no UI. Paired with the test secret on staging and in CI.
+// Cloudflare's test key: a visible widget marked "Testing only" that always passes. Paired with the
+// test secret on staging and in CI.
 export const TEST_SITE_KEY = '1x00000000000000000000AA';
 
 // The production widget ("abhishekgoyal.me"), in Managed mode. Its allowed hostnames must match
