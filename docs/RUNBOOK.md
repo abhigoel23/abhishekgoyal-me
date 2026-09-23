@@ -7,16 +7,20 @@ pasted into chat, issues or commits.
 ## Is lead capture healthy?
 
 ```bash
-curl -s https://abhishekgoyal-me-staging.abhigoel23.workers.dev/api/health
+curl -s https://abhishekgoyal.me/api/health          # production
+curl -s https://abhishekgoyal-me-staging.abhigoel23.workers.dev/api/health   # staging
 ```
 
 That only proves the Worker and D1 are up. The daily cron does the deep checks (Google token + Sheet read,
 Telegram) and alerts by email and Telegram. To see where every lead stands:
 
 ```bash
-pnpm exec wrangler d1 execute DB --env staging --remote --command \
+pnpm exec wrangler d1 execute DB --remote --command \
   "SELECT ref_kind, step, status, count(*) FROM outbox_status GROUP BY 1, 2, 3"
 ```
+
+Add `--env staging` for staging. An `autoreply` step marked `skipped` is not a failure: a visitor gets
+at most one auto-reply per address per 24 hours.
 
 Steps still `failed` or `pending` after the next 03:30 UTC run have an alert with the reason.
 
@@ -139,3 +143,18 @@ A restore replaces the whole database, including leads that arrived after that t
 6. Decide whether it's personal data. If it is, keep it out of Telegram and GA, and update
    `src/pages/privacy.mdx` in the same PR.
 7. Extend `tests/lead/lead.spec.ts`, then run `pnpm test`, `pnpm test:lead` and `pnpm check`.
+
+## Test a live lead, then clear it
+
+Submit through `https://abhishekgoyal.me/?debug=1&internal=1` so the visit is tagged as internal traffic
+and the conversion goes to GA4 DebugView. Check delivery, then remove the rows:
+
+```bash
+pnpm exec wrangler d1 execute DB --remote --command \
+  "SELECT lead_id, created_at, email FROM leads ORDER BY created_at DESC LIMIT 5"
+pnpm exec wrangler d1 execute DB --remote --command \
+  "DELETE FROM outbox_status WHERE ref_id = '<lead id>'"
+pnpm exec wrangler d1 execute DB --remote --command "DELETE FROM leads WHERE lead_id = '<lead id>'"
+```
+
+Delete the matching row in the Sheet by hand: the service account can append but not edit rows.
