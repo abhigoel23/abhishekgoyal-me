@@ -73,11 +73,28 @@ Bookings follow the same path: Cal.com → `/api/booking` (HMAC-SHA256 signature
 
 ## Environments (ADR 006)
 
-| Environment | Worker                     | Bindings                                             | Who deploys                                 |
-| ----------- | -------------------------- | ---------------------------------------------------- | ------------------------------------------- |
-| local       | `wrangler dev`             | local D1 and queue; secrets from `.dev.vars`         | you                                         |
-| staging     | `abhishekgoyal-me-staging` | own D1, queue + DLQ, test Sheet, Turnstile test keys | each PR's CI run (version deployed to 100%) |
-| production  | `abhishekgoyal-me`         | added in M4                                          | CI on merge to `main`                       |
+| Environment | Worker                     | Bindings                                                                      | Who deploys                                 |
+| ----------- | -------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------- |
+| local       | `wrangler dev`             | local D1 and queue; secrets from `.dev.vars`                                  | you                                         |
+| staging     | `abhishekgoyal-me-staging` | own D1, queue + DLQ, test Sheet, Turnstile test keys                          | each PR's CI run (version deployed to 100%) |
+| production  | `abhishekgoyal-me`         | D1 `abhishekgoyal-me`, `leads` + `leads-dlq`, prod Sheet, real Turnstile keys | CI on merge to `main`                       |
 
 The Cloudflare adapter picks the environment at **build** time (`CLOUDFLARE_ENV=staging pnpm build`). Queue
 consumers and crons only run on a Worker's _deployed_ version, which is why PR previews deploy to staging.
+
+## Production (live since 23 September 2026)
+
+| Piece           | Value                                                                                |
+| --------------- | ------------------------------------------------------------------------------------ |
+| Site            | `https://abhishekgoyal.me` (Worker custom domain on the apex; `www` 301s to it)      |
+| Worker          | `abhishekgoyal-me`, also on `abhishekgoyal-me.abhigoel23.workers.dev` (noindex)      |
+| Database        | D1 `abhishekgoyal-me`, migrations applied by CI before each deploy                   |
+| Queues          | `leads`, dead letters to `leads-dlq`                                                 |
+| Cron            | 03:30 UTC daily: re-sync, 18-month purge, deep health check, alerts                  |
+| Sheet           | "abhishekgoyal.me leads", `Leads` and `Bookings` tabs                                |
+| Service account | `leads-writer-prod@abhishekgoyal-me.iam.gserviceaccount.com` (separate from staging) |
+| Analytics       | GA4 `G-PHG39RRGSZ` after consent, Cloudflare Web Analytics always                    |
+| Alerts          | email to `contact@abhishekgoyal.me` and Telegram, from the cron and the DLQ consumer |
+
+`/api/lead` returns 503 whenever `DB`, `LEAD_QUEUE`, `RATE_LIMITER` or `TURNSTILE_SECRET` is missing, so
+bindings can be added before the secrets that make the form live.

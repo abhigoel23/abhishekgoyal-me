@@ -23,11 +23,14 @@ pnpm dev          # http://localhost:4321
 
 ## Environments
 
-| Env        | Where                          | Notes                                |
-| ---------- | ------------------------------ | ------------------------------------ |
-| local      | `pnpm dev` / `pnpm preview`    | Secrets in `.dev.vars` (see example) |
-| preview    | Worker preview URL, one per PR | Posted as a PR comment, `noindex`    |
-| production | abhishekgoyal.me               | Deployed on merge to `main`          |
+| Env        | Where                          | Notes                                               |
+| ---------- | ------------------------------ | --------------------------------------------------- |
+| local      | `pnpm dev` / `pnpm preview`    | Secrets in `.dev.vars` (see example)                |
+| preview    | Worker preview URL, one per PR | Posted as a PR comment, `noindex`                   |
+| production | https://abhishekgoyal.me       | Deployed on merge to `main`; `www` 301s to the apex |
+
+Nightly (`.github/workflows/nightly.yml`) runs Lighthouse and a link check against production and opens
+one Issue labelled `nightly` if either fails.
 
 ## Deploy and roll back
 
