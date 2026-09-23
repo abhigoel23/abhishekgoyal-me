@@ -93,6 +93,29 @@ export function professionalServiceJsonLd(services: readonly { title: string; su
   };
 }
 
+export function blogPostingJsonLd(post: {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  tags: readonly string[];
+  image: string;
+  url: string;
+}) {
+  return {
+    '@type': 'BlogPosting',
+    headline: post.title,
+    description: post.description,
+    datePublished: post.pubDate.toISOString(),
+    dateModified: (post.updatedDate ?? post.pubDate).toISOString(),
+    author: { '@id': PERSON_ID },
+    image: post.image,
+    mainEntityOfPage: post.url,
+    keywords: post.tags.join(', '),
+    url: post.url,
+  };
+}
+
 /** One @graph with the site-wide entities plus any page-specific ones (BlogPosting, FAQPage… in later milestones). */
 export function jsonLdGraph(extra: Record<string, unknown>[] = []) {
   return {

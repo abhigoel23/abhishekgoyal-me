@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  blogPostingJsonLd,
   canonicalUrl,
   faqJsonLd,
   jsonLdGraph,
@@ -81,5 +82,41 @@ describe('services JSON-LD', () => {
     const service = professionalServiceJsonLd([{ title: 'MVP build', summary: 'Idea to store.' }]);
     expect(service.founder['@id']).toBe('https://abhishekgoyal.me/#person');
     expect(service.hasOfferCatalog.itemListElement[0].itemOffered.name).toBe('MVP build');
+  });
+});
+
+describe('blogPostingJsonLd', () => {
+  it('describes a post, falling back to pubDate when there is no update', () => {
+    const post = blogPostingJsonLd({
+      title: 'Offline-first sync, the hard parts',
+      description: 'Notes from building Pulse.',
+      pubDate: new Date('2026-01-15T00:00:00.000Z'),
+      tags: ['Android', 'Offline-first'],
+      image: 'https://abhishekgoyal.me/og/writing/pulse-sync.png',
+      url: 'https://abhishekgoyal.me/writing/pulse-sync',
+    });
+    expect(post).toMatchObject({
+      '@type': 'BlogPosting',
+      headline: 'Offline-first sync, the hard parts',
+      datePublished: '2026-01-15T00:00:00.000Z',
+      dateModified: '2026-01-15T00:00:00.000Z',
+      author: { '@id': 'https://abhishekgoyal.me/#person' },
+      keywords: 'Android, Offline-first',
+      mainEntityOfPage: 'https://abhishekgoyal.me/writing/pulse-sync',
+      url: 'https://abhishekgoyal.me/writing/pulse-sync',
+    });
+  });
+
+  it('uses updatedDate for dateModified when set', () => {
+    const post = blogPostingJsonLd({
+      title: 'Title',
+      description: 'Description.',
+      pubDate: new Date('2026-01-01T00:00:00.000Z'),
+      updatedDate: new Date('2026-02-01T00:00:00.000Z'),
+      tags: [],
+      image: 'https://abhishekgoyal.me/og/writing/title.png',
+      url: 'https://abhishekgoyal.me/writing/title',
+    });
+    expect(post.dateModified).toBe('2026-02-01T00:00:00.000Z');
   });
 });
