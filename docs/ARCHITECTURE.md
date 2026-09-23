@@ -53,8 +53,8 @@ flowchart LR
    window) and five pending outbox rows: `sheets`, `notify`, `autoreply`, `telegram`, `ga`. Only then does
    the visitor see success. A duplicate submit returns success without a new row.
 4. **Queue.** The lead ID is enqueued. If enqueueing fails the lead is still safe; the cron picks it up.
-5. **Consumer.** Runs each pending step and records `done`, `skipped` or `failed` with the error. Failures
-   retry at 1, 2, 4, 8… minutes (capped at 1 h); after 5 retries the message goes to the dead-letter queue,
+5. **Consumer.** Runs each pending step and records `done`, `skipped` with the reason, or `failed` with
+   the error. Failures retry at 1, 2, 4, 8… minutes (capped at 1 h); after 5 retries the message goes to the dead-letter queue,
    which alerts. Resend calls carry an `Idempotency-Key`, so a retried email sends once.
 6. **Daily cron** (03:30 UTC): re-runs steps pending or failed for over an hour, deletes leads and bookings
    older than 18 months from D1 **and** the Sheet, checks Google and Telegram credentials, and alerts on

@@ -4,7 +4,7 @@ import { autoReply, notify, sender, telegram } from '../../data/emails';
 import { budgetBands, timelines, workModes } from '../../data/lead';
 import type { Alert } from './alert';
 import type { LeadRow } from './leadStore';
-import type { StepResult } from './outbox';
+import { skip, type StepResult } from './outbox';
 import { leadFields, optionLabel } from './sheets';
 
 const RESEND_URL = 'https://api.resend.com/emails';
@@ -146,8 +146,11 @@ export function notificationSteps(env: NotifyEnv, now: () => Date = () => new Da
       return 'done';
     },
     autoreply: async (lead: LeadRow): Promise<StepResult> => {
-      if (!lead.email || isReservedEmail(lead.email)) return 'skipped';
-      if (env.DB && (await autoReplySentRecently(env.DB, lead, now()))) return 'skipped';
+      if (!lead.email) return skip('no_email');
+      if (isReservedEmail(lead.email)) return skip('reserved_email');
+      if (env.DB && (await autoReplySentRecently(env.DB, lead, now()))) {
+        return skip('rate_limited_24h');
+      }
       const key = requireSecret(env.RESEND_API_KEY, 'RESEND_API_KEY');
       let email = autoReplyEmail(lead);
       // Outside production, never email visitors: send the auto-reply to the inbox for review.

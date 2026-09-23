@@ -2,7 +2,7 @@
 // when the form carried a GA client id, which exists only if the visitor consented to analytics.
 // No PII: path, budget band and source only.
 import type { LeadRow } from './leadStore';
-import type { StepResult } from './outbox';
+import { skip, type StepResult } from './outbox';
 
 export type GaConfig = { measurementId: string; apiSecret: string; environment: string };
 
@@ -36,7 +36,7 @@ export async function sendGenerateLead(
   config: GaConfig,
   fetcher: typeof fetch = fetch,
 ): Promise<StepResult> {
-  if (!lead.ga_client_id) return 'skipped';
+  if (!lead.ga_client_id) return skip('no_analytics_consent');
   const production = config.environment === 'production';
   // Outside production, use the validation endpoint: GA checks the payload but records nothing, so
   // staging never pollutes the real reports.
