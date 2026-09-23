@@ -31,9 +31,13 @@ pnpm dev          # http://localhost:4321
 
 ## Deploy and roll back
 
-Merging to `main` builds and deploys through GitHub Actions (`.github/workflows/deploy.yml`). To roll back, run `pnpm wrangler rollback` or use Cloudflare dashboard → Workers → abhishekgoyal-me → Deployments.
+Merging to `main` builds and deploys through GitHub Actions (`.github/workflows/ci.yml`), applying D1 migrations first and rolling back automatically if the production smoke test fails. To roll back by hand, run `pnpm exec wrangler rollback` or use Cloudflare dashboard → Workers → abhishekgoyal-me → Deployments.
 
 ## Docs
 
+- [Architecture](docs/ARCHITECTURE.md): how a lead travels from the form to the Sheet, inbox and phone
+- [Runbook](docs/RUNBOOK.md): health checks, alerts, rotating secrets, deletion requests, rollbacks
+- [Analytics](docs/ANALYTICS.md): what is tracked, the consent model, and how to check it
+- [DNS](docs/DNS.md): the zone, the launch cutover and email records
 - [Architecture decisions](docs/decisions/)
 - `CLAUDE.md`: conventions for AI-assisted work in this repo
