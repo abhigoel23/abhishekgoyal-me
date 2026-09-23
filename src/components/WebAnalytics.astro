@@ -1,0 +1,18 @@
+---
+// Cloudflare Web Analytics: cookieless page counts, the backstop for everyone GA never sees (declined
+// consent, ad blockers). Installed in code, not by Cloudflare's automatic injection: that injects only
+// into HTML it serves itself, and this site's HTML comes from the Worker. Loaded only on the live
+// site, so previews and local runs never inflate the counts. The privacy page lists it.
+---
+
+<script>
+  import { ANALYTICS_HOSTS, CF_BEACON_TOKEN } from '../data/analytics';
+
+  if ((ANALYTICS_HOSTS as readonly string[]).includes(location.hostname)) {
+    const beacon = document.createElement('script');
+    beacon.defer = true;
+    beacon.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    beacon.dataset.cfBeacon = JSON.stringify({ token: CF_BEACON_TOKEN });
+    document.head.appendChild(beacon);
+  }
+</script>
