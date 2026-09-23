@@ -28,6 +28,12 @@ export const pages = {
       'Mobile engineering services: MVP builds, app rescue and modernisation, Kotlin Multiplatform migration and fractional mobile leadership.',
     ogTitle: 'MVP builds, app rescues, KMP migrations and fractional mobile leadership',
   },
+  '/writing': {
+    title: 'Writing',
+    description:
+      'Notes on mobile engineering from Abhishek Goyal: architecture, offline-first sync and lessons from shipping Android and iOS products.',
+    ogTitle: 'Notes on mobile engineering: architecture, offline-first sync and shipping',
+  },
   '/about': {
     title: 'About',
     description:

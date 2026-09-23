@@ -25,4 +25,28 @@ const work = defineCollection({
     }),
 });
 
-export const collections = { work };
+// Blog posts. Drafts are excluded from production builds (see src/lib/posts.ts).
+const writing = defineCollection({
+  loader: glob({ pattern: '*.mdx', base: './src/content/writing' }),
+  schema: ({ image }) =>
+    z
+      .object({
+        title: z.string(),
+        /** Used for cards and the meta description. */
+        description: z.string(),
+        pubDate: z.coerce.date(),
+        updatedDate: z.coerce.date().optional(),
+        tags: z.array(z.string()).default([]),
+        draft: z.boolean().default(false),
+        heroImage: image().optional(),
+        heroAlt: z.string().optional(),
+        /** Only set when the post first ran elsewhere. */
+        canonicalUrl: z.url().optional(),
+      })
+      .refine((data) => !data.heroImage || !!data.heroAlt, {
+        message: 'heroAlt is required when heroImage is set',
+        path: ['heroAlt'],
+      }),
+});
+
+export const collections = { work, writing };

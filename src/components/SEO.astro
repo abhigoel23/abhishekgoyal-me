@@ -1,7 +1,14 @@
 ---
 // Every page's search and social metadata. Used through Base.astro; data comes from profile.ts.
 import { profile } from '../data/profile';
-import { canonicalUrl, jsonLdGraph, ogImagePath, pageTitle, serializeJsonLd } from '../lib/seo';
+import {
+  canonicalUrl,
+  jsonLdGraph,
+  ogImagePath,
+  pageTitle,
+  serializeJsonLd,
+  SITE_URL,
+} from '../lib/seo';
 
 export type Props = {
   title: string;
@@ -12,12 +19,23 @@ export type Props = {
   type?: 'website' | 'article' | 'profile';
   /** Page-specific JSON-LD nodes, added to the site-wide WebSite + Person graph. */
   jsonLd?: Record<string, unknown>[];
+  /** Absolute URL this page's canonical should point to, e.g. where a post first ran. Defaults to this path. */
+  canonical?: string;
 };
 
-const { title, description, noindex = false, image, type = 'website', jsonLd = [] } = Astro.props;
+const {
+  title,
+  description,
+  noindex = false,
+  image,
+  type = 'website',
+  jsonLd = [],
+  canonical: canonicalOverride,
+} = Astro.props;
 const fullTitle = pageTitle(title);
-const canonical = canonicalUrl(Astro.url.pathname);
-const imageUrl = new URL(image ?? ogImagePath(Astro.url.pathname), canonical).href;
+const canonical = canonicalOverride ?? canonicalUrl(Astro.url.pathname);
+// Resolved against this site, not the override: a cross-posted post's canonical is another domain.
+const imageUrl = new URL(image ?? ogImagePath(Astro.url.pathname), SITE_URL).href;
 ---
 
 <title>{fullTitle}</title>
