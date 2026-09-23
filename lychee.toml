@@ -1,0 +1,14 @@
+# Link check for the nightly run (lychee). Checks every link on the live site, internal and external.
+max_concurrency = 4
+max_retries = 2
+timeout = 20
+# Some sites answer bots with 403/429 however the link is fine in a browser.
+accept = ["200", "206", "429"]
+exclude = [
+  # LinkedIn answers crawlers with HTTP 999.
+  "^https://(www\\.)?linkedin\\.com/",
+  # Play Store rate-limits repeated automated requests.
+  "^https://play\\.google\\.com/",
+]
+# mailto: links can't be verified without sending mail.
+exclude_mail = true

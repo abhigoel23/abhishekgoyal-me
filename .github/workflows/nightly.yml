@@ -1,0 +1,99 @@
+name: Nightly
+
+# Watches the live site rather than a build: Lighthouse on every page in the sitemap, and a link check
+# over the whole site. A failure opens (or updates) one Issue labelled `nightly`; a green run closes it.
+on:
+  schedule:
+    # 02:00 UTC = 07:30 IST, so a failure is waiting at the start of the day.
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: nightly
+  cancel-in-progress: false
+
+jobs:
+  lighthouse:
+    name: lighthouse
+    if: vars.PRODUCTION_URL != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with: { node-version-file: .nvmrc, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      # All four categories must be >= 95 here (LIGHTHOUSE_GATE_ALL), unlike on a PR.
+      - run: pnpm lighthouse
+        env:
+          BASE_URL: ${{ vars.PRODUCTION_URL }}
+          LIGHTHOUSE_GATE_ALL: '1'
+
+  links:
+    name: links
+    if: vars.PRODUCTION_URL != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Link check
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --config lychee.toml --no-progress ${{ vars.PRODUCTION_URL }} --recursive
+          fail: true
+          output: lychee-report.md
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with: { name: lychee-report, path: lychee-report.md, retention-days: 7 }
+
+  report:
+    name: report
+    needs: [lighthouse, links]
+    if: always() && vars.PRODUCTION_URL != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        env:
+          LIGHTHOUSE: ${{ needs.lighthouse.result }}
+          LINKS: ${{ needs.links.result }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const failed = [
+              ['Lighthouse', process.env.LIGHTHOUSE],
+              ['Link check', process.env.LINKS],
+            ].filter(([, result]) => result === 'failure');
+            const run = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const title = 'Nightly check failing on production';
+            const existing = (
+              await github.rest.issues.listForRepo({ owner, repo, state: 'open', labels: 'nightly' })
+            ).data.find((issue) => issue.title === title);
+
+            if (failed.length === 0) {
+              if (existing) {
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: existing.number,
+                  body: `Green again: [run](${run}).`,
+                });
+                await github.rest.issues.update({ owner, repo, issue_number: existing.number, state: 'closed' });
+              }
+              return;
+            }
+
+            const body = [
+              `Failing: **${failed.map(([name]) => name).join(', ')}**.`,
+              '',
+              `Run: ${run}`,
+              '',
+              'Lighthouse gates all four categories at 95 here. The link check follows every link on the live site; see the `lychee-report` artifact on a failed run.',
+            ].join('\n');
+
+            if (existing) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body });
+            } else {
+              await github.rest.issues.create({ owner, repo, title, body, labels: ['nightly'] });
+            }
