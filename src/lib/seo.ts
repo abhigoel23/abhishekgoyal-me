@@ -128,3 +128,18 @@ export function jsonLdGraph(extra: Record<string, unknown>[] = []) {
 export function serializeJsonLd(data: unknown): string {
   return JSON.stringify(data).replace(/</g, '\\u003c');
 }
+
+/**
+ * Makes root-relative URLs in rendered HTML absolute (href, src and every srcset candidate), for HTML
+ * shown off-site such as RSS content: a feed reader would resolve "/work" against its own origin.
+ */
+export function absoluteUrls(html: string): string {
+  const abs = (url: string) =>
+    url.startsWith('/') && !url.startsWith('//') ? SITE_URL + url : url;
+  return html
+    .replace(/\b(href|src)="([^"]*)"/g, (_, attr: string, url: string) => `${attr}="${abs(url)}"`)
+    .replace(/\bsrcset="([^"]*)"/g, (_, set: string) => {
+      const candidates = set.split(',').map((c) => c.trim().replace(/^\S+/, abs));
+      return `srcset="${candidates.join(', ')}"`;
+    });
+}

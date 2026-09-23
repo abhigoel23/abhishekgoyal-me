@@ -41,6 +41,12 @@ const imageUrl = new URL(image ?? ogImagePath(Astro.url.pathname), SITE_URL).hre
 <title>{fullTitle}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${profile.name} — Writing`}
+  href={`${SITE_URL}/rss.xml`}
+/>
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
 <meta property="og:type" content={type} />
