@@ -1,0 +1,4 @@
+# The old CloudFront site was one page; its only server-visible URL was /index.html (its other links
+# were #anchors). Workers Assets already answers /index.html with a 307; make it permanent so the
+# old URL passes its ranking to the new home page.
+/index.html / 301
