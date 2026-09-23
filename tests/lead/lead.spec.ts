@@ -8,8 +8,22 @@ const ORIGIN = `http://localhost:${PORT}`;
 let ipCounter = 0;
 const nextIp = () => `203.0.113.${++ipCounter}`;
 
-/** Row count from the local e2e D1. */
+/**
+ * Row count from the local e2e D1. The Worker's queue consumer may still be writing outbox rows to the
+ * same SQLite file, so a read can hit SQLITE_BUSY; retry a few times before failing.
+ */
 function count(sql: string): number {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      return queryCount(sql);
+    } catch (error) {
+      if (attempt >= 5 || !String(error).includes('SQLITE_BUSY')) throw error;
+      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 250 * attempt);
+    }
+  }
+}
+
+function queryCount(sql: string): number {
   const out = execFileSync(
     'pnpm',
     [
