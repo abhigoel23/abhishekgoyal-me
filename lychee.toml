@@ -10,5 +10,5 @@ exclude = [
   # Play Store rate-limits repeated automated requests.
   "^https://play\\.google\\.com/",
 ]
-# mailto: links can't be verified without sending mail.
-exclude_mail = true
+# mailto: links can't be verified without sending mail (lychee skips them unless asked).
+include_mail = false
