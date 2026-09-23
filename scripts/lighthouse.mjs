@@ -8,7 +8,12 @@ import { appendFile } from 'node:fs/promises';
 import { chromium } from '@playwright/test';
 import lighthouse from 'lighthouse';
 
-const GATED = { accessibility: 0.95, seo: 0.95 };
+// On PRs only accessibility and SEO fail the build: performance and best practices move with the
+// runner's load. The nightly run against production gates all four (LIGHTHOUSE_GATE_ALL=1), where a
+// dip opens an Issue instead of blocking a merge.
+const GATED = process.env.LIGHTHOUSE_GATE_ALL
+  ? { accessibility: 0.95, seo: 0.95, 'best-practices': 0.95, performance: 0.95 }
+  : { accessibility: 0.95, seo: 0.95 };
 const CATEGORIES = ['accessibility', 'seo', 'best-practices', 'performance'];
 const PORT = 8788;
 const DEBUG_PORT = 9223;
