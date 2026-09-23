@@ -9,8 +9,18 @@ type Props = {
   href?: string;
   /** Match the page outline: h2 when cards sit directly under the page h1. */
   headingLevel?: 'h2' | 'h3';
+  /** Footer link text, shown only when `href` is set. */
+  footerLabel?: string;
 };
-const { eyebrow, title, summary, tags = [], href, headingLevel = 'h3' } = Astro.props;
+const {
+  eyebrow,
+  title,
+  summary,
+  tags = [],
+  href,
+  headingLevel = 'h3',
+  footerLabel = 'Read the case study →',
+} = Astro.props;
 const Heading = headingLevel;
 ---
 
@@ -40,7 +50,7 @@ const Heading = headingLevel;
   )}
   {href && (
     <span aria-hidden="true" class="mt-5 text-sm font-medium text-accent">
-      Read the case study →
+      {footerLabel}
     </span>
   )}
 </article>

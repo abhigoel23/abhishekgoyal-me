@@ -9,11 +9,14 @@ import Section from '../components/Section.astro';
 import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
 import { services } from '../data/services';
+import { writingCopy } from '../data/writing';
 import Base from '../layouts/Base.astro';
+import { formatPostDate, getPosts } from '../lib/posts';
 
 const featured = (await getCollection('work', ({ data }) => data.featured)).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const latestPosts = (await getPosts()).slice(0, 3);
 ---
 
 <Base {...pages['/']}>
@@ -70,6 +73,29 @@ const featured = (await getCollection('work', ({ data }) => data.featured)).sort
       </a>
     </p>
   </Section>
+
+  {latestPosts.length > 0 && (
+    <Section id="writing" eyebrow={writingCopy.home.eyebrow} title={writingCopy.home.title}>
+      <ul class="grid gap-6 md:grid-cols-3">
+        {latestPosts.map((post) => (
+          <li>
+            <Card
+              eyebrow={formatPostDate(post.data.pubDate)}
+              title={post.data.title}
+              summary={post.data.description}
+              href={`/writing/${post.id}`}
+              footerLabel={writingCopy.home.cardLink}
+            />
+          </li>
+        ))}
+      </ul>
+      <p class="mt-8">
+        <a class="link font-medium" href={writingCopy.home.link.href}>
+          {writingCopy.home.link.label}
+        </a>
+      </p>
+    </Section>
+  )}
 
   <Container class="py-16 sm:py-24">
     <div class="rounded-brand border border-line px-6 py-12 text-center sm:px-12">

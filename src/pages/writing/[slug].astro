@@ -25,7 +25,7 @@ const d = entry.data;
 const pageUrl = canonicalUrl(`/writing/${entry.id}`);
 // Only differs from pageUrl when the post first ran elsewhere.
 const canonical = d.canonicalUrl ?? pageUrl;
-const imageUrl = new URL(ogImagePath('/writing'), SITE_URL).href;
+const imageUrl = new URL(ogImagePath(`/writing/${entry.id}`), SITE_URL).href;
 const minutes = readingTime(entry.body ?? '');
 
 const blogJsonLd = blogPostingJsonLd({

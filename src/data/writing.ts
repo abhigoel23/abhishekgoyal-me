@@ -7,4 +7,11 @@ export const writingCopy = {
     body: "I'm writing up what I learned building HelperBook and Pulse. Until then, the case studies cover how they were built.",
     link: { label: 'Read the case studies →', href: '/work' },
   },
+  // The home page "Latest writing" section (src/pages/index.astro). Rendered only once there are posts.
+  home: {
+    eyebrow: 'Writing',
+    title: 'Latest writing',
+    cardLink: 'Read the post →',
+    link: { label: 'All writing →', href: '/writing' },
+  },
 } as const;

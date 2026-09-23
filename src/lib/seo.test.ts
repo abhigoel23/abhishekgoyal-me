@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  absoluteUrls,
   blogPostingJsonLd,
   canonicalUrl,
   faqJsonLd,
@@ -118,5 +119,21 @@ describe('blogPostingJsonLd', () => {
       url: 'https://abhishekgoyal.me/writing/title',
     });
     expect(post.dateModified).toBe('2026-02-01T00:00:00.000Z');
+  });
+});
+
+describe('absoluteUrls', () => {
+  it('makes root-relative href, src and srcset URLs absolute', () => {
+    const html =
+      '<a href="/work/pulse">x</a><img src="/_astro/a.webp" srcset="/_astro/a.webp 480w, /_astro/b.webp 768w">';
+    expect(absoluteUrls(html)).toBe(
+      '<a href="https://abhishekgoyal.me/work/pulse">x</a><img src="https://abhishekgoyal.me/_astro/a.webp" srcset="https://abhishekgoyal.me/_astro/a.webp 480w, https://abhishekgoyal.me/_astro/b.webp 768w">',
+    );
+  });
+
+  it('leaves absolute, protocol-relative, anchor and mailto URLs alone', () => {
+    const html =
+      '<a href="https://x.dev/">a</a><a href="//cdn.x/y">b</a><a href="#top">c</a><a href="mailto:a@b.c">d</a>';
+    expect(absoluteUrls(html)).toBe(html);
   });
 });

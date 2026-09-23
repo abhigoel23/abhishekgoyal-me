@@ -7,6 +7,7 @@ import { getCollection } from 'astro:content';
 import satori from 'satori';
 import { pages } from '../../data/pages';
 import { profile } from '../../data/profile';
+import { getPosts } from '../../lib/posts';
 import { ogImagePath } from '../../lib/seo';
 import { light } from '../../lib/theme';
 
@@ -23,7 +24,11 @@ export const getStaticPaths = (async () => {
     params: { slug: slug(`/work/${entry.id}`) },
     props: { title: entry.data.title },
   }));
-  return [...staticPages, ...caseStudies];
+  const posts = (await getPosts()).map((entry) => ({
+    params: { slug: slug(`/writing/${entry.id}`) },
+    props: { title: entry.data.title },
+  }));
+  return [...staticPages, ...caseStudies, ...posts];
 }) satisfies GetStaticPaths;
 
 // Satori takes a React-like element tree; this keeps it readable without JSX.
