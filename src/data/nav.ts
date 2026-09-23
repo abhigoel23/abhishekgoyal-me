@@ -1,8 +1,8 @@
-// Primary navigation. Routes land in M2; the header renders whatever is listed here.
+// Primary navigation: the header and footer render whatever is listed here, so every entry must be a
+// route that exists. `/writing` returns with the blog in M5.
 export const nav = [
   { href: '/work', label: 'Work' },
   { href: '/services', label: 'Services' },
-  { href: '/writing', label: 'Writing' },
   { href: '/about', label: 'About' },
 ] as const;
 
