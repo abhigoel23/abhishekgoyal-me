@@ -40,10 +40,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      # lychee has no crawler: it extracts links from each input it is given. Feeding it every page in
+      # the sitemap covers the whole site, and keeps the check honest if a page ever drops out.
+      - id: pages
+        name: List pages from the sitemap
+        run: |
+          urls=$(curl -sS "${{ vars.PRODUCTION_URL }}/sitemap-0.xml" \
+            | grep -oE '<loc>[^<]+</loc>' | sed -E 's|</?loc>||g' | tr '\n' ' ')
+          test -n "$urls" || { echo "::error::No URLs found in the sitemap"; exit 1; }
+          echo "urls=$urls" >> "$GITHUB_OUTPUT"
+          echo "Checking: $urls"
       - name: Link check
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config lychee.toml --no-progress ${{ vars.PRODUCTION_URL }} --recursive
+          args: --config lychee.toml --no-progress ${{ steps.pages.outputs.urls }}
           fail: true
           output: lychee-report.md
       - if: failure()
