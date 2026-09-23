@@ -31,9 +31,11 @@ export function gaClientId(cookie = typeof document === 'undefined' ? '' : docum
 }
 
 /**
- * The GA4 session id from the `_ga_<stream>` cookie ("GS1.1.<session id>.…"), or undefined when GA
- * hasn't run. Sent with the lead so the server-side generate_lead joins the visitor's session, and
- * its source, instead of landing as "(not set)".
+ * The GA4 session id from the `_ga_<stream>` cookie, or undefined when GA hasn't run. Sent with the
+ * lead so the server-side generate_lead joins the visitor's session, and its source, instead of
+ * landing as "(not set)". Two cookie formats are in the wild:
+ *   GS1.1.1790171878.1.0.1790171878.0.0.0          (dot-separated)
+ *   GS2.1.s1790172090$o1$g0$t1790172090$j60$l0$h0  (current: `s` prefix, $-separated)
  */
 export function gaSessionId(
   measurementId: string,
@@ -41,6 +43,8 @@ export function gaSessionId(
 ) {
   const stream = measurementId.replace(/^G-/, '');
   if (!/^[A-Z0-9]+$/.test(stream)) return undefined;
-  const match = new RegExp(`(?:^|;\\s*)_ga_${stream}=GS\\d\\.\\d\\.(\\d{1,20})\\.`).exec(cookie);
+  const match = new RegExp(`(?:^|;\\s*)_ga_${stream}=GS\\d\\.\\d\\.s?(\\d{1,20})(?:[.$]|;|$)`).exec(
+    cookie,
+  );
   return match?.[1];
 }
