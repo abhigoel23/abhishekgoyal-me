@@ -11,7 +11,7 @@ const posts = await getPosts();
 const minutes = posts.map((post) => readingTime(post.body ?? ''));
 ---
 
-<Base {...pages['/writing']} noindex={posts.length === 0}>
+<Base {...pages['/writing']}>
   <Container class="py-16 sm:py-24">
     <p class="eyebrow mb-3">Writing</p>
     <h1 class="text-h1 max-w-3xl">Notes from building mobile products</h1>
