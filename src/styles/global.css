@@ -137,4 +137,34 @@
     text-decoration: underline;
     text-underline-offset: 0.2em;
   }
+  & :not(pre) > code {
+    font-family: var(--brand-mono);
+    font-size: 0.9em;
+    padding: 0.1em 0.3em;
+    border-radius: var(--brand-radius);
+    background-color: var(--surface);
+  }
+  & pre {
+    font-family: var(--brand-mono);
+    font-size: 0.875rem;
+    line-height: 1.6;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--brand-radius);
+  }
+}
+
+/* Shiki code blocks: light colours are inline; use the dark theme's with the site's dark mode. */
+html[data-theme='dark'] .astro-code,
+html[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme='light']) .astro-code,
+  html:not([data-theme='light']) .astro-code span {
+    color: var(--shiki-dark) !important;
+    background-color: var(--shiki-dark-bg) !important;
+  }
 }
