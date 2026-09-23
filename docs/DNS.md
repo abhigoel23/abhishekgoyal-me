@@ -32,6 +32,17 @@ It replaced the M0.5 rule "apex to www", which pointed at the old CloudFront sit
 - The old CloudFront site's only server-visible URL was `/index.html`; `public/_redirects` sends it to `/`
   with a 301. Its other links were `#anchors`, which never reach a server.
 
+## Search visibility and analytics (M4, #82)
+
+- **Google Search Console**: Domain property for `abhishekgoyal.me`, verified by TXT record, with
+  `sitemap-index.xml` submitted. The older `google-site-verification=SiKHHj…` TXT belongs to Google
+  Workspace; Search Console adds its own, and both stay.
+- **Bing Webmaster Tools**: imported from Search Console, same sitemap.
+- **Crawler Hints** (Caching → Configuration): on, so Bing and Yandex hear about changes via IndexNow.
+- **Cloudflare Web Analytics**: set to _Enable with JS Snippet installation_, because Cloudflare's
+  automatic injection only touches HTML it serves itself and this site's HTML comes from the Worker.
+  The beacon lives in `src/components/WebAnalytics.astro`; the token is public.
+
 ## Launch cutover (M4, #81)
 
 1. [ ] Cloudflare → **Workers & Pages → abhishekgoyal-me → Settings → Domains & Routes → Add → Custom

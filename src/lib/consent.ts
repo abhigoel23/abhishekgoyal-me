@@ -1,6 +1,6 @@
 // Pure consent helpers for the consent bar (src/components/ConsentBar.astro), kept out of the DOM so
 // they can be unit tested.
-import { CONSENT_MAX_AGE_DAYS, GA_HOSTS } from '../data/analytics';
+import { ANALYTICS_HOSTS, CONSENT_MAX_AGE_DAYS } from '../data/analytics';
 
 export type ConsentChoice = 'granted' | 'denied';
 
@@ -33,7 +33,7 @@ export function writeConsent(choice: ConsentChoice, now: number): string {
 
 /** gtag loads only with consent, and only on the production hosts (never previews or localhost). */
 export function shouldLoadGa(hostname: string, choice: ConsentChoice | null): boolean {
-  return choice === 'granted' && (GA_HOSTS as readonly string[]).includes(hostname);
+  return choice === 'granted' && (ANALYTICS_HOSTS as readonly string[]).includes(hostname);
 }
 
 /**

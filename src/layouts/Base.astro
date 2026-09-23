@@ -7,6 +7,7 @@ import ConsentBar from '../components/ConsentBar.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import SEO, { type Props as SeoProps } from '../components/SEO.astro';
+import WebAnalytics from '../components/WebAnalytics.astro';
 import { dark, fonts, light, themeCss } from '../lib/theme';
 
 type Props = SeoProps;
@@ -34,6 +35,7 @@ type Props = SeoProps;
     <style is:global set:html={themeCss()}></style>
     <Attribution />
     <Analytics />
+    <WebAnalytics />
     <Font cssVariable={fonts.display} preload />
     <Font cssVariable={fonts.body} preload />
     <Font cssVariable={fonts.mono} />
