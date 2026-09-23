@@ -36,10 +36,21 @@ describe('gaClientId', () => {
 });
 
 describe('gaSessionId', () => {
-  it('reads the session id from the stream cookie', () => {
+  it('reads the session id from the dot-separated cookie', () => {
     const cookie =
       'theme=dark; _ga=GA1.1.1.2; _ga_PHG39RRGSZ=GS1.1.1790098349.1.0.1790098349.0.0.0';
     expect(gaSessionId('G-PHG39RRGSZ', cookie)).toBe('1790098349');
+  });
+
+  // The format GA4 actually sets today. The first launch-gate lead stored no session id because of it.
+  it('reads the session id from the $-separated cookie', () => {
+    const cookie =
+      '_ga_PHG39RRGSZ=GS2.1.s1790172090$o1$g0$t1790172090$j60$l0$h0; _ga=GA1.1.538898007.1790172091';
+    expect(gaSessionId('G-PHG39RRGSZ', cookie)).toBe('1790172090');
+  });
+
+  it('reads it as the last cookie in the string', () => {
+    expect(gaSessionId('G-PHG39RRGSZ', 'x=1; _ga_PHG39RRGSZ=GS2.1.s1790172090')).toBe('1790172090');
   });
 
   it('is undefined without GA, for another stream, or for an odd id', () => {
@@ -97,6 +108,26 @@ describe('generateLeadEvent', () => {
 });
 
 describe('sendGenerateLead', () => {
+  it('mirrors a debug lead to the validation endpoint in production', async () => {
+    const fetcher = vi.fn<typeof fetch>(async (input) =>
+      String(input).includes('/debug/mp/collect')
+        ? new Response(JSON.stringify({ validationMessages: [] }))
+        : new Response(null, { status: 204 }),
+    );
+    expect(await sendGenerateLead(tagged, config, fetcher)).toBe('done');
+    const urls = fetcher.mock.calls.map(([input]) => String(input));
+    expect(urls.filter((u) => u.includes('/debug/mp/collect'))).toHaveLength(1);
+    expect(urls.filter((u) => !u.includes('/debug/'))).toHaveLength(1);
+  });
+
+  it('still succeeds when the debug mirror fails', async () => {
+    const fetcher = vi.fn<typeof fetch>(async (input) => {
+      if (String(input).includes('/debug/mp/collect')) throw new Error('offline');
+      return new Response(null, { status: 204 });
+    });
+    expect(await sendGenerateLead(tagged, config, fetcher)).toBe('done');
+  });
+
   it('skips leads without a client id (no analytics consent)', async () => {
     const fetcher = vi.fn<typeof fetch>();
     expect(await sendGenerateLead({ ...lead, ga_client_id: null }, config, fetcher)).toBe(

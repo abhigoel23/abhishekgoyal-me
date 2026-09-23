@@ -47,7 +47,8 @@ export async function sendGenerateLead(
     measurement_id: config.measurementId,
     api_secret: config.apiSecret,
   })}`;
-  const res = await fetcher(url, { method: 'POST', body: JSON.stringify(generateLeadEvent(lead)) });
+  const body = JSON.stringify(generateLeadEvent(lead));
+  const res = await fetcher(url, { method: 'POST', body });
   if (!res.ok) throw new Error(`GA ${res.status}`);
   if (!production) {
     const { validationMessages = [] } = (await res.json()) as {
@@ -55,6 +56,27 @@ export async function sendGenerateLead(
     };
     if (validationMessages.length) {
       throw new Error(`GA validation: ${validationMessages.map((m) => m.description).join('; ')}`);
+    }
+    return 'done';
+  }
+  // The live endpoint answers 204 whatever it thinks of the payload, so a debug lead is mirrored to
+  // the validation endpoint: a rejected event then shows up in the Worker logs instead of vanishing.
+  if (lead.ga_debug === '1') {
+    try {
+      const check = await fetcher(url.replace('/mp/collect', '/debug/mp/collect'), {
+        method: 'POST',
+        body,
+      });
+      const { validationMessages = [] } = (await check.json()) as {
+        validationMessages?: { description: string }[];
+      };
+      console.log('GA debug lead', {
+        lead: lead.lead_id,
+        session: lead.ga_session_id ?? 'missing',
+        validationMessages,
+      });
+    } catch (error) {
+      console.log('GA debug check failed', { lead: lead.lead_id, error: String(error) });
     }
   }
   return 'done';
