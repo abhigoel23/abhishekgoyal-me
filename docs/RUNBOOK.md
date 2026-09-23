@@ -19,8 +19,20 @@ pnpm exec wrangler d1 execute DB --remote --command \
   "SELECT ref_kind, step, status, count(*) FROM outbox_status GROUP BY 1, 2, 3"
 ```
 
-Add `--env staging` for staging. An `autoreply` step marked `skipped` is not a failure: a visitor gets
-at most one auto-reply per address per 24 hours.
+Add `--env staging` for staging. A `skipped` step is not a failure: it was left out on purpose, and
+`last_error` says why:
+
+| `last_error`           | Step        | Meaning                                                                 |
+| ---------------------- | ----------- | ----------------------------------------------------------------------- |
+| `rate_limited_24h`     | `autoreply` | This address already got an auto-reply in the last 24 hours (the limit) |
+| `reserved_email`       | `autoreply` | A test address such as `@example.com`, which is never emailed           |
+| `no_email`             | `autoreply` | The record has no email address                                         |
+| `no_analytics_consent` | `ga`        | The visitor didn't accept analytics, so there is no GA client id        |
+
+```bash
+pnpm exec wrangler d1 execute DB --remote --command \
+  "SELECT step, last_error, count(*) FROM outbox_status WHERE status = 'skipped' GROUP BY 1, 2"
+```
 
 Steps still `failed` or `pending` after the next 03:30 UTC run have an alert with the reason.
 

@@ -130,9 +130,9 @@ describe('sendGenerateLead', () => {
 
   it('skips leads without a client id (no analytics consent)', async () => {
     const fetcher = vi.fn<typeof fetch>();
-    expect(await sendGenerateLead({ ...lead, ga_client_id: null }, config, fetcher)).toBe(
-      'skipped',
-    );
+    expect(await sendGenerateLead({ ...lead, ga_client_id: null }, config, fetcher)).toEqual({
+      skipped: 'no_analytics_consent',
+    });
     expect(fetcher).not.toHaveBeenCalled();
   });
 

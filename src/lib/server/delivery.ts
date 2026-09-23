@@ -11,7 +11,7 @@ import {
 import { sendGenerateLead } from './ga';
 import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
 import { alertText, notificationSteps, sendEmail, sendTelegram } from './notifications';
-import { deliverLead, runSteps, type StepHandlers } from './outbox';
+import { deliverLead, runSteps, skip, type StepHandlers } from './outbox';
 import { appendBooking, appendLead } from './sheets';
 
 export type DeliveryMessage = { kind: 'lead' | 'booking'; id: string };
@@ -37,7 +37,7 @@ export function leadHandlers(env: Env): StepHandlers {
     ...notificationSteps(env),
     ga: async (lead) => {
       // No client id means no analytics consent: nothing to send.
-      if (!lead.ga_client_id) return 'skipped';
+      if (!lead.ga_client_id) return skip('no_analytics_consent');
       if (!env.GA_MEASUREMENT_ID || !env.GA_MP_API_SECRET) {
         throw new Error('GA not configured (GA_MEASUREMENT_ID, GA_MP_API_SECRET)');
       }

@@ -101,7 +101,19 @@ describe('sendEmail', () => {
 describe('notificationSteps.autoreply', () => {
   it('skips reserved test addresses without sending', async () => {
     const steps = notificationSteps({ ENVIRONMENT: 'production', RESEND_API_KEY: 'k' } as never);
-    expect(await steps.autoreply({ ...base, email: 'bot@example.com' })).toBe('skipped');
+    expect(await steps.autoreply({ ...base, email: 'bot@example.com' })).toEqual({
+      skipped: 'reserved_email',
+    });
+  });
+
+  it('skips an address that already got an auto-reply in the last 24 hours', async () => {
+    const DB = { prepare: () => ({ bind: () => ({ first: async () => ({ 1: 1 }) }) }) };
+    const steps = notificationSteps({
+      ENVIRONMENT: 'production',
+      RESEND_API_KEY: 'k',
+      DB,
+    } as never);
+    expect(await steps.autoreply(base)).toEqual({ skipped: 'rate_limited_24h' });
   });
 
   it('outside production, sends the auto-reply to the inbox instead of the visitor', async () => {

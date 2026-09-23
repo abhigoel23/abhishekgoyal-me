@@ -7,7 +7,17 @@ import { getLead, LEAD_STEPS, type LeadRow } from './leadStore';
 
 export type RefKind = 'lead' | 'booking';
 export type LeadStep = (typeof LEAD_STEPS)[number];
-export type StepResult = 'done' | 'skipped';
+/**
+ * Why a step was skipped on purpose. Stored in `last_error`, so an expected skip (such as the 24-hour
+ * auto-reply limit) doesn't look like a fault. docs/RUNBOOK.md explains each one.
+ */
+export type SkipReason =
+  | 'rate_limited_24h' // this address already got the email in the last 24 hours
+  | 'reserved_email' // an RFC 2606 test address such as @example.com: never emailed
+  | 'no_email'
+  | 'no_analytics_consent'; // no GA client id: the visitor didn't accept analytics
+export type StepResult = 'done' | { skipped: SkipReason };
+export const skip = (reason: SkipReason): StepResult => ({ skipped: reason });
 export type Handlers<S extends string, R> = Partial<Record<S, (record: R) => Promise<StepResult>>>;
 export type StepHandlers = Handlers<LeadStep, LeadRow>;
 
@@ -38,8 +48,9 @@ export async function runSteps<S extends string, R>(
     const handler = handlers[step];
     if (!open.has(step) || !handler) continue;
     try {
-      const status = await handler(record);
-      await mark(db, kind, refId, step, status, null, now());
+      const result = await handler(record);
+      if (result === 'done') await mark(db, kind, refId, step, 'done', null, now());
+      else await mark(db, kind, refId, step, 'skipped', result.skipped, now());
     } catch (error) {
       failed.push(step);
       await mark(db, kind, refId, step, 'failed', String(error).slice(0, 500), now());
@@ -62,8 +73,8 @@ async function mark(
   kind: RefKind,
   refId: string,
   step: string,
-  status: StepResult | 'failed',
-  error: string | null,
+  status: 'done' | 'skipped' | 'failed',
+  detail: string | null, // the error, or the skip reason
   at: Date,
 ) {
   await db
@@ -71,7 +82,7 @@ async function mark(
       `UPDATE outbox_status SET status = ?, attempts = attempts + 1, last_error = ?, updated_at = ?
        WHERE ref_kind = ? AND ref_id = ? AND step = ?`,
     )
-    .bind(status, error, at.toISOString(), kind, refId, step)
+    .bind(status, detail, at.toISOString(), kind, refId, step)
     .run();
 }
 
