@@ -1,12 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { CONSENT_MAX_AGE_DAYS } from '../data/analytics';
-import {
-  gaCookieNames,
-  internalFromQuery,
-  readConsent,
-  shouldLoadGa,
-  writeConsent,
-} from './consent';
+import { flagFromQuery, gaCookieNames, readConsent, shouldLoadGa, writeConsent } from './consent';
 
 const now = Date.UTC(2026, 8, 22);
 const DAY = 24 * 60 * 60 * 1000;
@@ -50,12 +44,18 @@ describe('shouldLoadGa', () => {
   ])('never loads on %s', (host) => expect(shouldLoadGa(host, 'granted')).toBe(false));
 });
 
-describe('internalFromQuery', () => {
-  it('reads the internal flag', () => {
-    expect(internalFromQuery('?internal=1')).toBe(true);
-    expect(internalFromQuery('?utm_source=x&internal=0')).toBe(false);
-    expect(internalFromQuery('?internal=yes')).toBeNull();
-    expect(internalFromQuery('')).toBeNull();
+describe('flagFromQuery', () => {
+  it('reads the internal and debug flags', () => {
+    expect(flagFromQuery('?internal=1', 'internal')).toBe(true);
+    expect(flagFromQuery('?utm_source=x&internal=0', 'internal')).toBe(false);
+    expect(flagFromQuery('?debug=1', 'debug')).toBe(true);
+    expect(flagFromQuery('?debug=0', 'debug')).toBe(false);
+  });
+
+  it('leaves a flag alone when the query says nothing usable', () => {
+    expect(flagFromQuery('?internal=yes', 'internal')).toBeNull();
+    expect(flagFromQuery('?debug=1', 'internal')).toBeNull();
+    expect(flagFromQuery('', 'debug')).toBeNull();
   });
 });
 

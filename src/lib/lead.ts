@@ -49,6 +49,16 @@ const common = {
     .regex(/^\d{1,20}\.\d{1,20}$/)
     .optional()
     .catch(undefined),
+  // GA4 session id (a unix timestamp), so the server-side conversion joins the visitor's session.
+  ga_session_id: z
+    .string()
+    .regex(/^\d{1,20}$/)
+    .optional()
+    .catch(undefined),
+  // Browser flags from ?debug=1 / ?internal=1: send the conversion to DebugView, and mark it as my
+  // own traffic. Never set for real visitors.
+  ga_debug: z.literal('1').optional().catch(undefined),
+  ga_internal: z.literal('1').optional().catch(undefined),
 };
 
 const project = z

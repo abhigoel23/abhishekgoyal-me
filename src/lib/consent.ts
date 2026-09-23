@@ -4,9 +4,13 @@ import { CONSENT_MAX_AGE_DAYS, GA_HOSTS } from '../data/analytics';
 
 export type ConsentChoice = 'granted' | 'denied';
 
-/** localStorage keys: the visitor's choice, and the "this is me" flag set by `?internal=1`. */
+/** localStorage keys: the visitor's choice, plus the flags set by `?internal=1` and `?debug=1`. */
 export const CONSENT_KEY = 'consent';
 export const INTERNAL_KEY = 'ga_internal';
+export const DEBUG_KEY = 'ga_debug';
+
+export const FLAG_KEYS = { internal: INTERNAL_KEY, debug: DEBUG_KEY } as const;
+export type FlagName = keyof typeof FLAG_KEYS;
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -32,10 +36,22 @@ export function shouldLoadGa(hostname: string, choice: ConsentChoice | null): bo
   return choice === 'granted' && (GA_HOSTS as readonly string[]).includes(hostname);
 }
 
-/** `?internal=1` marks this browser as internal traffic, `?internal=0` unmarks it, otherwise null. */
-export function internalFromQuery(search: string): boolean | null {
-  const value = new URLSearchParams(search).get('internal');
+/**
+ * `?internal=1` marks this browser as mine (kept out of GA reports) and `?debug=1` marks its events
+ * for DebugView. `=0` unmarks, anything else leaves the flag alone.
+ */
+export function flagFromQuery(search: string, name: FlagName): boolean | null {
+  const value = new URLSearchParams(search).get(name);
   return value === '1' ? true : value === '0' ? false : null;
+}
+
+/** '1' when the flag is set in this browser, otherwise undefined (storage may be blocked). */
+export function readFlag(name: FlagName): '1' | undefined {
+  try {
+    return localStorage.getItem(FLAG_KEYS[name]) === '1' ? '1' : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /** Names of the GA cookies (`_ga`, `_ga_<stream>`) present in a cookie string. */
