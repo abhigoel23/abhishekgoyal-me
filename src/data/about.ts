@@ -1,7 +1,9 @@
-// About page copy. Every claim must match resume/resume.html.
+// About page copy. Every claim must match resume/resume.html; the HelperBook origin story is Abhishek's
+// own account (#51).
 export const aboutIntro = [
   'I’m a mobile engineer based in Gurugram. For 13 years I’ve built Android and iOS apps, and the work I enjoy most is owning the mobile side of a product end to end: the architecture, the app itself and the release.',
   'I’m comfortable owning architecture, media pipelines, release engineering and product calls at once.',
+  'HelperBook started at home. My wife was working out our helper’s salary at the end of the month, trying to remember which days she had been absent. That record shouldn’t live in anyone’s memory, so I built an app to keep it, on the phone and nowhere else.',
 ];
 
 // The four pillars, each backed by something in the resume.
