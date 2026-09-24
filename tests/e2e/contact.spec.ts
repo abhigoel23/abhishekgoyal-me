@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { stubTurnstile } from './turnstile';
 
 // The form is a client:visible island; Astro drops the `ssr` attribute once it has hydrated. Waiting
 // for that keeps these tests stable against remote previews, where the JS arrives over the network.
@@ -44,6 +45,7 @@ test('a well-formed submission shows the "form unavailable" message when the API
 }) => {
   // Mocked: against a staging preview the real API would store a lead. Real submissions are covered
   // by tests/e2e/lead.spec.ts (#63).
+  await stubTurnstile(page);
   await page.route('**/api/lead', (route) =>
     route.fulfill({ status: 503, json: { ok: false, error: 'unavailable' } }),
   );
@@ -63,6 +65,7 @@ test('a well-formed submission shows the "form unavailable" message when the API
 
 test('"Just following along" swaps the enquiry for an email-only sign-up', async ({ page }) => {
   let body: Record<string, unknown> = {};
+  await stubTurnstile(page);
   await page.route('**/api/subscribe', (route) => {
     body = route.request().postDataJSON() as Record<string, unknown>;
     return route.fulfill({ json: { ok: true } });
