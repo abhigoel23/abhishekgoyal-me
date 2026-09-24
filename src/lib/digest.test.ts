@@ -64,8 +64,8 @@ describe('digestDraft', () => {
 
   it('always carries the unsubscribe wording, the reply option and the gap to write', () => {
     const { html: body } = digestDraft({ ...base, posts: [a], first: false });
-    // The link itself is Resend's Unsubscribe footer block, added in the editor (RUNBOOK).
-    expect(body).toContain('Unsubscribe with the link below');
+    // The word is linked in Resend's editor, which drops a pasted placeholder link (RUNBOOK).
+    expect(body).toContain('abhishekgoyal.me. Unsubscribe, or reply UNSUBSCRIBE.');
     expect(body).not.toContain('RESEND_UNSUBSCRIBE_URL');
     expect(body).toContain('reply UNSUBSCRIBE');
     expect(body).toContain(WRITE_THIS);

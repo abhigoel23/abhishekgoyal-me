@@ -56,9 +56,9 @@ export function digestDraft(input: {
     '<hr>',
     `<p>The ${a(checklistUrl, 'Offline-first Android launch checklist')} is always there if you need it again. More at ${a(siteUrl, 'abhishekgoyal.me')}.</p>`,
     '<p>Abhishek</p>',
-    // No unsubscribe link here: Resend's editor drops a link to {{{RESEND_UNSUBSCRIBE_URL}}}, so the
-    // Broadcast gets the editor's own Unsubscribe footer block, right after this line (RUNBOOK).
-    '<p><small>You’re getting this because you signed up for the checklist at abhishekgoyal.me. Unsubscribe with the link below, or reply UNSUBSCRIBE.</small></p>',
+    // "Unsubscribe" is plain text on purpose: Resend's editor drops a pasted link to
+    // {{{RESEND_UNSUBSCRIBE_URL}}}, so Abhishek links the word with the editor's link button (RUNBOOK).
+    '<p><small>You’re getting this because you signed up for the checklist at abhishekgoyal.me. Unsubscribe, or reply UNSUBSCRIBE.</small></p>',
   ].join('\n');
   return { subject, html };
 }
