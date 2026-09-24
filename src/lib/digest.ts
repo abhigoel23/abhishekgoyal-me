@@ -1,5 +1,5 @@
-// The newsletter digest behind `pnpm digest` (scripts/digest.mjs): a Markdown draft to paste into
-// Resend → Broadcasts. Sent only when there's something new, at most once a month (docs/GROWTH.md).
+// The newsletter digest behind `pnpm digest` (scripts/digest.mjs): an HTML draft to paste into the code
+// view of Resend → Broadcasts. Sent only when there's something new, at most once a month (docs/GROWTH.md).
 // No imports: Node loads this directly.
 
 export type DigestPost = { title: string; description: string; url: string };
@@ -27,38 +27,40 @@ export function postsToSend<T extends { pubDate: string; draft: boolean }>(
     .sort((a, b) => a.pubDate.localeCompare(b.pubDate));
 }
 
+const escape = (s: string) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const a = (href: string, text: string) => `<a href="${escape(href)}">${escape(text)}</a>`;
+
+/**
+ * Subject and HTML for Resend's editor. Pasted Markdown loses its links there, so this goes into the
+ * editor's code (HTML) view instead.
+ */
 export function digestDraft(input: {
   posts: DigestPost[];
   checklistUrl: string;
   siteUrl: string;
   first: boolean;
-}): { subject: string; body: string } {
+}): { subject: string; html: string } {
   const { posts, checklistUrl, siteUrl, first } = input;
   const subject =
     posts.length === 1
       ? `New post: ${posts[0]!.title}`
       : `${posts.length} new posts, and what I'm building`;
   const intro = first
-    ? `This is the first note since you signed up for the checklist. Thank you for confirming.`
-    : `Here's what's new since my last note.`;
-  const body = [
-    'Hi,',
-    '',
-    intro,
-    '',
-    ...(posts.length ? ['## New on the site', ''] : []),
-    ...posts.flatMap((p) => [`**[${p.title}](${p.url})**`, '', p.description, '']),
-    "## What I'm building",
-    '',
-    `${WRITE_THIS}: two or three sentences, in your own words, on what you're working on. Every claim has to match the resume.`,
-    '',
-    '---',
-    '',
-    `The [Offline-first Android launch checklist](${checklistUrl}) is always there if you need it again. More at [abhishekgoyal.me](${siteUrl}).`,
-    '',
-    'Abhishek',
-    '',
-    `You're getting this because you signed up for the checklist at abhishekgoyal.me. [Unsubscribe](${UNSUBSCRIBE_PLACEHOLDER}), or reply UNSUBSCRIBE.`,
+    ? 'This is the first note since you signed up for the checklist. Thank you for confirming.'
+    : 'Here’s what’s new since my last note.';
+  const html = [
+    '<p>Hi,</p>',
+    `<p>${intro}</p>`,
+    ...(posts.length ? ['<h2>New on the site</h2>'] : []),
+    ...posts.map((p) => `<p><strong>${a(p.url, p.title)}</strong><br>${escape(p.description)}</p>`),
+    '<h2>What I’m building</h2>',
+    `<p>${WRITE_THIS}: two or three sentences, in your own words, on what you’re working on. Every claim has to match the resume.</p>`,
+    '<hr>',
+    `<p>The ${a(checklistUrl, 'Offline-first Android launch checklist')} is always there if you need it again. More at ${a(siteUrl, 'abhishekgoyal.me')}.</p>`,
+    '<p>Abhishek</p>',
+    // Not escaped: Resend replaces the placeholder with each contact's own link.
+    `<p><small>You’re getting this because you signed up for the checklist at abhishekgoyal.me. <a href="${UNSUBSCRIBE_PLACEHOLDER}">Unsubscribe</a>, or reply UNSUBSCRIBE.</small></p>`,
   ].join('\n');
-  return { subject, body };
+  return { subject, html };
 }

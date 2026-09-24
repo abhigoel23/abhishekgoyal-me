@@ -1,5 +1,5 @@
-// `pnpm digest [YYYY-MM-DD]`: a Markdown draft of the newsletter digest to paste into Resend →
-// Broadcasts (docs/RUNBOOK.md → Sending a note). Pass the date of the last note; posts published after it
+// `pnpm digest [YYYY-MM-DD]`: an HTML draft of the newsletter digest to paste into the code view of
+// Resend → Broadcasts (docs/RUNBOOK.md → Sending a note). Pass the date of the last note; posts published after it
 // and up to today are included. With no date, every published post is included (the first note).
 // Prints only; it sends nothing.
 import { readdirSync, readFileSync } from 'node:fs';
@@ -34,7 +34,7 @@ if (!posts.length) {
   process.exit(1);
 }
 
-const { subject, body } = digestDraft({
+const { subject, html } = digestDraft({
   posts: posts.map((p) => ({
     title: p.title,
     description: p.description,
@@ -45,7 +45,7 @@ const { subject, body } = digestDraft({
   first: since === undefined,
 });
 
-console.log(`Subject: ${subject}\n\n${body}`);
+console.log(`Subject: ${subject}\n\n${html}`);
 console.error(
   `\n${posts.length} post(s). Replace "${WRITE_THIS}" before sending. Send to a test segment first.`,
 );

@@ -201,16 +201,16 @@ unsubscribed contact meanwhile: Resend itself enforces the unsubscribe.
 **Sending a note.** Only when there's something new (a post, or real news on what you're building), and at
 most once a month ([GROWTH.md](./GROWTH.md#the-newsletter)). Claude drafts; you press send.
 
-1. `pnpm digest <date of the last note>` prints a Markdown draft: subject, the posts published since then
-   (future-dated posts are left out until their day), newsletter UTM links, the checklist link and the
-   unsubscribe footer. Find the last note's date in Resend → Broadcasts. Run it with no date for the very
-   first note.
+1. `pnpm digest <date of the last note>` prints the subject and an HTML draft: the posts published since
+   then (future-dated posts are left out until their day), newsletter UTM links, the checklist link and
+   the unsubscribe footer. Find the last note's date in Resend → Broadcasts. Run it with no date for the
+   very first note. HTML, not Markdown: pasting Markdown into Resend's editor drops every link.
 2. Replace the `✍️ WRITE THIS` gap with two or three sentences in your own words. Every claim must match
    the resume, as on the site.
 3. Resend → **Broadcasts** → **Create broadcast**. From: `Abhishek Goyal <contact@abhishekgoyal.me>`;
-   Reply-to: `contact@abhishekgoyal.me` (people may reply UNSUBSCRIBE); Subject from the draft. Paste the
-   body: the editor converts the Markdown.
-4. Check that the last line's **Unsubscribe** link survived pasting and points at
+   Reply-to: `contact@abhishekgoyal.me` (people may reply UNSUBSCRIBE); Subject from the draft. Open the
+   editor's **code view** (`</>`) and paste the HTML there, not into the visual editor.
+4. Back in the visual editor, check the links are live and the last line's **Unsubscribe** points at
    `{{{RESEND_UNSUBSCRIBE_URL}}}`: the privacy page promises one in every note.
 5. Send it to the **staging** segment first (subscribe your own address there via the staging site),
    then check the email: links work and carry `utm_source=newsletter`, and **Unsubscribe** marks you

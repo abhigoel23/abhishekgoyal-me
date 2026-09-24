@@ -53,18 +53,31 @@ describe('digestDraft', () => {
   });
 
   it('lists every post with its link and description', () => {
-    const { subject, body } = digestDraft({ ...base, posts: [a, b], first: true });
+    const { subject, html: body } = digestDraft({ ...base, posts: [a, b], first: true });
     expect(subject).toBe("2 new posts, and what I'm building");
-    expect(body).toContain('**[Post A](https://abhishekgoyal.me/writing/a)**');
+    expect(body).toContain(
+      '<strong><a href="https://abhishekgoyal.me/writing/a">Post A</a></strong>',
+    );
     expect(body).toContain('About B.');
     expect(body).toContain('first note');
   });
 
   it('always carries the unsubscribe link, the reply option and the gap to write', () => {
-    const { body } = digestDraft({ ...base, posts: [a], first: false });
-    expect(body).toContain(`[Unsubscribe](${UNSUBSCRIBE_PLACEHOLDER})`);
+    const { html: body } = digestDraft({ ...base, posts: [a], first: false });
+    expect(body).toContain(`<a href="${UNSUBSCRIBE_PLACEHOLDER}">Unsubscribe</a>`);
     expect(body).toContain('reply UNSUBSCRIBE');
     expect(body).toContain(WRITE_THIS);
     expect(body).toContain(base.checklistUrl);
+  });
+
+  it('escapes titles and URLs', () => {
+    const odd = {
+      title: 'A & <B>',
+      description: 'x < y',
+      url: 'https://abhishekgoyal.me/?a=1&b=2',
+    };
+    const { html } = digestDraft({ ...base, posts: [odd], first: false });
+    expect(html).toContain('href="https://abhishekgoyal.me/?a=1&amp;b=2">A &amp; &lt;B&gt;</a>');
+    expect(html).toContain('x &lt; y');
   });
 });
