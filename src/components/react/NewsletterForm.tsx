@@ -75,7 +75,7 @@ export default function NewsletterForm({ source, analyticsPath, idPrefix = 'news
       consent: values.consent,
       source,
       ...submissionContext(),
-      'cf-turnstile-response': turnstileToken(),
+      'cf-turnstile-response': await turnstileToken(),
       website: values.website,
       started_at: startedAt,
     };

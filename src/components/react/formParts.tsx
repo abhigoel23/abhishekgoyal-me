@@ -31,6 +31,8 @@ const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?ren
 
 let turnstileLoad: Promise<void> | undefined;
 
+const TOKEN_WAIT_MS = 8_000;
+
 function loadTurnstile(): Promise<void> {
   if (window.turnstile) return Promise.resolve();
   if (!turnstileLoad) {
@@ -87,8 +89,16 @@ export function useTurnstile(active: boolean, action: TurnstileAction) {
     };
   }, [active, action]);
 
-  // Read at submit time, never during render.
-  const token = () => tokenRef.current;
+  // Read at submit time, never during render. A visitor can submit before the widget has answered (it
+  // starts when the form appears), so wait for it briefly; after that, send what there is and let the
+  // server's check fail with a clear message.
+  const token = async (timeoutMs = TOKEN_WAIT_MS) => {
+    const deadline = Date.now() + timeoutMs;
+    while (!tokenRef.current && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return tokenRef.current;
+  };
   const reset = () => {
     tokenRef.current = '';
     if (widgetIdRef.current && window.turnstile) window.turnstile.reset(widgetIdRef.current);
