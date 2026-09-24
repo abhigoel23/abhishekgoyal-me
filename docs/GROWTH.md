@@ -19,7 +19,7 @@ Why these sources:
 - **Cloudflare Web Analytics, not GA4, counts visits.** It needs no consent, so it sees everyone. Leads
   and visits then cover the same people.
 - **GA4 is for the shape, not the totals:** which sources and landing pages lead to leads, and where the
-  funnel drops (the saved Explore reports, #115).
+  funnel drops (the saved explorations listed in [ANALYTICS.md](./ANALYTICS.md#ga4-admin-settings)).
 - With a handful of leads a month, a percentage swings wildly. Read the counts and the trend over
   several months before the percentage.
 

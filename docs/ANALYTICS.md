@@ -213,8 +213,32 @@ there is nothing here to diff or restore from a backup. As configured:
 - Google signals off, matching `allow_google_signals: false` in the client-side config.
 - Data retention set to 14 months, the longest GA4 offers.
 - Search Console linked, for organic query data in GA4's reports.
-- Saved Explore reports: a funnel `page_view → form_start → generate_lead`; landing pages by
-  conversion; and a source/medium breakdown.
+- Five event-scoped custom dimensions (Admin → Data display → Custom definitions), registered
+  2026-09-24. GA4 only fills a custom dimension from the day it's registered, so these reports can't
+  break down earlier data:
+
+  | Dimension      | Event parameter | Sent with                                  |
+  | -------------- | --------------- | ------------------------------------------ |
+  | Lead path      | `lead_path`     | `form_step`, `form_start`, `generate_lead` |
+  | CTA            | `cta`           | `cta_click`, `book_call_click`             |
+  | Case study     | `case_study`    | `case_study_read`                          |
+  | Sign-up method | `method`        | `sign_up`                                  |
+  | Budget band    | `budget_band`   | `generate_lead`                            |
+
+  Left out on purpose: `lead_id` and `session_id` (one value per lead, so useless as a breakdown) and
+  `lead_source` (GA's own session source dimensions cover it).
+
+- Saved explorations (Explore), used in the monthly review ([GROWTH.md](./GROWTH.md)). Set each one's
+  date range to the month under review; the range is saved with the exploration.
+
+  | Exploration                     | Type      | Setup                                                                                                                                                                         |
+  | ------------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | **Lead funnel**                 | Funnel    | Closed. Tab 1: `page_view` → `form_start` → `generate_lead`. Tab "Sign-up funnel": `page_view` → `form_start` where `lead_path` = `checklist` → `sign_up`                     |
+  | **Landing pages by conversion** | Free form | Rows: Landing page + query string. Values: Sessions, Engaged sessions, Key events, Session key event rate. A post shows as `/writing/<slug>`                                  |
+  | **Source / medium**             | Free form | Rows: Session source / medium, then Session campaign; same values. Tab "CTA clicks": rows CTA, value Event count, filtered to Event name = `cta_click` (data from 2026-09-24) |
+
+  These only see visitors who accept the consent bar; totals come from D1 and Cloudflare (GROWTH.md).
+  "Key events" is `generate_lead` alone until `sign_up` is marked, then both.
 
 Nothing checks this list against GA, so it drifts silently if a filter or report is renamed there.
 Worth a glance whenever the analytics setup changes.
