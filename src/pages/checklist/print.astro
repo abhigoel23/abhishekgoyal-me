@@ -114,11 +114,12 @@ const closingParts = checklist.closing.split('/contact');
     margin: 10pt 0 0;
     max-width: 46em;
   }
+  /* Sections flow across pages; a heading never ends a page, and an item never splits. */
   .section {
     margin-top: 16pt;
-    break-inside: avoid-page;
   }
   h2 {
+    break-after: avoid-page;
     margin: 0 0 6pt;
     padding-bottom: 3pt;
     border-bottom: 1pt solid var(--line);
