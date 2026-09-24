@@ -28,17 +28,25 @@ export const SUBSCRIBER_STEPS = [
 export type SubscriberStep = (typeof SUBSCRIBER_STEPS)[number];
 export type SubscriberHandlers = Handlers<SubscriberStep, SubscriberRow>;
 
-/** The confirm link. The token sits in the fragment, which browsers never send to a server. */
-export const confirmLink = (token: string) =>
-  `${profile.url}/subscribe/confirm#t=${encodeURIComponent(token)}`;
+/**
+ * The confirm link. The token sits in the fragment, which browsers never send to a server. `origin` is
+ * the environment's own (SITE_ORIGIN), so a staging link reaches staging's D1.
+ */
+export const confirmLink = (token: string, origin: string = profile.url) =>
+  `${origin}/subscribe/confirm#t=${encodeURIComponent(token)}`;
 
-export function confirmationEmail(to: string, token: string, environment: string): Email {
+export function confirmationEmail(
+  to: string,
+  token: string,
+  environment: string,
+  origin: string = profile.url,
+): Email {
   const email: Email = {
     from: sender.from,
     to,
     subject: confirmSubscription.subject,
     text: [
-      ...confirmSubscription.lines(confirmLink(token)),
+      ...confirmSubscription.lines(confirmLink(token, origin)),
       '',
       ...confirmSubscription.signature,
       '',
@@ -75,6 +83,7 @@ export function checklistEmail(to: string, environment: string): Email {
 type SubscriberEnv = Pick<
   Env,
   | 'ENVIRONMENT'
+  | 'SITE_ORIGIN'
   | 'RESEND_API_KEY'
   | 'RESEND_CONTACTS_KEY'
   | 'RESEND_SEGMENT_ID'
@@ -110,7 +119,7 @@ export function subscriberHandlers(
       const key = `${subscriber.subscriber_id}:confirm:${(await hashToken(raw)).slice(0, 16)}`;
       await sendEmail(
         env.RESEND_API_KEY,
-        confirmationEmail(subscriber.email, raw, environment),
+        confirmationEmail(subscriber.email, raw, environment, env.SITE_ORIGIN || profile.url),
         key,
       );
       return 'done';

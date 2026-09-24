@@ -39,6 +39,13 @@ describe('confirmationEmail', () => {
     );
   });
 
+  it("links to the environment's own origin", () => {
+    const staging = 'https://abhishekgoyal-me-staging.abhigoel23.workers.dev';
+    expect(confirmationEmail('a@b.in', TOKEN, 'staging', staging).text).toContain(
+      `${staging}/subscribe/confirm#t=${TOKEN}`,
+    );
+  });
+
   it('goes to the visitor in production and to the inbox elsewhere', () => {
     expect(confirmationEmail('asha@acme.in', TOKEN, 'production').to).toBe('asha@acme.in');
     const staging = confirmationEmail('asha@acme.in', TOKEN, 'staging');

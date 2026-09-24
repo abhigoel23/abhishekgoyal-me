@@ -18,6 +18,8 @@
     // so the staging key can't reach it.
     "SHEET_ID": "1kajbfdXYs5Kwi9eCw_Cs6-DcLNdOgzh9l6sH2EifdkA",
     "GOOGLE_SA_EMAIL": "leads-writer-prod@abhishekgoyal-me.iam.gserviceaccount.com",
+    // Where emailed links point: the confirmation link must reach this environment's D1.
+    "SITE_ORIGIN": "https://abhishekgoyal.me",
     // Resend segment for newsletter subscribers (#110). An id, not a secret. Set at the M5 gate (#114);
     // until then the audience step fails and retries, which can't happen before sign-up is linked.
     "RESEND_SEGMENT_ID": "",
@@ -67,6 +69,8 @@
         "GOOGLE_SA_EMAIL": "leads-writer@abhishekgoyal-me.iam.gserviceaccount.com",
         // GA4 web stream measurement ID ("G-…"), public. Staging validates against GA's debug endpoint.
         "GA_MEASUREMENT_ID": "G-PHG39RRGSZ",
+        // Where emailed links point (the confirmation link must reach this environment's D1).
+        "SITE_ORIGIN": "https://abhishekgoyal-me-staging.abhigoel23.workers.dev",
         // Resend segment "Newsletter (staging)" (#110). An id, not a secret.
         "RESEND_SEGMENT_ID": "",
       },
