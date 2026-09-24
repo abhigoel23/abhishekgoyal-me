@@ -1,0 +1,117 @@
+---
+title: "Offline-first with a server: lessons from Pulse's sync engine"
+description: 'Lessons from building the Pulse sync engine: temporary IDs, upload order, conflicts, and why status became a first-class feature.'
+pubDate: 2026-09-24
+tags: [offline-first, sync, android, ios]
+---
+
+The [local-only HelperBook](/writing/offline-first-without-a-server) post is about an app that never talks to a
+server, and what that buys you. Pulse is the opposite case: an offline-first inspection app for auditors that
+has to reach a server eventually, because the whole point is that the data ends up somewhere other people can
+see it. I owned mobile for Pulse, Android and iOS, from an early prototype to 100+ B2B enterprise clients.
+The sync contract (payloads, upload semantics, failure behaviour) was something I designed with the backend
+and web teams before implementing both native clients against it. This is what I learned building it, not a
+walkthrough of how it works end to end.
+
+## Records need an identity before the server has one
+
+An auditor can start an inspection with no signal at all. The form has to exist as soon as they start filling
+it in, which means it needs an ID before the server has assigned one. The app solved this with a temporary
+local ID, created on the device the moment the record starts. When the device reconnects and the record is
+created on the server, the app gets back a server ID and remaps the form's answers and any media against it.
+
+That remapping is the part that's easy to underestimate. Every piece of local state that referred to the
+temporary ID — form answers, photo attachments, upload queue entries — has to be repointed to the server ID
+without losing anything or duplicating anything. And it has to survive retries: if the same record tries to
+sync again after a failure, it has to reuse the server ID it already has rather than asking for a new one,
+or the server would end up with two records for the same inspection. As a simplified illustration:
+
+```kotlin
+// Simplified illustration, not Pulse's actual code.
+fun idForUpload(record: LocalRecord): RecordId =
+    record.serverId ?: run {
+        val assigned = createRecordOnServer(record.localId)
+        record.serverId = assigned
+        assigned
+    }
+```
+
+The cost of this is real: you're carrying two ID spaces through the whole client, and every piece of code
+that touches a record needs to know which one it's holding. But the alternative — waiting for a server ID
+before letting the auditor start work — isn't available to an offline-first app. If there's no signal, there's
+no server round trip to wait for.
+
+## Upload order is a correctness decision, not a performance one
+
+Inspection forms come with photos, and photos are larger and slower to upload than form data. It would be
+tempting to submit the form first, since that's the thing the auditor is waiting on, and let the photos trail
+in behind it. Pulse did the opposite: photos were uploaded first, in the background, while the auditor was
+still working, and the form was only submitted once every photo attached to it was confirmed on the server.
+
+The reason is what that ordering prevents. If the form went first, the server would briefly, or not so
+briefly on a bad connection, hold a submitted inspection with photos missing. Anyone looking at that record
+from the web or backend side would see a completed inspection with holes in it, and there'd be no clean way
+to tell "still uploading" apart from "photo was never taken." Uploading media first and gating the form
+submission on it means the server never has to represent that in-between state at all. The trade-off is that
+a form can be finished on the device and still not "done" from the server's point of view, which is exactly
+the kind of thing that has to be visible to the person waiting on it.
+
+## Status has to be visible, or people don't trust the sync
+
+That last point led to one of the changes I'm gladdest we made, and it came out of a real problem: auditors
+weren't sure whether their work had actually reached the server once they'd submitted a form. The submission
+felt finished on their screen, but the photos might still be uploading in the background, and there was
+nothing telling them that. From their side, "I submitted it" and "it's on the server" looked identical, and
+they had no way to tell those two states apart.
+
+The fix was to stop treating sync as something that happens invisibly after submission and start showing it:
+once a form was submitted, the UI showed upload progress and a count of items still left to go up. It's a
+small piece of UI, but it changed what "submitted" meant to the person using the app. Instead of a single
+state that quietly covered "done" and "still working on it," there were two, and the auditor could see which
+one they were in. The lesson generalises past Pulse: any offline-first system is going to have a gap between
+"the user is finished" and "the server has it," and if that gap isn't visible, users will assume the wrong
+one.
+
+## Conflicts are mostly designed away, but not entirely
+
+Most of the time two people weren't editing the same inspection record at once, and the app was built so that
+was the common case rather than something handled after the fact. But an offline-first system can't promise that
+never happens — a record can be edited on two devices before either has synced, and eventually both versions
+reach the server. When that happened, the default was last write wins: whichever version reaches the server
+second was the one that was kept.
+
+Last write wins is a reasonable default because it's simple and it doesn't block anyone waiting to sync. But
+it's also exactly the kind of thing that can silently overwrite someone's work, which is why it isn't the
+whole answer here. When a conflict was detected, the user saw a warning and could choose to keep their local
+version instead of the one that had just landed. That warning is the important part. A conflict-resolution
+strategy that resolves quietly is only safe if you're confident it never matters which side wins; the moment
+that's not certain, the person who did the work needs the chance to say so.
+
+## Knowing nothing is actually getting lost
+
+None of this is worth much if you can't tell whether it's working. The way I had visibility into that was
+logging and monitoring on the upload pipeline itself — failures were visible, not silent, so a stuck or
+failing upload showed up rather than disappearing. That's a narrower claim than "we proved nothing was ever
+lost"; it's closer to "we could see when something didn't make it, instead of finding out from someone else
+much later." Over four and a half years of field use, no data-loss incidents were reported. The ordering and
+remapping decisions above are what kept data safe; the monitoring is what makes "none reported" mean
+something, because a failed upload would have shown up in the logs rather than waiting for someone to notice.
+
+## What I'd tell another builder
+
+If you're building sync into an offline-first app, the identity problem comes first: decide early how a
+record gets an ID before the server has assigned one, and plan for the remapping that follows, because it
+touches everything downstream.
+
+Second, think about upload order as a correctness tool, not just a performance one. Whatever order your
+uploads go in defines what invalid in-between states your server can end up holding, so pick the order that
+minimises those states rather than the order that feels fastest to the user.
+
+Third, don't let "submitted" and "synced" collapse into one state in the UI. They're different things, and
+the moment users can't tell them apart is the moment they stop trusting the app to have their data.
+
+And last, pick a conflict strategy you can explain in one sentence, then make sure the person whose work might
+get overwritten by it gets a say. Last write wins is fine as a default. It's only fine because there's a
+warning attached to it.
+
+More on how the Pulse sync engine fits together is in the [case study](/work/pulse).
