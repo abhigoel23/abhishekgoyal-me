@@ -50,6 +50,7 @@ body:
         - [ ] "Reported" stays "reported"; plans are called plans
         - [ ] Past tense for products Abhishek no longer works on (Pulse, the video-hiring app)
         - [ ] The video-hiring client stays anonymous (no name, logo or screens); only blurred HelperBook screenshots
+        - [ ] LinkedIn post drafted in the PR description (claims only from the post, UTM link from `pnpm share <slug>`) and fact-checked with it
 
         **Ship**
         - [ ] PR preview checked; `pubDate` set to the merge day
@@ -57,7 +58,8 @@ body:
         - [ ] TOPICS.md status set to `published (/writing/<slug>)`
 
         **After it's live**
-        - [ ] Cross-posted with a canonical link to abhishekgoyal.me and UTM links (CONTENT.md → Cross-posting)
+        - [ ] dev.to: imported draft checked and published (`pnpm share <slug>` lists the checks)
+        - [ ] LinkedIn: the drafted post published (CONTENT.md → Cross-posting)
         - [ ] Added to the next monthly digest
     validations:
       required: true
