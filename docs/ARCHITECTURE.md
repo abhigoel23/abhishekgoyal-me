@@ -54,6 +54,7 @@ flowchart LR
 | `src/lib/server/bookings.ts`                         | Cal.com webhook verification, parsing and storage                             |
 | `src/lib/server/ga.ts`                               | Server-side `generate_lead` and `sign_up`                                     |
 | `src/lib/server/cron.ts`                             | Daily re-sync, retention purge, deep health checks, alerts                    |
+| `src/lib/server/monthly.ts`                          | Last month's counts to the Sheet's Monthly tab, days 1–7 (docs/GROWTH.md)     |
 | `migrations/`                                        | D1 schema                                                                     |
 
 ## The lead flow
@@ -72,7 +73,8 @@ flowchart LR
    which alerts. Resend calls carry an `Idempotency-Key`, so a retried email sends once.
 6. **Daily cron** (03:30 UTC): re-runs steps pending or failed for over an hour, deletes leads and bookings
    older than 18 months from D1 **and** the Sheet, checks Google and Telegram credentials, and alerts on
-   anything wrong.
+   anything wrong. On days 1–7 it also writes last month's counts (no personal data) to the Sheet's
+   Monthly tab, once ([GROWTH.md](./GROWTH.md#the-monthly-tab)).
 
 Bookings follow the same path: Cal.com → `/api/booking` (HMAC-SHA256 signature) → D1 → queue → `sheets` and
 `telegram` steps, one delivery per event (created, rescheduled, cancelled).

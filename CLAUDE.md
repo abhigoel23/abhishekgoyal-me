@@ -37,7 +37,7 @@ pnpm 12 has no `-s` flag; use `--silent`.
 - `src/components/react/` — React islands only (forms, embeds)
 - `tests/e2e/` — Playwright smoke (safe on any URL); `tests/lead/` — lead flow, local only; unit tests
   live next to source as `*.test.ts`
-- `docs/` — ARCHITECTURE, RUNBOOK, CONTENT, ANALYTICS, DNS, `decisions/` (ADRs)
+- `docs/` — ARCHITECTURE, RUNBOOK, CONTENT, TOPICS, GROWTH, ANALYTICS, DNS, `decisions/` (ADRs)
 
 ## Conventions
 

@@ -4,6 +4,7 @@ import { sendAlert } from './lib/server/alert';
 import {
   dailyMaintenance,
   deepChecks,
+  monthlySheet,
   sheetRetention,
   unsubscribedCleanup,
 } from './lib/server/cron';
@@ -14,6 +15,7 @@ import {
   leadHandlers,
   type DeliveryMessage,
 } from './lib/server/delivery';
+import { recordMonth } from './lib/server/monthly';
 import { retryDelaySeconds } from './lib/server/outbox';
 import { subscriberHandlers } from './lib/server/subscriberDelivery';
 
@@ -66,7 +68,7 @@ export default {
 
   // Daily: re-sync undelivered steps, purge data past retention (D1, the Sheet and, for unsubscribed
   // addresses, Resend), deep health check, alerts.
-  async scheduled(_controller, env) {
+  async scheduled(controller, env) {
     if (!env.DB) return;
     await dailyMaintenance(
       env.DB,
@@ -81,5 +83,8 @@ export default {
       sheetRetention(env),
       unsubscribedCleanup(env),
     );
+    // After maintenance, so a failure there can't stop it; retried daily through day 7 (monthly.ts).
+    const now = new Date(controller.scheduledTime);
+    console.log('monthly', await recordMonth(env.DB, monthlySheet(env), alertTransports(env), now));
   },
 } satisfies ExportedHandler<Env, DeliveryMessage>;

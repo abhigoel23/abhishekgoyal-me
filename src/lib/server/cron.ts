@@ -5,7 +5,15 @@ import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
 import { checkTelegram } from './notifications';
 import { BOOKING_STEPS, getBookingEvent, type BookingHandlers } from './bookings';
 import { deliverLead, runSteps, type RefKind, type StepHandlers } from './outbox';
-import { deleteSubscriberRows, purgeBookingRows, purgeLeadRows, readSheetTitle } from './sheets';
+import { MONTHLY_HEADERS, MONTHLY_TAB, type MonthlySheet } from './monthly';
+import {
+  appendGeneratedRow,
+  deleteSubscriberRows,
+  purgeBookingRows,
+  purgeLeadRows,
+  readFirstColumn,
+  readSheetTitle,
+} from './sheets';
 import { checkSegment, deleteContact } from './resendContacts';
 import { deliverSubscriber, type SubscriberHandlers } from './subscriberDelivery';
 import { deleteUnsubscribed, purgeUnconfirmed, unsubscribedDue } from './subscriberStore';
@@ -149,6 +157,18 @@ export function sheetRetention(env: Env) {
       (await purgeLeadRows(token, sheetId, cutoffIso)) +
       (await purgeBookingRows(token, sheetId, cutoffIso))
     );
+  };
+}
+
+/** The Leads Sheet's Monthly tab (docs/GROWTH.md). Undefined if the Sheet isn't configured. */
+export function monthlySheet(env: Env): MonthlySheet | undefined {
+  const { GOOGLE_SA_EMAIL: email, GOOGLE_SA_KEY: key, SHEET_ID: sheetId } = env;
+  if (!email || !key || !sheetId) return undefined;
+  const token = () => getAccessToken({ email, privateKeyPem: key }, SHEETS_SCOPE);
+  return {
+    months: async () => readFirstColumn(await token(), sheetId, MONTHLY_TAB),
+    append: async (row) =>
+      appendGeneratedRow(await token(), sheetId, MONTHLY_TAB, MONTHLY_HEADERS, row),
   };
 }
 

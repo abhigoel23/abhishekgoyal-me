@@ -92,7 +92,7 @@ async function appendRow(
   sheetId: string,
   tab: string,
   headers: string[],
-  row: string[],
+  row: (string | number)[],
   fetcher: typeof fetch,
 ) {
   await ensureHeader(token, sheetId, tab, headers, fetcher);
@@ -351,4 +351,30 @@ export async function deleteSubscriberRows(
     .filter(([i, id]) => i > 0 && ids.has(id))
     .map(([i]) => i);
   return deleteRowRuns(token, sheetId, SUBSCRIBERS_TAB, rowRuns(indexes), fetcher);
+}
+
+/** Column A of a tab, header included (the Monthly tab's months). */
+export async function readFirstColumn(
+  token: string,
+  sheetId: string,
+  tab: string,
+  fetcher: typeof fetch = fetch,
+): Promise<string[]> {
+  const range = encodeURIComponent(`${tab}!A:A`);
+  const data = (await sheetsFetch(token, `${API}/${sheetId}/values/${range}`, {}, fetcher)) as {
+    values?: string[][];
+  };
+  return (data.values ?? []).map((row) => row[0] ?? '');
+}
+
+/** Appends a row of values we generate ourselves (counts, never user input), writing the header first. */
+export async function appendGeneratedRow(
+  token: string,
+  sheetId: string,
+  tab: string,
+  headers: string[],
+  row: (string | number)[],
+  fetcher: typeof fetch = fetch,
+) {
+  await appendRow(token, sheetId, tab, headers, row, fetcher);
 }
