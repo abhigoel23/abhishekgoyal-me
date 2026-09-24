@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   absoluteUrls,
+  feedHtml,
   blogPostingJsonLd,
   canonicalUrl,
   faqJsonLd,
@@ -135,5 +136,15 @@ describe('absoluteUrls', () => {
     const html =
       '<a href="https://x.dev/">a</a><a href="//cdn.x/y">b</a><a href="#top">c</a><a href="mailto:a@b.c">d</a>';
     expect(absoluteUrls(html)).toBe(html);
+  });
+});
+
+describe('feedHtml', () => {
+  it('drops inline styles and makes URLs absolute', () => {
+    expect(
+      feedHtml(
+        '<pre class="shiki" style="--shiki-light:#000"><a href="/rss.xml" style="color:red">x</a></pre>',
+      ),
+    ).toBe('<pre class="shiki"><a href="https://abhishekgoyal.me/rss.xml">x</a></pre>');
   });
 });

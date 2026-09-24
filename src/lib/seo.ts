@@ -133,6 +133,14 @@ export function serializeJsonLd(data: unknown): string {
  * Makes root-relative URLs in rendered HTML absolute (href, src and every srcset candidate), for HTML
  * shown off-site such as RSS content: a feed reader would resolve "/work" against its own origin.
  */
+/**
+ * Post HTML for the feed: absolute URLs, and no inline `style` attributes (the syntax highlighter's
+ * colours), which feed readers strip anyway and the W3C validator flags.
+ */
+export function feedHtml(html: string): string {
+  return absoluteUrls(html).replace(/\sstyle="[^"]*"/g, '');
+}
+
 export function absoluteUrls(html: string): string {
   const abs = (url: string) =>
     url.startsWith('/') && !url.startsWith('//') ? SITE_URL + url : url;
