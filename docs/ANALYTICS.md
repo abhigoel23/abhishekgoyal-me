@@ -152,16 +152,23 @@ they don't expire on their own the way the consent choice does.
 
 ## Checking that it works
 
-- **DebugView** (GA4 → Admin → DebugView): visit the site with `?debug=1`, accept the consent bar, and
-  step through the form. `form_start`, `form_step` and any `cta_click` / `book_call_click` should appear
+- **DebugView** (GA4 → Admin → DebugView): **only while the developer-traffic filter is _Inactive_.**
+  Both data filters are _Active_ (see below), and an active developer-traffic filter drops every
+  `debug_mode` event before DebugView sees it, so DebugView stays empty. GA won't move an active filter
+  back to _Testing_, only to _Inactive_: switch it off for the test, and back to _Active_ straight after.
+  Then visit the site with `?debug=1`, accept the consent bar, and step through the form. `form_start`, `form_step` and any `cta_click` / `book_call_click` should appear
   within seconds. `generate_lead` appears only after the queue consumer has run for that lead (not
   instantly on submit). `sign_up` appears once the address is confirmed and the consumer has run;
   the `?debug=1` flag is saved with the sign-up, so confirming from any device still routes it to
   DebugView.
   `case_study_read` appears after 20 s at the end of a case study.
-- **Realtime** (GA4 → Reports → Realtime): confirms events without needing the debug flag. A data
-  filter in _Testing_ state excludes nothing, so a visit tagged `?internal=1` still shows here until
-  the internal-traffic filter is switched to _Active_.
+- **Realtime** (GA4 → Reports → Realtime): confirms events without needing the debug flag. With the
+  internal-traffic filter _Active_, visits tagged `?internal=1` don't show here either; test from a
+  browser without the flag (`?internal=0`) to see them.
+- **Without touching GA** (server-side events): a debug `generate_lead` or `sign_up` is also sent to
+  GA's validation endpoint, and the Worker logs the answer as `GA debug event`. In Cloudflare →
+  Workers & Pages → `abhishekgoyal-me` → Observability, search for it. No `validationMessages` field
+  (the logs drop empty lists) means GA accepted the event as valid.
 - **Declined consent**: with the bar declined (or before any choice is made), no request to
   `googletagmanager.com` or `google-analytics.com` should appear in the browser's network tab, and no
   `_ga*` cookies should be set. This is the expected, correct behaviour, not a bug.
@@ -189,12 +196,15 @@ every row in the Leads and Subscribers Sheets carries first-touch attribution al
 Some of the analytics configuration lives only in the GA4 web interface, not in this repository, so
 there is nothing here to diff or restore from a backup. As configured:
 
-- `generate_lead` and `sign_up` marked as key events (GA4's term for a conversion).
+- `generate_lead` marked as a key event (GA4's term for a conversion). `sign_up` is marked too once
+  the first real sign-up has arrived (Admin → Data display → Events → Mark as key event): GA only
+  offers it for an event it has already processed, and test sign-ups are filtered out.
 - Enhanced Measurement with **File downloads** on (the source of `file_download`).
 - An internal-traffic data filter matching the `traffic_type` parameter, so my own visits (tagged via
   `?internal=1`) are excluded from reports rather than deleted.
-- The developer-traffic filter, excluding events that carry `debug_mode` — set by `?debug=1` here, and
-  by tools such as Tag Assistant — so test traffic stays in DebugView and out of the reports.
+- The developer-traffic filter (_Active_), excluding events that carry `debug_mode` — set by `?debug=1`
+  here, and by tools such as Tag Assistant — so test traffic stays out of the reports. While it is
+  active, DebugView shows nothing (see "Checking that it works").
 - Google signals off, matching `allow_google_signals: false` in the client-side config.
 - Data retention set to 14 months, the longest GA4 offers.
 - Search Console linked, for organic query data in GA4's reports.
