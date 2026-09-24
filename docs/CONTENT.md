@@ -4,7 +4,10 @@ How to publish a post, edit copy, or add a case study, without needing to know A
 
 ## Publish a post
 
-1. Open a GitHub Issue describing the post (every PR must close an Issue).
+1. Pick the top `idea` in [`docs/TOPICS.md`](./TOPICS.md) and open an Issue from the **Post** template
+   (`.github/ISSUE_TEMPLATE/post.yml`; every PR must close an Issue). The Issue carries the source quotes
+   and the fact-check, ship and cross-post checklist. The target is one post every 2 weeks. To skip a
+   post, close its Issue as "not planned" and give the reason.
 2. Branch off `main`: `content/<slug>`, e.g. `content/offline-first-testing`.
 3. Create `src/content/writing/<slug>.mdx`. The file name is the URL: `<slug>.mdx` becomes
    `/writing/<slug>`.
