@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build && node scripts/resume-pdf.mjs",
+    "build": "astro build && node scripts/resume-pdf.mjs && node scripts/checklist-pdf.mjs",
     "preview": "wrangler dev",
     "check": "pnpm --silent cf:types && eslint . && prettier --check . && astro check --minimalOutput",
     "lint": "eslint .",

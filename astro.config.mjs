@@ -44,11 +44,14 @@ export default defineConfig({
     react(),
     mdx(),
     // /styleguide is an internal design reference and /thanks a post-submit confirmation: both noindex,
-    // both kept out of the sitemap.
+    // both kept out of the sitemap. /checklist and /checklist/print are kept out too, until the sign-up
+    // form ships (#111).
     sitemap({
       filter: (page) => {
         const path = new URL(page).pathname;
-        return !path.startsWith('/styleguide') && path !== '/thanks';
+        return (
+          !path.startsWith('/styleguide') && path !== '/thanks' && !path.startsWith('/checklist')
+        );
       },
     }),
   ],
