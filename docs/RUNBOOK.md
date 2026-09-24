@@ -41,14 +41,16 @@ Steps still `failed` or `pending` after the next 03:30 UTC run have an alert wit
 
 ## An alert arrived
 
-| Alert                                         | Likely cause → fix                                                                                         |
-| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `Health check failed · sheets: … 403/404`     | The Sheet was unshared or deleted, or `SHEET_ID` is wrong → reshare with the service account as Editor     |
-| `Health check failed · sheets: invalid_grant` | The service-account key was revoked or rotated → [rotate the Google key](#rotate-a-secret)                 |
-| `Health check failed · telegram: 401`         | Bot token revoked → new token from @BotFather, then rotate `TELEGRAM_BOT_TOKEN`                            |
-| `… moved to the dead-letter queue`            | A step failed 5 times in a row. The lead is safe in D1; fix the cause and the next cron re-syncs it        |
-| `Delivery still failing after re-sync`        | Read `last_error` (query below), fix, and the next daily run re-syncs it ([details](#re-run-delivery-now)) |
-| `Sheet retention cleanup failed`              | Usually the same as a Sheets health failure                                                                |
+| Alert                                         | Likely cause → fix                                                                                                      |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `Health check failed · sheets: … 403/404`     | The Sheet was unshared or deleted, or `SHEET_ID` is wrong → reshare with the service account as Editor                  |
+| `Health check failed · sheets: invalid_grant` | The service-account key was revoked or rotated → [rotate the Google key](#rotate-a-secret)                              |
+| `Health check failed · telegram: 401`         | Bot token revoked → new token from @BotFather, then rotate `TELEGRAM_BOT_TOKEN`                                         |
+| `… moved to the dead-letter queue`            | A step failed 5 times in a row. The lead is safe in D1; fix the cause and the next cron re-syncs it                     |
+| `Delivery still failing after re-sync`        | Read `last_error` (query below), fix, and the next daily run re-syncs it ([details](#re-run-delivery-now))              |
+| `Sheet retention cleanup failed`              | Usually the same as a Sheets health failure                                                                             |
+| `Deleting unsubscribed subscribers failed`    | The Sheet or a Resend contact delete failed. Nothing was deleted from D1 for those, so the next run retries             |
+| `Health check failed · resend_contacts: …`    | `RESEND_CONTACTS_KEY` revoked or not full access, or the segment was deleted → rotate the key / fix `RESEND_SEGMENT_ID` |
 
 ```bash
 pnpm exec wrangler d1 execute DB --env staging --remote --command \
@@ -93,15 +95,17 @@ remote rows. Those follow at the next daily run.
 Creating a new Google key needs the "Disable service account key creation" org policy set to _Not enforced_
 on the `abhishekgoyal-me` project (IAM & Admin → Organization Policies). Set it back to _Inherit_ afterwards.
 
-| Secret               | Where it comes from                                                                                |
-| -------------------- | -------------------------------------------------------------------------------------------------- |
-| `TURNSTILE_SECRET`   | Cloudflare → Turnstile (staging uses the public test secret)                                       |
-| `GOOGLE_SA_KEY`      | GCP → IAM → Service accounts → `leads-writer` (staging) or `leads-writer-prod` (production) → Keys |
-| `RESEND_API_KEY`     | resend.com → API Keys (sending access, abhishekgoyal.me only)                                      |
-| `TELEGRAM_BOT_TOKEN` | @BotFather                                                                                         |
-| `TELEGRAM_CHAT_ID`   | `getUpdates` after messaging the bot                                                               |
-| `CAL_WEBHOOK_SECRET` | `openssl rand -hex 32`, also pasted into the Cal.com webhook                                       |
-| `GA_MP_API_SECRET`   | GA4 → Admin → Data streams → Measurement Protocol API secrets                                      |
+| Secret                  | Where it comes from                                                                                |
+| ----------------------- | -------------------------------------------------------------------------------------------------- |
+| `TURNSTILE_SECRET`      | Cloudflare → Turnstile (staging uses the public test secret)                                       |
+| `GOOGLE_SA_KEY`         | GCP → IAM → Service accounts → `leads-writer` (staging) or `leads-writer-prod` (production) → Keys |
+| `RESEND_API_KEY`        | resend.com → API Keys (sending access, abhishekgoyal.me only)                                      |
+| `TELEGRAM_BOT_TOKEN`    | @BotFather                                                                                         |
+| `TELEGRAM_CHAT_ID`      | `getUpdates` after messaging the bot                                                               |
+| `CAL_WEBHOOK_SECRET`    | `openssl rand -hex 32`, also pasted into the Cal.com webhook                                       |
+| `GA_MP_API_SECRET`      | GA4 → Admin → Data streams → Measurement Protocol API secrets                                      |
+| `RESEND_CONTACTS_KEY`   | resend.com → API Keys, **full access** (managing contacts needs it; one key per environment)       |
+| `RESEND_WEBHOOK_SECRET` | resend.com → Webhooks → the environment's endpoint → Signing secret (`whsec_…`)                    |
 
 ## Someone asks to delete their data
 
@@ -116,7 +120,63 @@ pnpm exec wrangler d1 execute DB --env staging --remote --command \
 ```
 
 Then delete their rows in the Sheet (Leads and Bookings tabs, filter by email), and the emails in the
-`contact@` inbox. Reply to confirm it's done.
+`contact@` inbox. If they are also a subscriber, remove them everywhere as below. Reply to confirm it's
+done.
+
+## Newsletter subscribers
+
+**Someone replies UNSUBSCRIBE.** Resend → Audience → Contacts → find the address → set it to
+**Unsubscribed**. The webhook marks D1 and the Sheet, and the address is deleted everywhere 30 days later.
+Reply to confirm.
+
+**Remove a subscriber everywhere now** (a deletion request):
+
+1. Resend → Audience → Contacts → the address → **Delete contact**. The `contact.deleted` webhook marks
+   the row unsubscribed.
+2. Delete the D1 row:
+
+   ```bash
+   pnpm exec wrangler d1 execute DB --remote --command \
+     "DELETE FROM outbox_status WHERE ref_kind = 'subscriber' AND ref_id IN (SELECT subscriber_id FROM subscribers WHERE email = 'person@example.com');
+      DELETE FROM subscribers WHERE email = 'person@example.com'"
+   ```
+
+3. Delete their row(s) in the Sheet's Subscribers tab (filter by email).
+
+**Re-send a confirmation.** A visitor who signs up again more than 24 hours after the last email gets a
+new link on their own. Within 24 hours the form changes nothing, on purpose. To send one sooner, mark
+the step pending; the next daily run issues a fresh token and emails it (the old link stops working):
+
+```bash
+pnpm exec wrangler d1 execute DB --remote --command \
+  "UPDATE outbox_status SET status = 'pending', last_error = NULL WHERE ref_kind = 'subscriber' AND step = 'confirm_email'
+     AND ref_id = (SELECT subscriber_id FROM subscribers WHERE email = 'person@example.com' AND status = 'pending')"
+```
+
+**Where does a subscriber stand?**
+
+```bash
+pnpm exec wrangler d1 execute DB --remote --command \
+  "SELECT s.status, s.source, s.confirmed_at, s.unsubscribed_at, o.step, o.status AS step_status, o.last_error
+   FROM subscribers s LEFT JOIN outbox_status o ON o.ref_kind = 'subscriber' AND o.ref_id = s.subscriber_id
+   WHERE s.email = 'person@example.com'"
+```
+
+**The Resend webhook is failing.** Symptoms: people unsubscribe in Resend but D1 and the Sheet still say
+subscribed. Resend → Webhooks → the endpoint → recent deliveries:
+
+- **401**: the signing secret doesn't match. Copy it from that page and store it with
+  `wrangler versions secret put RESEND_WEBHOOK_SECRET` (see [Rotate a secret](#rotate-a-secret)).
+- **503**: the Worker is missing `RESEND_WEBHOOK_SECRET` or a binding; same fix.
+- **5xx otherwise**: D1 was unavailable; Resend retries on its own.
+- **No deliveries**: the endpoint URL or its events are wrong: it must be `…/api/resend-webhook` with
+  `contact.updated` and `contact.deleted`.
+
+Deliveries that failed can be re-sent from that page once fixed. Nothing is ever emailed to an
+unsubscribed contact meanwhile: Resend itself enforces the unsubscribe.
+
+**Sending a note.** Resend → Broadcasts, to the environment's segment. Keep Resend's unsubscribe link in
+the footer (`{{{RESEND_UNSUBSCRIBE_URL}}}`): the privacy page promises one in every note.
 
 ## Roll back a deploy
 

@@ -1,7 +1,12 @@
 // Worker entry: Astro serves pages and /api/*; the queue consumer and cron handle lead delivery (ADR 003).
 import { handle } from '@astrojs/cloudflare/handler';
 import { sendAlert } from './lib/server/alert';
-import { dailyMaintenance, deepChecks, sheetRetention } from './lib/server/cron';
+import {
+  dailyMaintenance,
+  deepChecks,
+  sheetRetention,
+  unsubscribedCleanup,
+} from './lib/server/cron';
 import {
   alertTransports,
   bookingHandlers,
@@ -59,8 +64,8 @@ export default {
     }
   },
 
-  // Daily: re-sync undelivered steps, purge data past retention (D1 and the Sheet), deep health
-  // check, alerts.
+  // Daily: re-sync undelivered steps, purge data past retention (D1, the Sheet and, for unsubscribed
+  // addresses, Resend), deep health check, alerts.
   async scheduled(_controller, env) {
     if (!env.DB) return;
     await dailyMaintenance(
@@ -74,6 +79,7 @@ export default {
       deepChecks(env),
       alertTransports(env),
       sheetRetention(env),
+      unsubscribedCleanup(env),
     );
   },
 } satisfies ExportedHandler<Env, DeliveryMessage>;

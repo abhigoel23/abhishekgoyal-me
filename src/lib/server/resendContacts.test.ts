@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 import { describe, expect, it, vi } from 'vitest';
-import { checkSegment, upsertContact, verifyWebhook } from './resendContacts';
+import { checkSegment, deleteContact, upsertContact, verifyWebhook } from './resendContacts';
 
 const json = (status: number, body: unknown = {}) => Response.json(body, { status });
 
@@ -40,6 +40,19 @@ describe('upsertContact', () => {
       /Resend create contact 401/,
     );
     expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('deleteContact', () => {
+  it('deletes by email, and treats an already-deleted contact as done', async () => {
+    const fetcher = vi.fn<typeof fetch>(async () => json(200));
+    await deleteContact('key', 'asha@acme.in', fetcher);
+    expect(fetcher.mock.calls[0]![0]).toBe('https://api.resend.com/contacts/asha%40acme.in');
+    expect(fetcher.mock.calls[0]![1]!.method).toBe('DELETE');
+    await expect(deleteContact('key', 'a@b.in', async () => json(404))).resolves.toBeUndefined();
+    await expect(deleteContact('key', 'a@b.in', async () => json(500))).rejects.toThrow(
+      /delete contact 500/,
+    );
   });
 });
 

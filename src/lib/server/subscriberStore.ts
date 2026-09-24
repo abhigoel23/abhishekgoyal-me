@@ -281,3 +281,45 @@ export async function purgeUnconfirmed(db: D1Database, now: Date) {
   ]);
   return results[1]!.meta.changes;
 }
+
+/** Unsubscribed addresses are deleted everywhere this long after unsubscribing (privacy policy, #113). */
+export const UNSUBSCRIBED_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+export const UNSUBSCRIBED_PURGE_BATCH = 50;
+
+/** Subscribers due for deletion: unsubscribed more than 30 days ago, oldest first. */
+export async function unsubscribedDue(db: D1Database, now: Date) {
+  const cutoff = new Date(now.getTime() - UNSUBSCRIBED_RETENTION_MS).toISOString();
+  const { results } = await db
+    .prepare(
+      `SELECT subscriber_id, email FROM subscribers
+       WHERE status = 'unsubscribed' AND unsubscribed_at < ?
+       ORDER BY unsubscribed_at LIMIT ${UNSUBSCRIBED_PURGE_BATCH}`,
+    )
+    .bind(cutoff)
+    .all<{ subscriber_id: string; email: string }>();
+  return results;
+}
+
+/**
+ * Deletes these subscribers and their outbox rows, once the Sheet and Resend copies are gone. Only rows
+ * still unsubscribed: someone who signed up again in the meantime is kept.
+ */
+export async function deleteUnsubscribed(db: D1Database, subscriberIds: string[]) {
+  if (!subscriberIds.length) return 0;
+  const marks = subscriberIds.map(() => '?').join(', ');
+  const results = await db.batch([
+    db
+      .prepare(
+        `DELETE FROM outbox_status WHERE ref_kind = 'subscriber' AND ref_id IN
+           (SELECT subscriber_id FROM subscribers
+            WHERE status = 'unsubscribed' AND subscriber_id IN (${marks}))`,
+      )
+      .bind(...subscriberIds),
+    db
+      .prepare(
+        `DELETE FROM subscribers WHERE status = 'unsubscribed' AND subscriber_id IN (${marks})`,
+      )
+      .bind(...subscriberIds),
+  ]);
+  return results[1]!.meta.changes;
+}

@@ -24,7 +24,8 @@ export default defineConfig({
     command: [
       `rm -rf ${PERSIST}`,
       `wrangler d1 migrations apply DB --env staging --local --persist-to ${PERSIST}`,
-      `wrangler dev --port ${PORT} --env-file .dev.vars.example --persist-to ${PERSIST}`,
+      // --test-scheduled: GET /cdn-cgi/handler/scheduled runs the daily cron (local dev only).
+      `wrangler dev --port ${PORT} --env-file .dev.vars.example --persist-to ${PERSIST} --test-scheduled`,
     ].join(' && '),
     url: `http://localhost:${PORT}`,
     reuseExistingServer: false,

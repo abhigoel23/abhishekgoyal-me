@@ -5,10 +5,10 @@ import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
 import { checkTelegram } from './notifications';
 import { BOOKING_STEPS, getBookingEvent, type BookingHandlers } from './bookings';
 import { deliverLead, runSteps, type RefKind, type StepHandlers } from './outbox';
-import { purgeBookingRows, purgeLeadRows, readSheetTitle } from './sheets';
-import { checkSegment } from './resendContacts';
+import { deleteSubscriberRows, purgeBookingRows, purgeLeadRows, readSheetTitle } from './sheets';
+import { checkSegment, deleteContact } from './resendContacts';
 import { deliverSubscriber, type SubscriberHandlers } from './subscriberDelivery';
-import { purgeUnconfirmed } from './subscriberStore';
+import { deleteUnsubscribed, purgeUnconfirmed, unsubscribedDue } from './subscriberStore';
 
 export const RETENTION_MONTHS = 18;
 // Rows younger than this may still be in the queue's own retries; leave them to it.
@@ -152,19 +152,78 @@ export function sheetRetention(env: Env) {
   };
 }
 
+/** Where an unsubscribed address lives besides D1. Each is left out when not configured. */
+export type UnsubscribedCleanup = {
+  sheetRows?: (subscriberIds: string[]) => Promise<number>;
+  contact?: (email: string) => Promise<void>;
+};
+
+export function unsubscribedCleanup(env: Env): UnsubscribedCleanup {
+  const { GOOGLE_SA_EMAIL: email, GOOGLE_SA_KEY: key, SHEET_ID: sheetId } = env;
+  return {
+    ...(email && key && sheetId
+      ? {
+          sheetRows: async (ids: string[]) => {
+            const token = await getAccessToken({ email, privateKeyPem: key }, SHEETS_SCOPE);
+            return deleteSubscriberRows(token, sheetId, ids);
+          },
+        }
+      : {}),
+    ...(env.RESEND_CONTACTS_KEY
+      ? { contact: (address: string) => deleteContact(env.RESEND_CONTACTS_KEY, address) }
+      : {}),
+  };
+}
+
+/**
+ * Deletes subscribers 30 days after they unsubscribed (privacy policy): Sheet rows and the Resend
+ * contact first, then D1, so anything that fails is still in D1 and is retried the next day.
+ */
+export async function purgeUnsubscribed(db: D1Database, now: Date, cleanup: UnsubscribedCleanup) {
+  const due = await unsubscribedDue(db, now);
+  const failed: string[] = [];
+  if (!due.length) return { deleted: 0, failed };
+  if (cleanup.sheetRows) {
+    try {
+      await cleanup.sheetRows(due.map((s) => s.subscriber_id));
+    } catch (error) {
+      return { deleted: 0, failed: [`sheet: ${String(error).slice(0, 200)}`] };
+    }
+  }
+  const cleared: string[] = [];
+  for (const { subscriber_id: id, email } of due) {
+    try {
+      await cleanup.contact?.(email);
+      cleared.push(id);
+    } catch (error) {
+      failed.push(`subscriber ${id}: ${String(error).slice(0, 200)}`);
+    }
+  }
+  return { deleted: await deleteUnsubscribed(db, cleared), failed };
+}
+
 export async function dailyMaintenance(
   db: D1Database,
   handlers: AllHandlers,
   checks: HealthChecks,
   transports: AlertTransport[],
   purgeSheet?: (cutoffIso: string) => Promise<number>,
+  cleanup: UnsubscribedCleanup = {},
   now = new Date(),
 ) {
   const synced = await resync(db, handlers, now);
+  const unsubscribed = await purgeUnsubscribed(db, now, cleanup);
   const purged = {
     ...(await purge(db, now)),
     unconfirmedSubscribers: await purgeUnconfirmed(db, now),
+    unsubscribedSubscribers: unsubscribed.deleted,
   };
+  if (unsubscribed.failed.length) {
+    await sendAlert(
+      { subject: 'Deleting unsubscribed subscribers failed', lines: unsubscribed.failed },
+      transports,
+    );
+  }
   let sheetRowsPurged: number | string = 'not configured';
   if (purgeSheet) {
     try {

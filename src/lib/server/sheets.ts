@@ -166,12 +166,18 @@ const ISO_TIMESTAMP = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
 
 /** 0-based row indexes (header excluded) whose "Received (UTC)" is before the cutoff, as descending runs. */
 export function expiredRowRuns(received: string[][], cutoffIso: string): [number, number][] {
-  const expired = received
-    .map((row, i) => [i, row[0] ?? ''] as const)
-    .filter(([i, v]) => i > 0 && ISO_TIMESTAMP.test(v) && v < cutoffIso)
-    .map(([i]) => i);
+  return rowRuns(
+    received
+      .map((row, i) => [i, row[0] ?? ''] as const)
+      .filter(([i, v]) => i > 0 && ISO_TIMESTAMP.test(v) && v < cutoffIso)
+      .map(([i]) => i),
+  );
+}
+
+/** Ascending 0-based row indexes → [start, end) runs, last first, ready for deleteDimension. */
+function rowRuns(indexes: number[]): [number, number][] {
   const runs: [number, number][] = [];
-  for (const i of expired) {
+  for (const i of indexes) {
     const last = runs[runs.length - 1];
     if (last && last[1] === i) last[1] = i + 1;
     else runs.push([i, i + 1]);
@@ -197,9 +203,17 @@ async function purgeRows(
   const data = (await sheetsFetch(token, `${API}/${sheetId}/values/${range}`, {}, fetcher)) as {
     values?: string[][];
   };
-  const runs = expiredRowRuns(data.values ?? [], cutoffIso);
-  if (!runs.length) return 0;
+  return deleteRowRuns(token, sheetId, tab, expiredRowRuns(data.values ?? [], cutoffIso), fetcher);
+}
 
+async function deleteRowRuns(
+  token: string,
+  sheetId: string,
+  tab: string,
+  runs: [number, number][],
+  fetcher: typeof fetch,
+) {
+  if (!runs.length) return 0;
   const meta = (await sheetsFetch(
     token,
     `${API}/${sheetId}?fields=sheets.properties(sheetId,title)`,
@@ -314,4 +328,27 @@ export async function setSubscriberStatus(
     fetcher,
   );
   return rows.length;
+}
+
+/**
+ * Deletes every row of these subscribers (a re-subscriber can have several), for the purge 30 days
+ * after unsubscribing (#113). Matches on the Subscriber ID column; safe to repeat. Returns rows deleted.
+ */
+export async function deleteSubscriberRows(
+  token: string,
+  sheetId: string,
+  subscriberIds: string[],
+  fetcher: typeof fetch = fetch,
+) {
+  if (!subscriberIds.length) return 0;
+  const ids = new Set(subscriberIds);
+  const idRange = encodeURIComponent(`${SUBSCRIBERS_TAB}!A:A`);
+  const data = (await sheetsFetch(token, `${API}/${sheetId}/values/${idRange}`, {}, fetcher)) as {
+    values?: string[][];
+  };
+  const indexes = (data.values ?? [])
+    .map((row, i) => [i, row[0] ?? ''] as const)
+    .filter(([i, id]) => i > 0 && ids.has(id))
+    .map(([i]) => i);
+  return deleteRowRuns(token, sheetId, SUBSCRIBERS_TAB, rowRuns(indexes), fetcher);
 }

@@ -257,7 +257,7 @@ export default function LeadForm() {
       company: values.company,
       consent: values.consent,
       ...submissionContext(),
-      'cf-turnstile-response': turnstileToken(),
+      'cf-turnstile-response': await turnstileToken(),
       website: values.website,
       started_at: startedAtRef.current,
     };
