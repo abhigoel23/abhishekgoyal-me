@@ -24,8 +24,6 @@ gives households a reason to enter real numbers. Those two things are connected.
 payroll data because it never has it in the first place is a different trust proposition than one that
 promises to look after your payroll data on a server somewhere.
 
-{/* ASK ABHISHEK: what made you pick this problem — a specific household need you saw, or a general observation about how families track this today? */}
-
 ## No sync engine to design
 
 The technical consequence is that there's no sync contract to design, no conflict resolution, no retry
@@ -78,8 +76,6 @@ on for debugging, the discipline around what you ship and how you roll it out is
 have. It's currently in closed beta on Google Play with 12–20 households, built with Jetpack Compose,
 min SDK 24, target API 35.
 
-{/* ASK ABHISHEK: any early signal from the closed-beta households worth mentioning once there's something concrete to say? */}
-
 ## What I'd tell another builder
 
 If you're weighing whether a product needs a backend at all, the question I'd ask first isn't "can we build
@@ -87,8 +83,6 @@ the sync engine," it's "what does the user lose if there's no sync engine." For 
 multi-device access and recovery-without-export, and I judged that a household tracking one home's payroll
 would rather have neither of those than have their wage data sitting on a server. For a different product,
 that trade might go the other way.
-
-{/* ASK ABHISHEK: anything you'd point to about where the export/restore feature is headed, if you want to hint at what's next without over-promising? */}
 
 The second thing I'd say: local-only doesn't mean less engineering. It means the engineering moves into the
 data model and the release pipeline instead of into a sync contract. You still have to get the rules right,
