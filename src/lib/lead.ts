@@ -28,16 +28,9 @@ const optionalText = (max: number) =>
     .optional()
     .transform((v) => v || undefined);
 
-const common = {
-  name: requiredText(limits.name, 'Please add your name'),
-  email: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .max(limits.email)
-    .pipe(z.email({ message: 'Please add a valid email address' })),
-  consent: z.literal(true, { error: 'Please agree so I can reply to you' }),
-  // First-touch attribution captured by the form. Never shown to the visitor, so invalid values are dropped.
+/** First-touch attribution and GA ids, shared by the lead and subscribe schemas. */
+export const attribution = {
+  // Captured by the form. Never shown to the visitor, so invalid values are dropped.
   source_page: optionalText(limits.short),
   utm_source: optionalText(limits.short),
   utm_medium: optionalText(limits.short),
@@ -59,6 +52,20 @@ const common = {
   // own traffic. Never set for real visitors.
   ga_debug: z.literal('1').optional().catch(undefined),
   ga_internal: z.literal('1').optional().catch(undefined),
+};
+
+export const emailField = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .max(limits.email)
+  .pipe(z.email({ message: 'Please add a valid email address' }));
+
+const common = {
+  name: requiredText(limits.name, 'Please add your name'),
+  email: emailField,
+  consent: z.literal(true, { error: 'Please agree so I can reply to you' }),
+  ...attribution,
 };
 
 const project = z

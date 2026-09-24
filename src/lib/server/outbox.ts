@@ -5,7 +5,7 @@
 // duplicate row with the same ID, which is harmless and easy to spot.
 import { getLead, LEAD_STEPS, type LeadRow } from './leadStore';
 
-export type RefKind = 'lead' | 'booking';
+export type RefKind = 'lead' | 'booking' | 'subscriber';
 export type LeadStep = (typeof LEAD_STEPS)[number];
 /**
  * Why a step was skipped on purpose. Stored in `last_error`, so an expected skip (such as the 24-hour
@@ -15,7 +15,8 @@ export type SkipReason =
   | 'rate_limited_24h' // this address already got the email in the last 24 hours
   | 'reserved_email' // an RFC 2606 test address such as @example.com: never emailed
   | 'no_email'
-  | 'no_analytics_consent'; // no GA client id: the visitor didn't accept analytics
+  | 'no_analytics_consent' // no GA client id: the visitor didn't accept analytics
+  | 'not_pending'; // a subscriber confirmed or unsubscribed before the confirmation email went out
 export type StepResult = 'done' | { skipped: SkipReason };
 export const skip = (reason: SkipReason): StepResult => ({ skipped: reason });
 export type Handlers<S extends string, R> = Partial<Record<S, (record: R) => Promise<StepResult>>>;

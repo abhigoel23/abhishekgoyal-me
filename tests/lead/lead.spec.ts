@@ -1,50 +1,12 @@
-import { execFileSync } from 'node:child_process';
 import { expect, test, type Page } from '@playwright/test';
-import { PERSIST, PORT } from '../../playwright.lead.config';
+import { PORT } from '../../playwright.lead.config';
+import { count } from './d1';
 
 const ORIGIN = `http://localhost:${PORT}`;
 // The rate limiter keys on cf-connecting-ip (set by Cloudflare in production, where clients can't
 // spoof it). Locally each test uses its own address so the flood test doesn't starve the others.
 let ipCounter = 0;
 const nextIp = () => `203.0.113.${++ipCounter}`;
-
-/**
- * Row count from the local e2e D1. The Worker's queue consumer may still be writing outbox rows to the
- * same SQLite file, so a read can hit SQLITE_BUSY; retry a few times before failing.
- */
-function count(sql: string): number {
-  for (let attempt = 1; ; attempt++) {
-    try {
-      return queryCount(sql);
-    } catch (error) {
-      if (attempt >= 5 || !String(error).includes('SQLITE_BUSY')) throw error;
-      Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 250 * attempt);
-    }
-  }
-}
-
-function queryCount(sql: string): number {
-  const out = execFileSync(
-    'pnpm',
-    [
-      'exec',
-      'wrangler',
-      'd1',
-      'execute',
-      'DB',
-      '--env',
-      'staging',
-      '--local',
-      '--persist-to',
-      PERSIST,
-      '--json',
-      '--command',
-      sql,
-    ],
-    { encoding: 'utf8' },
-  );
-  return Number(Object.values(JSON.parse(out)[0].results[0])[0]);
-}
 
 const MIN_FILL_MS = 3_100;
 const TEST_TOKEN = 'XXXX.DUMMY.TOKEN.XXXX'; // accepted by Cloudflare's always-pass test secret
