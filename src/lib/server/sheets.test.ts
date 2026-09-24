@@ -5,6 +5,7 @@ import { retryDelaySeconds } from './outbox';
 import { sanitizeCell } from './sanitize';
 import {
   appendLead,
+  deleteSubscriberRows,
   expiredRowRuns,
   LEAD_HEADERS,
   leadToRow,
@@ -248,5 +249,38 @@ describe('Subscribers tab', () => {
     const none = vi.fn<typeof fetch>(async () => Response.json({ values: [['Subscriber ID']] }));
     expect(await setSubscriberStatus('t', 'sheet', 's-9', 'Unsubscribed', none)).toBe(0);
     expect(none).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('deleteSubscriberRows', () => {
+  const ids = [['Subscriber ID'], ['s-1'], ['s-2'], ['s-1'], ['s-3'], ['s-1']];
+
+  it('deletes every row of the given subscribers from the Subscribers tab, bottom up', async () => {
+    const calls: { url: string; body?: string }[] = [];
+    const fetcher = vi.fn<typeof fetch>(async (url, init) => {
+      calls.push({ url: String(url), body: init?.body as string | undefined });
+      if (String(url).includes('/values/')) return Response.json({ values: ids });
+      if (String(url).includes('fields=sheets')) {
+        return Response.json({ sheets: [{ properties: { sheetId: 9, title: 'Subscribers' } }] });
+      }
+      return Response.json({});
+    });
+    expect(await deleteSubscriberRows('tok', 'SHEET', ['s-1', 's-3'], fetcher)).toBe(4);
+    expect(calls[0]!.url).toContain(encodeURIComponent('Subscribers!A:A'));
+    const { requests } = JSON.parse(calls[2]!.body!);
+    expect(
+      requests.map((r: { deleteDimension: { range: object } }) => r.deleteDimension.range),
+    ).toEqual([
+      { sheetId: 9, dimension: 'ROWS', startIndex: 3, endIndex: 6 },
+      { sheetId: 9, dimension: 'ROWS', startIndex: 1, endIndex: 2 },
+    ]);
+  });
+
+  it('never deletes the header, and makes no calls for an empty list', async () => {
+    const fetcher = vi.fn<typeof fetch>(async () => Response.json({ values: ids }));
+    expect(await deleteSubscriberRows('tok', 'SHEET', ['Subscriber ID'], fetcher)).toBe(0);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(await deleteSubscriberRows('tok', 'SHEET', [], fetcher)).toBe(0);
+    expect(fetcher).toHaveBeenCalledTimes(1);
   });
 });

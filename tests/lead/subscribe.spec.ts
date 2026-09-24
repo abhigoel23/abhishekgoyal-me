@@ -222,3 +222,32 @@ for (const { name, url, pick, source } of [
     ).toBe(1);
   });
 }
+
+test('the daily cron deletes addresses unsubscribed over 30 days ago, and nothing else', async ({
+  request,
+}) => {
+  const [old, recent, back] = ['old', 'recent', 'back'].map((label) => newEmail(`purge-${label}`));
+  for (const email of [old, recent, back]) await signup(request, email);
+  const day = 24 * 60 * 60 * 1000;
+  const ago = (days: number) => new Date(Date.now() - days * day).toISOString();
+  query(
+    `UPDATE subscribers SET status = 'unsubscribed', unsubscribed_at = '${ago(31)}' WHERE email = '${old}'`,
+  );
+  query(
+    `UPDATE subscribers SET status = 'unsubscribed', unsubscribed_at = '${ago(29)}' WHERE email = '${recent}'`,
+  );
+  // Unsubscribed long ago but signed up again: pending now, so kept.
+  query(`UPDATE subscribers SET unsubscribed_at = '${ago(40)}' WHERE email = '${back}'`);
+  const oldId = query<{ subscriber_id: string }>(
+    `SELECT subscriber_id FROM subscribers WHERE email = '${old}'`,
+  )[0]!.subscriber_id;
+
+  // Runs the daily cron now (wrangler dev --test-scheduled).
+  const res = await request.get('/cdn-cgi/handler/scheduled?cron=30+3+*+*+*');
+  expect(res.ok()).toBe(true);
+
+  expect(statusOf(old)).toBeUndefined();
+  expect(count(`SELECT count(*) FROM outbox_status WHERE ref_id = '${oldId}'`)).toBe(0);
+  expect(statusOf(recent)).toBe('unsubscribed');
+  expect(statusOf(back)).toBe('pending');
+});

@@ -55,6 +55,20 @@ export async function upsertContact(
   return 'updated' as const;
 }
 
+/**
+ * Deletes the contact from Resend (all segments), for the purge 30 days after unsubscribing. Already
+ * gone counts as done. Resend then sends contact.deleted, which finds nothing left to mark.
+ */
+export async function deleteContact(key: string, email: string, fetcher: typeof fetch = fetch) {
+  const res = await resendFetch(
+    key,
+    `/contacts/${encodeURIComponent(email)}`,
+    { method: 'DELETE' },
+    fetcher,
+  );
+  if (!res.ok && res.status !== 404) await fail(res, 'delete contact');
+}
+
 /** Health check: the key works and the segment exists (reads only). */
 export async function checkSegment(key: string, segmentId: string, fetcher: typeof fetch = fetch) {
   const res = await resendFetch(key, `/segments/${encodeURIComponent(segmentId)}`, {}, fetcher);

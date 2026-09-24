@@ -2,7 +2,7 @@
 layout: ../layouts/Prose.astro
 path: /privacy
 eyebrow: Your data
-updated: 22 September 2026
+updated: 24 September 2026
 ---
 
 This is the personal website of Abhishek Goyal, based in Gurugram, India. I want it to collect as little as
@@ -14,6 +14,9 @@ does.
 - Reading the site records nothing about you beyond what the host needs to serve pages.
 - If you send an enquiry, I use it only to reply to you and follow up on that enquiry.
 - Enquiries are deleted automatically 18 months after they arrive.
+- If you sign up for the checklist, you get it once you confirm your email, plus occasional notes you can
+  unsubscribe from at any time. Your address is deleted 30 days after you unsubscribe, or 30 days after
+  signing up if you never confirm.
 - Analytics run only if you accept them, and never receive your name, email or message.
 - You can ask me to delete your data at any time: reply **DELETE** to my email, or write to
   [contact@abhishekgoyal.me](mailto:contact@abhishekgoyal.me).
@@ -33,11 +36,37 @@ sends the anonymous Google Analytics ID for your visit (see below). The site doe
 address.
 
 **Why.** To reply to your enquiry and follow up about it. You give consent when you tick the box, and you
-can withdraw it at any time by asking me to delete your data. I never sell your data, add you to a mailing
-list, or use it for anything else.
+can withdraw it at any time by asking me to delete your data. I never sell your data or use it for anything
+else, and sending an enquiry never adds you to my mailing list.
 
 **Spam protection.** To keep bots out, the form uses Cloudflare Turnstile, which checks signals from your
 browser to tell people from bots, and a per-IP limit on how often it can be submitted.
+
+## The checklist and occasional notes
+
+You can sign up on the [checklist page](/checklist), or choose "Just following along" on the contact form.
+
+**What it collects.** Your email address, the time you ticked the consent box, and which form you used. Like
+the contact form, it also records the page you first arrived on, any campaign tags and the site that linked
+you here, plus the anonymous Google Analytics ID for your visit if you accepted analytics. It doesn't ask
+for your name, and the site does not store your IP address.
+
+**How it works.** Signing up sends you an email with a confirmation link. Nothing else is sent until you open
+the link and press **Confirm**, so nobody can sign you up without your say. The link works for 7 days. If
+you never confirm, your address is deleted 30 days after you signed up.
+
+**What you get.** Once you confirm: an email with a link to the checklist, then occasional notes on what I'm
+building. I send no more than that, and I never sell your address or pass it on.
+
+**Why.** To send you the checklist and the notes you asked for. You give consent when you tick the box and
+confirm your address.
+
+**Unsubscribing.** Every note has an unsubscribe link. You can also reply **UNSUBSCRIBE** to any of my
+emails, or write to [contact@abhishekgoyal.me](mailto:contact@abhishekgoyal.me). 30 days after you
+unsubscribe, your address and everything stored with it are deleted from the database, my Google Sheet and
+Resend. If you'd rather it went sooner, ask me to delete it.
+
+The same spam protection applies as for the contact form: Cloudflare Turnstile and a per-IP limit.
 
 ## Booking a call
 
@@ -47,21 +76,23 @@ and I keep them with your enquiry.
 
 ## Who processes your data for me
 
-| Service              | What it does                                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Cloudflare**       | Hosts the site, stores enquiries and bookings, runs Turnstile, and counts visits without cookies             |
-| **Google Workspace** | My email, and a Google Sheet that holds a working copy of enquiries and bookings                             |
-| **Resend**           | Sends me an email about each enquiry, and sends you a short confirmation                                     |
-| **Telegram**         | Pings my phone about new enquiries and bookings, with **no personal details**: only the type, budget or time |
-| **Cal.com**          | Handles call bookings (only if you book one)                                                                 |
-| **Google Analytics** | Counts visits and enquiries, only if you accept analytics                                                    |
+| Service              | What it does                                                                                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Cloudflare**       | Hosts the site, stores enquiries, bookings and sign-ups, runs Turnstile, and counts visits without cookies                                                     |
+| **Google Workspace** | My email, and a Google Sheet that holds a working copy of enquiries, bookings and confirmed sign-ups                                                           |
+| **Resend**           | Sends my emails (enquiry notifications, confirmations, the checklist and notes), and keeps the mailing list: your email address and whether you are subscribed |
+| **Telegram**         | Pings my phone about new enquiries and bookings, with **no personal details**: only the type, budget or time                                                   |
+| **Cal.com**          | Handles call bookings (only if you book one)                                                                                                                   |
+| **Google Analytics** | Counts visits, enquiries and sign-ups, only if you accept analytics                                                                                            |
 
 Some of these companies store data outside India, for example in the United States or the EU.
 
 ## How long it is kept
 
 Enquiries and bookings are **deleted automatically 18 months** after they arrive, from both the database
-and my Google Sheet. The confirmation and notification emails stay in the mailboxes until they are deleted.
+and my Google Sheet. Checklist sign-ups are **deleted automatically 30 days** after you unsubscribe, from
+the database, the Sheet and Resend's mailing list, or 30 days after signing up if you never confirmed.
+While you're subscribed, they are kept until you unsubscribe. The confirmation and notification emails stay in the mailboxes until they are deleted.
 Delivery services such as Resend keep their own sending logs for a limited time under their own policies. If
 you ask me to delete your data, I remove it from the database, the Sheet and my inbox.
 
@@ -70,9 +101,11 @@ you ask me to delete your data, I remove it from the database, the Sheet and my 
 - **Google Analytics.** A bar at the bottom of the page asks first. Nothing from Google loads until you
   press **Accept**, and pressing **Decline** (or ignoring the bar) means nothing is sent. If you accept,
   Google Analytics sets two cookies, `_ga` and `_ga_<id>`, that expire after 6 months. It counts pages
-  viewed and clicks on buttons such as "Start a project", and never receives your name, email or message.
-  When an enquiry is saved, the site tells Google Analytics that an enquiry happened, with only its type,
-  budget range and where the visit came from. Ad features and Google signals are switched off.
+  viewed, clicks on buttons such as "Start a project", downloads of PDFs such as my resume, and whether you
+  reached the end of a case study. It never receives your name, email or message. When an enquiry is
+  saved, the site tells Google Analytics that an enquiry happened, with only its type, budget range and
+  where the visit came from. When you confirm a sign-up, it tells Google Analytics that a sign-up happened,
+  with only the form you used. Ad features and Google signals are switched off.
 - **Changing your mind.** Use **Cookie settings** at the bottom of any page. Declining after you accepted
   deletes the Google Analytics cookies. Your choice is saved in your browser's storage for 6 months, then
   the bar asks again.
@@ -81,7 +114,7 @@ you ask me to delete your data, I remove it from the database, the Sheet and my 
 - **Your theme choice.** Saved in your browser's storage if you switch between light and dark mode. It never
   leaves your device.
 - **Where you arrived from.** The page you landed on and any campaign tags are kept in your browser's
-  session storage, which is cleared when you close the tab. They are sent only if you submit the form.
+  session storage, which is cleared when you close the tab. They are sent only if you submit a form.
 
 ## Server logs
 
