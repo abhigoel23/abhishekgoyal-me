@@ -65,7 +65,7 @@ export function reviewBody(
     '- [ ] Performance: **Search clicks** and **impressions**; top 3 queries and pages in Notes',
     '',
     '**3. GA4** (only visitors who accept the consent bar)',
-    '- [ ] Explore → the saved reports (#115): source / medium, the lead funnel, landing pages by conversion',
+    '- [ ] Explore, with the date range set to this month: **Lead funnel** (both tabs), **Landing pages by conversion**, **Source / medium** (and its CTA clicks tab)',
     "- [ ] If `sign_up` appears in Admin → Events and isn't a key event yet, mark it as one (then delete this line from `src/lib/monthlyReview.ts`)",
     '',
     '**4. Leads and Subscribers Sheets**',
