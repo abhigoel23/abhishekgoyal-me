@@ -33,6 +33,13 @@ export default defineConfig({
   // Prerender in Node, not workerd: the share images (src/pages/og) use Satori + native resvg and read font
   // files at build time. On-demand routes (src/pages/api/*) still always run in workerd.
   adapter: cloudflare({ imageService: 'compile', prerenderEnvironment: 'node' }),
+  // Code blocks in posts: high-contrast GitHub themes pass WCAG AA (the default theme's comments don't).
+  // The light colours are inline; global.css swaps in --shiki-dark when the site is in dark mode.
+  markdown: {
+    shikiConfig: {
+      themes: { light: 'github-light-high-contrast', dark: 'github-dark-high-contrast' },
+    },
+  },
   integrations: [
     react(),
     mdx(),
