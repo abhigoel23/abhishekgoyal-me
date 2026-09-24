@@ -199,26 +199,28 @@ Deliveries that failed can be re-sent from that page once fixed. Nothing is ever
 unsubscribed contact meanwhile: Resend itself enforces the unsubscribe.
 
 **Sending a note.** Only when there's something new (a post, or real news on what you're building), and at
-most once a month ([GROWTH.md](./GROWTH.md#the-newsletter)). Claude drafts; you press send.
+most once a month ([GROWTH.md](./GROWTH.md#the-newsletter)). Notes go through Resend's Broadcast API, not
+its editor: the editor drops pasted links, and it drops a pasted link to `{{{RESEND_UNSUBSCRIBE_URL}}}`
+(both tested on staging, 2026-09-24). Through the API, every note carries each subscriber's own
+unsubscribe link, which the privacy page promises.
 
-1. `pnpm digest <date of the last note>` prints the subject and an HTML draft: the posts published since
-   then (future-dated posts are left out until their day), newsletter UTM links, the checklist link and
-   the unsubscribe footer. Find the last note's date in Resend → Broadcasts. Run it with no date for the
-   very first note. HTML, not Markdown: pasting Markdown into Resend's editor drops every link.
-2. Replace the `✍️ WRITE THIS` gap with two or three sentences in your own words. Every claim must match
-   the resume, as on the site.
-3. Resend → **Broadcasts** → **Create broadcast**. From: `Abhishek Goyal <contact@abhishekgoyal.me>`;
-   Reply-to: `contact@abhishekgoyal.me` (people may reply UNSUBSCRIBE); Subject from the draft. Open the
-   editor's **code view** (`</>`) and paste the HTML there, not into the visual editor.
-4. Back in the visual editor, check the links are live. Then, in the last line, select the word
-   **Unsubscribe**, click the editor's link button and enter `{{{RESEND_UNSUBSCRIBE_URL}}}` as the address;
-   Resend fills in each subscriber's own link. The privacy page promises one in every note. It has to be
-   done in the editor: a link to the placeholder in pasted HTML is dropped. (Tested on staging,
-   2026-09-24.)
-5. Send it to the **staging** segment first (subscribe your own address there via the staging site),
-   then check the email: links work and carry `utm_source=newsletter`, and **Unsubscribe** marks you
-   unsubscribed in the staging Sheet.
-6. Duplicate the Broadcast to the **production** segment and send.
+1. `pnpm digest <date of the last note>` writes `newsletter/<today>.html`: the subject (first line), the
+   posts published since the last note (future-dated posts wait for their day), newsletter UTM links, the
+   checklist link and the unsubscribe footer. With no date it includes every post (the very first note).
+   The last note is the newest file in `newsletter/`.
+2. Replace the `✍️ WRITE THIS` paragraph with two or three sentences in Abhishek's words. Every claim
+   must match the resume. Open a PR, fact-check it like a post, and merge.
+3. **Test:** Actions → **Send newsletter** → Run workflow on `main`, note = the date, target = `test`
+   (or `gh workflow run send-newsletter.yml -f note=<date> -f target=test`). It goes to the staging
+   segment with `[TEST]` in the subject. Your address must be subscribed there (sign up on the staging
+   site). Check the links, `utm_source=newsletter`, and that Unsubscribe works.
+4. **Production:** the same with target = `production`. The workflow refuses unless that note went out as
+   a test from the same commit, and refuses a note already sent to production. Claude runs this only
+   after an explicit yes in chat.
+
+The send script (`scripts/newsletter-send.mjs`) also refuses a note that still has the `✍️ WRITE THIS`
+gap or has no unsubscribe link. It needs the GitHub secret `RESEND_BROADCAST_KEY`: a Resend API key with
+**Full access** (a sending-only key can't create broadcasts). Rotate it like the other Resend keys.
 
 ## Roll back a deploy
 

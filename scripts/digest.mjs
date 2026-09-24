@@ -1,12 +1,12 @@
-// `pnpm digest [YYYY-MM-DD]`: an HTML draft of the newsletter digest to paste into the code view of
-// Resend → Broadcasts (docs/RUNBOOK.md → Sending a note). Pass the date of the last note; posts published after it
-// and up to today are included. With no date, every published post is included (the first note).
-// Prints only; it sends nothing.
-import { readdirSync, readFileSync } from 'node:fs';
+// `pnpm digest [YYYY-MM-DD]`: writes the newsletter note newsletter/<today>.html (docs/RUNBOOK.md →
+// Sending a note). Pass the date of the last note; posts published after it and up to today are included.
+// With no date, every published post is included (the first note). It sends nothing: the Send newsletter
+// workflow does, once the note is merged.
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { profile } from '../src/data/profile.ts';
 import { sharePlatforms } from '../src/data/share.ts';
-import { digestDraft, isDay, postsToSend, WRITE_THIS } from '../src/lib/digest.ts';
+import { digestDraft, isDay, noteFile, postsToSend, WRITE_THIS } from '../src/lib/digest.ts';
 import { campaignUrl, parseFrontMatter } from '../src/lib/share.ts';
 
 const since = process.argv[2];
@@ -45,7 +45,12 @@ const { subject, html } = digestDraft({
   first: since === undefined,
 });
 
-console.log(`Subject: ${subject}\n\n${html}`);
-console.error(
-  `\n${posts.length} post(s). Replace "${WRITE_THIS}" before sending. Send to a test segment first.`,
-);
+const out = new URL(`../newsletter/${today}.html`, import.meta.url);
+if (existsSync(out)) {
+  console.error(`newsletter/${today}.html already exists; edit that one instead.`);
+  process.exit(1);
+}
+mkdirSync(new URL('../newsletter/', import.meta.url), { recursive: true });
+writeFileSync(out, noteFile(subject, html));
+console.log(`Wrote newsletter/${today}.html (${posts.length} post(s)): ${subject}`);
+console.log(`Replace "${WRITE_THIS}", then open a PR. Send with the Send newsletter workflow.`);

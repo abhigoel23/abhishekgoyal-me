@@ -1,5 +1,16 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { digestDraft, isDay, postsToSend, WRITE_THIS } from './digest';
+import { newsletter } from '../data/newsletter';
+import {
+  digestDraft,
+  isDay,
+  noteFile,
+  noteProblems,
+  parseNote,
+  postsToSend,
+  UNSUBSCRIBE_PLACEHOLDER,
+  WRITE_THIS,
+} from './digest';
 
 const post = (pubDate: string, draft = false) => ({ pubDate, draft, title: pubDate });
 
@@ -62,11 +73,11 @@ describe('digestDraft', () => {
     expect(body).toContain('first note');
   });
 
-  it('always carries the unsubscribe wording, the reply option and the gap to write', () => {
+  it('always carries the unsubscribe link, the reply option and the gap to write', () => {
     const { html: body } = digestDraft({ ...base, posts: [a], first: false });
-    // The word is linked in Resend's editor, which drops a pasted placeholder link (RUNBOOK).
-    expect(body).toContain('abhishekgoyal.me. Unsubscribe, or reply UNSUBSCRIBE.');
-    expect(body).not.toContain('RESEND_UNSUBSCRIBE_URL');
+    expect(body).toContain(
+      `<a href="${UNSUBSCRIBE_PLACEHOLDER}">Unsubscribe</a>, or reply UNSUBSCRIBE.`,
+    );
     expect(body).toContain('reply UNSUBSCRIBE');
     expect(body).toContain(WRITE_THIS);
     expect(body).toContain(base.checklistUrl);
@@ -81,5 +92,54 @@ describe('digestDraft', () => {
     const { html } = digestDraft({ ...base, posts: [odd], first: false });
     expect(html).toContain('href="https://abhishekgoyal.me/?a=1&amp;b=2">A &amp; &lt;B&gt;</a>');
     expect(html).toContain('x &lt; y');
+  });
+});
+
+describe('note files', () => {
+  const base = {
+    checklistUrl: 'https://abhishekgoyal.me/checklist',
+    siteUrl: 'https://abhishekgoyal.me/',
+  };
+  const draft = digestDraft({
+    ...base,
+    posts: [
+      { title: 'Post A', description: 'About A.', url: 'https://abhishekgoyal.me/writing/a' },
+    ],
+    first: true,
+  });
+
+  it('round-trips the subject and HTML', () => {
+    expect(parseNote(noteFile(draft.subject, draft.html))).toEqual(draft);
+  });
+
+  it('rejects a file without the subject line, and a subject that would break it', () => {
+    expect(() => parseNote('<p>Hi</p>')).toThrow();
+    expect(() => noteFile('a --> b', '<p>Hi</p>')).toThrow();
+  });
+
+  it('refuses to send a draft whose gap is still unwritten', () => {
+    expect(noteProblems(draft)).toEqual([`"${WRITE_THIS}" is still in the note`]);
+  });
+
+  it('is ready once the gap is written', () => {
+    const written = {
+      ...draft,
+      html: draft.html.replace(/<p>✍️ WRITE THIS:[^<]*<\/p>/, '<p>Done.</p>'),
+    };
+    expect(noteProblems(written)).toEqual([]);
+  });
+
+  it('refuses a note without the unsubscribe link or a subject', () => {
+    const problems = noteProblems({ subject: '', html: '<p>Hi</p>' });
+    expect(problems).toHaveLength(2);
+    expect(problems.join()).toContain('unsubscribe');
+  });
+});
+
+describe('newsletter segments', () => {
+  it('match RESEND_SEGMENT_ID in wrangler.jsonc (production, then staging)', () => {
+    const config = readFileSync(new URL('../../wrangler.jsonc', import.meta.url), 'utf8');
+    const ids = [...config.matchAll(/"RESEND_SEGMENT_ID": "([^"]+)"/g)].map((m) => m[1]);
+    expect(ids).toEqual([newsletter.segments.production, newsletter.segments.test]);
   });
 });

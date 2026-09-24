@@ -1,11 +1,14 @@
-// The newsletter digest behind `pnpm digest` (scripts/digest.mjs): an HTML draft to paste into the code
-// view of Resend → Broadcasts. Sent only when there's something new, at most once a month (docs/GROWTH.md).
-// No imports: Node loads this directly.
+// The newsletter note: `pnpm digest` (scripts/digest.mjs) writes newsletter/<date>.html, and the Send
+// newsletter workflow (scripts/newsletter-send.mjs) sends it through Resend's Broadcast API. Sent only
+// when there's something new, at most once a month (docs/GROWTH.md). No imports: Node loads this directly.
 
 export type DigestPost = { title: string; description: string; url: string };
 
-/** Marks the part Abhishek writes himself; `pnpm digest` warns while it's still in the draft. */
+/** Marks the part Abhishek writes himself; the send script refuses a note that still has it. */
 export const WRITE_THIS = '✍️ WRITE THIS';
+
+/** Resend replaces this with each contact's own unsubscribe link (sent through the API, not the editor). */
+export const UNSUBSCRIBE_PLACEHOLDER = '{{{RESEND_UNSUBSCRIBE_URL}}}';
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -28,10 +31,7 @@ const escape = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const a = (href: string, text: string) => `<a href="${escape(href)}">${escape(text)}</a>`;
 
-/**
- * Subject and HTML for Resend's editor. Pasted Markdown loses its links there, so this goes into the
- * editor's code (HTML) view instead.
- */
+/** The note's subject and HTML body. */
 export function digestDraft(input: {
   posts: DigestPost[];
   checklistUrl: string;
@@ -56,9 +56,34 @@ export function digestDraft(input: {
     '<hr>',
     `<p>The ${a(checklistUrl, 'Offline-first Android launch checklist')} is always there if you need it again. More at ${a(siteUrl, 'abhishekgoyal.me')}.</p>`,
     '<p>Abhishek</p>',
-    // "Unsubscribe" is plain text on purpose: Resend's editor drops a pasted link to
-    // {{{RESEND_UNSUBSCRIBE_URL}}}, so Abhishek links the word with the editor's link button (RUNBOOK).
-    '<p><small>You’re getting this because you signed up for the checklist at abhishekgoyal.me. Unsubscribe, or reply UNSUBSCRIBE.</small></p>',
+    // Not escaped: Resend replaces the placeholder with each contact's own link.
+    `<p><small>You’re getting this because you signed up for the checklist at abhishekgoyal.me. <a href="${UNSUBSCRIBE_PLACEHOLDER}">Unsubscribe</a>, or reply UNSUBSCRIBE.</small></p>`,
   ].join('\n');
   return { subject, html };
+}
+
+const SUBJECT_LINE = /^<!-- subject: (.+) -->\n/;
+
+/** newsletter/<date>.html: the subject in a comment on the first line, then the HTML body. */
+export function noteFile(subject: string, html: string): string {
+  if (subject.includes('-->') || subject.includes('\n'))
+    throw new Error('Subject can’t contain --> or a newline');
+  return `<!-- subject: ${subject} -->\n${html}\n`;
+}
+
+export function parseNote(file: string): { subject: string; html: string } {
+  const m = SUBJECT_LINE.exec(file);
+  if (!m) throw new Error('The note must start with <!-- subject: … -->');
+  return { subject: m[1]!.trim(), html: file.slice(m[0].length).trim() };
+}
+
+/** Reasons not to send; empty when the note is ready. */
+export function noteProblems(note: { subject: string; html: string }): string[] {
+  const problems: string[] = [];
+  if (!note.subject) problems.push('The subject is empty');
+  if (note.html.includes(WRITE_THIS)) problems.push(`"${WRITE_THIS}" is still in the note`);
+  if (!note.html.includes(`href="${UNSUBSCRIBE_PLACEHOLDER}"`)) {
+    problems.push(`There's no unsubscribe link (href="${UNSUBSCRIBE_PLACEHOLDER}")`);
+  }
+  return problems;
 }

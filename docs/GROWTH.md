@@ -59,7 +59,8 @@ Only counts are recorded, never names or addresses, so the tab adds no personal 
 
 Subscribers were promised "occasional notes on what I'm building", so a note goes out only when there's
 something new, and at most once a month: new posts since the last note, a few lines on what you're
-building, and the checklist link. Drafted with `pnpm digest`, sent from Resend Broadcasts
+building, and the checklist link. Drafted with `pnpm digest` into `newsletter/<date>.html`, reviewed in a
+PR, and sent by the Send newsletter workflow: a test to staging first, then production
 ([RUNBOOK → Sending a note](./RUNBOOK.md#newsletter-subscribers)). Its links carry
 `utm_source=newsletter&utm_medium=email&utm_campaign=digest-<date>`, so GA4 and the Sheets attribute
 visits and leads to the note that brought them.
