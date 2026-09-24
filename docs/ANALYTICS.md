@@ -4,10 +4,10 @@ What is tracked, where it lives, and how to check it's working.
 
 ## What is measured, and where
 
-| Tool                                | Measures                                  | Consent           | Sees                                                          |
-| ----------------------------------- | ----------------------------------------- | ----------------- | ------------------------------------------------------------- |
-| Google Analytics 4 (`G-PHG39RRGSZ`) | Page views, CTA clicks, form steps, leads | Only after Accept | Visitors who accept and don't block Google                    |
-| Cloudflare Web Analytics            | Page counts                               | None (cookieless) | Everyone, including visitors who decline or run an ad blocker |
+| Tool                                | Measures                                                                             | Consent           | Sees                                                          |
+| ----------------------------------- | ------------------------------------------------------------------------------------ | ----------------- | ------------------------------------------------------------- |
+| Google Analytics 4 (`G-PHG39RRGSZ`) | Page views, CTA clicks, form steps, leads, sign-ups, case study reads, PDF downloads | Only after Accept | Visitors who accept and don't block Google                    |
+| Cloudflare Web Analytics            | Page counts                                                                          | None (cookieless) | Everyone, including visitors who decline or run an ad blocker |
 
 Both exist because GA4 only sees visitors who accept the consent bar and don't block Google, which on a
 site with a lead form and no other product analytics isn't everyone. Cloudflare's beacon is the backstop:
@@ -52,14 +52,17 @@ as easily as it was given — Accept and Decline are equal-weight buttons, no da
 
 ## Event table
 
-| Event             | Fires from                                            | Parameters                                                                                                                                      | Sent when                                                       |
-| ----------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `page_view`       | Browser (GA4 automatic)                               | GA4's default set                                                                                                                               | Every page load, once `gtag.js` has loaded                      |
-| `form_step`       | Browser (`LeadForm.tsx`)                              | `lead_path` (`project`, `role`, `following`)                                                                                                    | A path is chosen on /contact                                    |
-| `form_start`      | Browser (`LeadForm.tsx`, `NewsletterForm.tsx`)        | `lead_path` (as above, or `checklist` on /checklist)                                                                                            | The first time the visitor types in the form, once per mount    |
-| `cta_click`       | Browser (`Analytics.astro`)                           | `cta`                                                                                                                                           | Any click on an element with `data-cta="…"`, except `book_call` |
-| `book_call_click` | Browser (`Analytics.astro`)                           | `cta` (always `"book_call"`)                                                                                                                    | Click on the Book a call CTA                                    |
-| `generate_lead`   | Worker (`src/lib/server/ga.ts`, Measurement Protocol) | `lead_id`, `lead_path`, `budget_band`, `lead_source`, `engagement_time_msec`, plus `session_id` / `debug_mode` / `traffic_type` when applicable | The queue consumer, once the lead is saved (see below)          |
+| Event             | Fires from                                            | Parameters                                                                                                                                         | Sent when                                                                                                  |
+| ----------------- | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `page_view`       | Browser (GA4 automatic)                               | GA4's default set                                                                                                                                  | Every page load, once `gtag.js` has loaded                                                                 |
+| `form_step`       | Browser (`LeadForm.tsx`)                              | `lead_path` (`project`, `role`, `following`)                                                                                                       | A path is chosen on /contact                                                                               |
+| `form_start`      | Browser (`LeadForm.tsx`, `NewsletterForm.tsx`)        | `lead_path` (as above, or `checklist` on /checklist)                                                                                               | The first time the visitor types in the form, once per mount                                               |
+| `cta_click`       | Browser (`Analytics.astro`)                           | `cta`                                                                                                                                              | Any click on an element with `data-cta="…"`, except `book_call`                                            |
+| `book_call_click` | Browser (`Analytics.astro`)                           | `cta` (always `"book_call"`)                                                                                                                       | Click on the Book a call CTA                                                                               |
+| `generate_lead`   | Worker (`src/lib/server/ga.ts`, Measurement Protocol) | `lead_id`, `lead_path`, `budget_band`, `lead_source`, `engagement_time_msec`, plus `session_id` / `debug_mode` / `traffic_type` when applicable    | The queue consumer, once the lead is saved (see below)                                                     |
+| `sign_up`         | Worker (`src/lib/server/ga.ts`, Measurement Protocol) | `method` (the sign-up form: `checklist` or `lead_form`), `engagement_time_msec`, plus `session_id` / `debug_mode` / `traffic_type` when applicable | The queue consumer, once the address is confirmed (see below)                                              |
+| `case_study_read` | Browser (`CaseStudyRead.astro`)                       | `case_study` (the slug)                                                                                                                            | On `/work/[slug]`, once the end of the text is in view and the page has been open 20 s; once per page view |
+| `file_download`   | Browser (GA4 Enhanced Measurement)                    | GA4's default set (`file_name`, `file_extension`, `link_url`, …)                                                                                   | A click on a link to a `.pdf`, e.g. the resume on `/resume` and `/hire`                                    |
 
 The CTA ids currently in the markup, all sent as `cta_click` except where noted:
 
@@ -74,7 +77,7 @@ The CTA ids currently in the markup, all sent as `cta_click` except where noted:
 | `book_call` (fires `book_call_click`, not `cta_click`) | `src/components/BookCall.astro` |
 
 `track()` (`src/lib/track.ts`) is a no-op until `gtag` exists on `window`, which only happens after
-Accept — so all five browser-side events above are consent-gated automatically, with no separate check
+Accept — so all the browser-side events above are consent-gated automatically, with no separate check
 in each caller. Note the order in the funnel: `form_step` fires when the path is picked, before
 `form_start`, which waits for the first keystroke.
 
@@ -106,6 +109,31 @@ Outside production (`config.environment !== 'production'`), the event goes to
 the payload and returns any `validationMessages`, but records nothing, so staging and local runs never
 pollute the real reports.
 
+## How `sign_up` works
+
+`sign_up` is the newsletter's key event, sent like `generate_lead`: by the queue consumer's `ga` step
+(`sendSignUp` in `src/lib/server/ga.ts`), and only if the sign-up form carried a `ga_client_id`, i.e.
+the visitor had accepted analytics. It fires when the address is **confirmed** (the double opt-in
+button, #109), not when the form is submitted, so an unconfirmed or mistyped address never counts.
+`method` is the form it came from (`checklist` on /checklist, `lead_form` for "Just following along"
+on /contact).
+
+Because confirming happens later, usually from an email app and often on another device, `sign_up`
+usually **doesn't join the original visit**: it carries the sign-up visit's `session_id`, but GA only
+attributes it to that session while the session is still open (30 minutes of inactivity by default).
+Expect many sign-ups to show as `(direct)` / `(not set)` for source. For attribution, use the
+Subscribers Sheet, which stores first-touch `source_page` and UTM params from the sign-up visit.
+
+## PDF downloads
+
+`file_download` comes from GA4's Enhanced Measurement (file downloads on), which records clicks on links
+to `.pdf` and other file types. Nothing is added in code, so nothing is counted twice. It covers
+`/resume.pdf` (linked from `/resume` and `/hire`).
+
+The checklist PDF is only linked from the delivery email. That click happens in the reader's email
+app, where GA doesn't run, and the PDF itself can't run a script, so **checklist downloads can't be
+tracked**. `sign_up` (a confirmed address, which is what triggers that email) is the proxy.
+
 ## The `?internal=1` and `?debug=1` flags
 
 Appending `?internal=1` or `?debug=1` to any URL on the live site sets a `localStorage` flag in that
@@ -127,7 +155,10 @@ they don't expire on their own the way the consent choice does.
 - **DebugView** (GA4 → Admin → DebugView): visit the site with `?debug=1`, accept the consent bar, and
   step through the form. `form_start`, `form_step` and any `cta_click` / `book_call_click` should appear
   within seconds. `generate_lead` appears only after the queue consumer has run for that lead (not
-  instantly on submit).
+  instantly on submit). `sign_up` appears once the address is confirmed and the consumer has run;
+  the `?debug=1` flag is saved with the sign-up, so confirming from any device still routes it to
+  DebugView.
+  `case_study_read` appears after 20 s at the end of a case study.
 - **Realtime** (GA4 → Reports → Realtime): confirms events without needing the debug flag. A data
   filter in _Testing_ state excludes nothing, so a visit tagged `?internal=1` still shows here until
   the internal-traffic filter is switched to _Active_.
@@ -149,16 +180,17 @@ https://abhishekgoyal.me/?utm_source=linkedin&utm_medium=social&utm_campaign=lau
 
 `src/components/Attribution.astro` captures `source_page`, the three UTM params and a cross-site
 `referrer` into `sessionStorage` on first landing, so a later visit to `/contact` (without the query
-string still attached) carries the same first-touch attribution. `src/components/react/LeadForm.tsx`
-reads that and sends it with the lead, so every row in the Leads Sheet carries first-touch attribution
-alongside the submission — not just whatever GA recorded for the session.
+string still attached) carries the same first-touch attribution. Both forms read that
+(`submissionContext()` in `src/components/react/formParts.tsx`) and send it with the lead or sign-up, so
+every row in the Leads and Subscribers Sheets carries first-touch attribution alongside the submission — not just whatever GA recorded for the session.
 
 ## GA4 admin settings
 
 Some of the analytics configuration lives only in the GA4 web interface, not in this repository, so
 there is nothing here to diff or restore from a backup. As configured:
 
-- `generate_lead` marked as a key event (GA4's term for a conversion).
+- `generate_lead` and `sign_up` marked as key events (GA4's term for a conversion).
+- Enhanced Measurement with **File downloads** on (the source of `file_download`).
 - An internal-traffic data filter matching the `traffic_type` parameter, so my own visits (tagged via
   `?internal=1`) are excluded from reports rather than deleted.
 - The developer-traffic filter, excluding events that carry `debug_mode` — set by `?debug=1` here, and

@@ -7,7 +7,8 @@ export type TrackEvent =
   | { name: 'form_start'; params: { lead_path: string } }
   | { name: 'form_step'; params: { lead_path: string } }
   | { name: 'cta_click'; params: { cta: string } }
-  | { name: 'book_call_click'; params: { cta: string } };
+  | { name: 'book_call_click'; params: { cta: string } }
+  | { name: 'case_study_read'; params: { case_study: string } };
 
 type Gtag = (command: 'event', name: string, params: Record<string, string>) => void;
 
