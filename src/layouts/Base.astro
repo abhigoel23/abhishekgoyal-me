@@ -10,14 +10,19 @@ import SEO, { type Props as SeoProps } from '../components/SEO.astro';
 import WebAnalytics from '../components/WebAnalytics.astro';
 import { dark, fonts, light, themeCss } from '../lib/theme';
 
-type Props = SeoProps;
+type Props = SeoProps & {
+  /** Hide the footer's link to /checklist (on /checklist itself). */
+  hideChecklistBand?: boolean;
+};
+
+const { hideChecklistBand, ...seo } = Astro.props;
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <SEO {...Astro.props} />
+    <SEO {...seo} />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -52,6 +57,6 @@ type Props = SeoProps;
     <main id="main" class="flex-1">
       <slot />
     </main>
-    <Footer />
+    <Footer hideChecklistBand={hideChecklistBand} />
   </body>
 </html>

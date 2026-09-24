@@ -15,7 +15,7 @@ export const POST: APIRoute = async ({ request }) => {
   return handleSubscribe(request, {
     // Its own key, so sign-ups and enquiries don't share a budget.
     rateLimit: async (ip) => (await RATE_LIMITER.limit({ key: `subscribe:${ip}` })).success,
-    verifyTurnstile: (token, ip) => verifyTurnstile(token, TURNSTILE_SECRET, ip),
+    verifyTurnstile: (token, ip) => verifyTurnstile(token, TURNSTILE_SECRET, ip, 'subscribe'),
     saveSignup: (input, now) => saveSignup(DB, input, now),
     enqueue: async (message) => {
       await LEAD_QUEUE.send(message);

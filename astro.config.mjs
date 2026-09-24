@@ -44,15 +44,15 @@ export default defineConfig({
     react(),
     mdx(),
     // /styleguide is an internal design reference and /thanks a post-submit confirmation: both noindex,
-    // both kept out of the sitemap. /checklist and /checklist/print are kept out too, until the sign-up
-    // form ships (#111). /subscribe/confirm is the double opt-in page: noindex, never in the sitemap.
+    // both kept out of the sitemap. So are /checklist/print (the PDF's source) and /subscribe/confirm
+    // (the double opt-in page). /checklist itself is listed.
     sitemap({
       filter: (page) => {
         const path = new URL(page).pathname;
         return (
           !path.startsWith('/styleguide') &&
           path !== '/thanks' &&
-          !path.startsWith('/checklist') &&
+          !path.startsWith('/checklist/') &&
           !path.startsWith('/subscribe')
         );
       },

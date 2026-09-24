@@ -14,7 +14,7 @@ export const POST: APIRoute = async ({ request }) => {
   const { DB, LEAD_QUEUE, RATE_LIMITER, TURNSTILE_SECRET } = env;
   return handleLead(request, {
     rateLimit: async (key) => (await RATE_LIMITER.limit({ key })).success,
-    verifyTurnstile: (token, ip) => verifyTurnstile(token, TURNSTILE_SECRET, ip),
+    verifyTurnstile: (token, ip) => verifyTurnstile(token, TURNSTILE_SECRET, ip, 'lead'),
     saveLead: (lead, now) => saveLead(DB, lead, now),
     enqueue: async (leadId) => {
       await LEAD_QUEUE.send({ kind: 'lead', id: leadId });

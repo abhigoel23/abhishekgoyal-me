@@ -1,19 +1,24 @@
 ---
-// Landing page for the checklist lead magnet. Not live yet: the real sign-up form arrives in #111, so
-// this page stays noindex and out of the sitemap (astro.config.mjs) and isn't linked from nav/footer/home.
+// Landing page for the checklist lead magnet. The form signs up with double opt-in (#109); the checklist
+// is emailed once the address is confirmed. Linked from the footer band on every other page.
 import Container from '../../components/Container.astro';
+import NewsletterForm from '../../components/react/NewsletterForm';
 import { checklist, checklistPage } from '../../data/checklist';
 import { pages } from '../../data/pages';
+import { newsletterCopy } from '../../data/subscribe';
 import Base from '../../layouts/Base.astro';
 ---
 
-<Base {...pages['/checklist']} noindex>
+<Base {...pages['/checklist']} hideChecklistBand>
   <Container class="py-16 sm:py-24">
     <div class="grid gap-12 md:grid-cols-[1.5fr_1fr] md:gap-16">
       <div>
         <p class="eyebrow mb-3">{checklistPage.eyebrow}</p>
         <h1 class="text-h1 max-w-2xl">{checklistPage.title}</h1>
         <p class="mt-5 max-w-2xl text-lead text-muted">{checklistPage.lead}</p>
+        <a class="link mt-5 inline-block font-medium md:hidden" href="#checklist-signup">
+          {checklistPage.jump} <span aria-hidden="true">↓</span>
+        </a>
 
         <h2 class="text-h3 mt-10">Who it's for</h2>
         <ul class="mt-4 space-y-2 text-muted">
@@ -55,15 +60,22 @@ import Base from '../../layouts/Base.astro';
         </ul>
       </div>
 
-      <div
+      <section
         id="checklist-signup"
-        data-signup-slot
+        aria-labelledby="checklist-signup-title"
         class="h-fit rounded-brand border border-line bg-surface p-6"
       >
-        <p class="text-h3">Get the checklist</p>
+        <h2 id="checklist-signup-title" class="text-h3">
+          Get the checklist
+        </h2>
         <p class="mt-3 text-muted">{checklistPage.formNote}</p>
-        <p class="mt-4 text-sm font-medium text-accent">{checklistPage.soon}</p>
-      </div>
+        <noscript>
+          <p class="mt-5 text-sm font-medium">{newsletterCopy.noscript}</p>
+        </noscript>
+        <div class="mt-6">
+          <NewsletterForm client:visible source="checklist" analyticsPath="checklist" />
+        </div>
+      </section>
     </div>
   </Container>
 </Base>
