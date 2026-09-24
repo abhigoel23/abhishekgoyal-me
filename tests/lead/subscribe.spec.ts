@@ -1,7 +1,7 @@
 // Newsletter double opt-in (#109), against the local staging build and its throwaway D1. The raw token
 // only ever exists in the email, so the tests plant a known token's hash in D1 and open its link.
 import { createHash, createHmac, randomBytes } from 'node:crypto';
-import { expect, test, type APIRequestContext } from '@playwright/test';
+import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 import { PORT } from '../../playwright.lead.config';
 import { count, query } from './d1';
 
@@ -181,3 +181,44 @@ test('a signed Resend unsubscribe marks the subscriber; an unsigned one is refus
   expect((await signup(request, email)).status()).toBe(200);
   expect(statusOf(email)).toBe('pending');
 });
+
+// The forms themselves (#111), end to end against the local API: each shows its success state and
+// stores a pending subscriber with its source.
+async function isolateSubscribeIp(page: Page) {
+  const ip = nextIp();
+  await page.route('**/api/subscribe', (route) =>
+    route.continue({ headers: { ...route.request().headers(), 'cf-connecting-ip': ip } }),
+  );
+}
+
+const SUBSCRIBE_MIN_FILL_MS = 1_600;
+
+for (const { name, url, pick, source } of [
+  { name: 'the /checklist form', url: '/checklist', pick: null, source: 'checklist' },
+  {
+    name: '"Just following along" on /contact',
+    url: '/contact',
+    pick: 'Just following along',
+    source: 'lead_form',
+  },
+] as const) {
+  test(`${name} signs up as pending and shows "Check your inbox"`, async ({ page }) => {
+    const email = newEmail(source);
+    await isolateSubscribeIp(page);
+    await page.goto(url);
+    await page.locator('form, [role="radiogroup"], fieldset').first().scrollIntoViewIfNeeded();
+    await page.locator('astro-island:not([ssr])').first().waitFor();
+    if (pick) await page.getByRole('radio', { name: pick }).check();
+    await page.getByRole('textbox', { name: /^Email/ }).fill(email);
+    await page.getByLabel(/^Email me the checklist/).check();
+    await page.waitForTimeout(SUBSCRIBE_MIN_FILL_MS); // the server rejects submits faster than 1.5 s
+    await page.getByRole('button', { name: 'Email me the checklist' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Check your inbox to confirm' })).toBeVisible();
+    expect(
+      count(
+        `SELECT count(*) FROM subscribers WHERE email = '${email}' AND status = 'pending' AND source = '${source}'`,
+      ),
+    ).toBe(1);
+  });
+}

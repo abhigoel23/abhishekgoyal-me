@@ -8,6 +8,11 @@ export const leadPaths = [
   { value: 'role', label: 'A full-time role' },
 ] as const;
 
+// A third choice on the /contact form that isn't an enquiry: it signs up to the newsletter (#111), so it
+// posts to /api/subscribe and is never stored as a lead.
+export const followingPath = { value: 'following', label: 'Just following along' } as const;
+export const contactPaths = [...leadPaths, followingPath] as const;
+
 export const serviceOptions = [
   ...services.map((s) => ({ value: s.id, label: s.title })),
   { value: 'unsure', label: 'Not sure yet' },

@@ -19,3 +19,6 @@ export function turnstileSiteKey(hostname: string) {
     ? PRODUCTION_SITE_KEY
     : TEST_SITE_KEY;
 }
+
+/** The widget's `action`, one per form; the endpoint refuses tokens solved for another form. */
+export type TurnstileAction = 'lead' | 'subscribe';

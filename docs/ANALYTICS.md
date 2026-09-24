@@ -55,8 +55,8 @@ as easily as it was given — Accept and Decline are equal-weight buttons, no da
 | Event             | Fires from                                            | Parameters                                                                                                                                      | Sent when                                                       |
 | ----------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | `page_view`       | Browser (GA4 automatic)                               | GA4's default set                                                                                                                               | Every page load, once `gtag.js` has loaded                      |
-| `form_step`       | Browser (`LeadForm.tsx`)                              | `lead_path`                                                                                                                                     | A path is chosen ("A project…" or "A full-time role")           |
-| `form_start`      | Browser (`LeadForm.tsx`)                              | `lead_path`                                                                                                                                     | The first time the visitor types in the form, once per mount    |
+| `form_step`       | Browser (`LeadForm.tsx`)                              | `lead_path` (`project`, `role`, `following`)                                                                                                    | A path is chosen on /contact                                    |
+| `form_start`      | Browser (`LeadForm.tsx`, `NewsletterForm.tsx`)        | `lead_path` (as above, or `checklist` on /checklist)                                                                                            | The first time the visitor types in the form, once per mount    |
 | `cta_click`       | Browser (`Analytics.astro`)                           | `cta`                                                                                                                                           | Any click on an element with `data-cta="…"`, except `book_call` |
 | `book_call_click` | Browser (`Analytics.astro`)                           | `cta` (always `"book_call"`)                                                                                                                    | Click on the Book a call CTA                                    |
 | `generate_lead`   | Worker (`src/lib/server/ga.ts`, Measurement Protocol) | `lead_id`, `lead_path`, `budget_band`, `lead_source`, `engagement_time_msec`, plus `session_id` / `debug_mode` / `traffic_type` when applicable | The queue consumer, once the lead is saved (see below)          |
@@ -70,6 +70,7 @@ The CTA ids currently in the markup, all sent as `cta_click` except where noted:
 | `hero_hire`                                            | `src/components/Hero.astro`     |
 | `hire_request_interview`                               | `src/pages/hire.astro`          |
 | `hire_request_interview_footer`                        | `src/pages/hire.astro`          |
+| `footer_checklist`                                     | `src/components/Footer.astro`   |
 | `book_call` (fires `book_call_click`, not `cta_click`) | `src/components/BookCall.astro` |
 
 `track()` (`src/lib/track.ts`) is a no-op until `gtag` exists on `window`, which only happens after

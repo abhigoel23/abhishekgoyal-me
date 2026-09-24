@@ -1,29 +1,44 @@
 // The /contact form. Validates with src/lib/lead.ts (the same schema POST /api/lead uses), so a client
-// error and a server error always say the same thing. Anti-bot fields (Turnstile, honeypot, timing) are
+// error and a server error always say the same thing. The "Just following along" path renders
+// NewsletterForm instead (#111). Anti-bot fields (Turnstile, honeypot, timing) are
 // read by src/lib/server/leadHandler.ts.
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm, type Resolver, type UseFormRegisterReturn } from 'react-hook-form';
 import {
   budgetBands,
+  contactPaths,
   currencies,
   formCopy,
-  leadPaths,
   serviceOptions,
   timelines,
   workModes,
 } from '../../data/lead';
-import { GA_MEASUREMENT_ID } from '../../data/analytics';
-import { turnstileSiteKey } from '../../data/turnstile';
+import { followingCopy } from '../../data/subscribe';
 import { leadSchema } from '../../lib/lead';
-import { readFlag } from '../../lib/consent';
-import { gaClientId, gaSessionId, track } from '../../lib/track';
+import { track } from '../../lib/track';
+import {
+  ConsentField,
+  describedBy,
+  errorCopyFor,
+  FieldWrap,
+  FormAlert,
+  Honeypot,
+  submissionContext,
+  submitClass,
+  TextField,
+  controlClass,
+  useTurnstile,
+  type FormErrorBody,
+} from './formParts';
+import NewsletterForm from './NewsletterForm';
 
-type Path = '' | 'project' | 'role';
+type Path = '' | 'project' | 'role' | 'following';
 type Currency = (typeof currencies)[number]['value'];
 
 // A flat superset of both branches of leadSchema's discriminated union: react-hook-form needs one shape
 // to bind inputs to, and only the fields for the chosen `path` are required (leadSchema enforces that).
+// "following" isn't a lead: that path renders NewsletterForm instead, which posts to /api/subscribe.
 type FormValues = {
   path: Path;
   name: string;
@@ -41,80 +56,6 @@ type FormValues = {
   website: string; // honeypot
 };
 
-type Attribution = {
-  source_page?: string;
-  utm_source?: string;
-  utm_medium?: string;
-  utm_campaign?: string;
-  referrer?: string;
-};
-
-// POST /api/lead's error body (see src/lib/server/leadHandler.ts).
-type LeadErrorBody = { error?: string; fields?: Record<string, string> };
-
-// Minimal shape of the Turnstile explicit-render API. No @types package for it, so this is hand-rolled.
-declare global {
-  interface Window {
-    turnstile?: {
-      render: (
-        container: HTMLElement,
-        options: {
-          sitekey: string;
-          action?: string;
-          callback?: (token: string) => void;
-          'error-callback'?: () => void;
-          'expired-callback'?: () => void;
-        },
-      ) => string;
-      reset: (widgetId?: string) => void;
-    };
-  }
-}
-
-const TURNSTILE_SRC = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
-
-let turnstileLoad: Promise<void> | undefined;
-
-function loadTurnstile(): Promise<void> {
-  if (window.turnstile) return Promise.resolve();
-  if (!turnstileLoad) {
-    turnstileLoad = new Promise((resolve) => {
-      const script = document.createElement('script');
-      script.src = TURNSTILE_SRC;
-      script.async = true;
-      script.defer = true;
-      script.addEventListener('load', () => resolve(), { once: true });
-      document.head.appendChild(script);
-    });
-  }
-  return turnstileLoad;
-}
-
-function readAttribution(): Attribution {
-  try {
-    const raw = sessionStorage.getItem('lead-attribution');
-    return raw ? (JSON.parse(raw) as Attribution) : {};
-  } catch {
-    return {};
-  }
-}
-
-function errorCopyFor(error: string | undefined): string {
-  switch (error) {
-    case 'rate_limited':
-      return formCopy.errors.rateLimited;
-    case 'unavailable':
-      return formCopy.errors.unavailable;
-    case 'rejected':
-      return formCopy.errors.rejected;
-    case 'verification_failed':
-    case 'forbidden':
-      return formCopy.errors.verificationFailed;
-    default:
-      return formCopy.errors.generic;
-  }
-}
-
 const defaultValues: FormValues = {
   path: '',
   name: '',
@@ -131,86 +72,6 @@ const defaultValues: FormValues = {
   consent: false,
   website: '',
 };
-
-const controlClass = (hasError: boolean) =>
-  [
-    'mt-2 block w-full rounded-brand border bg-bg px-3.5 py-2.5 text-base text-ink placeholder:text-muted',
-    'focus-visible:outline-2 focus-visible:outline-offset-1',
-    hasError ? 'border-accent' : 'border-line hover:border-ink/40',
-  ].join(' ');
-
-function describedBy(id: string, hint: boolean, error: boolean): string | undefined {
-  const parts = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean);
-  return parts.length ? parts.join(' ') : undefined;
-}
-
-type FieldWrapProps = {
-  id: string;
-  label: string;
-  hint?: string;
-  error?: string;
-  required?: boolean;
-  children: ReactNode;
-};
-
-function FieldWrap({ id, label, hint, error, required, children }: FieldWrapProps) {
-  return (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium">
-        {label}
-        {required ? <span className="text-muted"> (required)</span> : null}
-      </label>
-      {hint && (
-        <p id={`${id}-hint`} className="text-muted mt-1 text-sm">
-          {hint}
-        </p>
-      )}
-      {children}
-      {error && (
-        <p id={`${id}-error`} className="text-accent mt-1.5 text-sm font-medium">
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-type TextFieldProps = {
-  id: string;
-  label: string;
-  type?: 'text' | 'email' | 'url';
-  hint?: string;
-  error?: string;
-  required?: boolean;
-  autoComplete?: string;
-  registration: UseFormRegisterReturn;
-};
-
-function TextField({
-  id,
-  label,
-  type = 'text',
-  hint,
-  error,
-  required,
-  autoComplete,
-  registration,
-}: TextFieldProps) {
-  return (
-    <FieldWrap id={id} label={label} hint={hint} error={error} required={required}>
-      <input
-        id={id}
-        type={type}
-        required={required}
-        autoComplete={autoComplete}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(id, !!hint, !!error)}
-        className={controlClass(!!error)}
-        {...registration}
-      />
-    </FieldWrap>
-  );
-}
 
 type TextareaFieldProps = {
   id: string;
@@ -327,9 +188,6 @@ function RadioGroup({
 
 export default function LeadForm() {
   const startedAtRef = useRef(Date.now());
-  const turnstileHostRef = useRef<HTMLDivElement | null>(null);
-  const widgetIdRef = useRef<string | undefined>(undefined);
-  const tokenRef = useRef('');
   const [formError, setFormError] = useState<string | null>(null);
 
   const {
@@ -343,7 +201,8 @@ export default function LeadForm() {
     // leadSchema is a discriminated union keyed on `path`; FormValues is a flat superset of both branches
     // (one form, two sets of fields). The cast is safe: at runtime safeParse only reads the fields the
     // chosen branch needs and ignores the rest, so validation still matches the server exactly.
-    resolver: zodResolver(leadSchema) as unknown as Resolver<FormValues>,
+    // raw: submit the values as typed, including the honeypot, which the schema doesn't know about.
+    resolver: zodResolver(leadSchema, undefined, { raw: true }) as unknown as Resolver<FormValues>,
     defaultValues,
   });
 
@@ -357,7 +216,9 @@ export default function LeadForm() {
     // A radio clicked before hydration (slow network) is already checked in the DOM; keep that choice.
     const clicked = document.querySelector<HTMLInputElement>('input[name="path"]:checked')?.value;
     const requested = clicked ?? params.get('path');
-    if (requested === 'role' || requested === 'project') setValue('path', requested);
+    if (requested === 'role' || requested === 'project' || requested === 'following') {
+      setValue('path', requested);
+    }
     if (typeof navigator !== 'undefined' && navigator.language?.includes('IN')) {
       setValue('currency', 'INR');
     }
@@ -368,48 +229,19 @@ export default function LeadForm() {
     setValue('budget', '');
   }, [currency, setValue]);
 
-  // The widget's container only exists once a path is chosen, so render it then (once per mount).
+  // The widget's container only exists once a lead path is chosen, so render it then.
   const hasPath = path === 'project' || path === 'role';
-  useEffect(() => {
-    if (!hasPath) return;
-    let cancelled = false;
-    const clearToken = () => {
-      tokenRef.current = '';
-    };
-    loadTurnstile()
-      .then(() => {
-        const host = turnstileHostRef.current;
-        if (cancelled || !host || !window.turnstile || widgetIdRef.current) return;
-        widgetIdRef.current = window.turnstile.render(host, {
-          sitekey: turnstileSiteKey(window.location.hostname),
-          action: 'lead',
-          callback: (token) => {
-            tokenRef.current = token;
-          },
-          // Tokens last 5 minutes; the widget refreshes itself and calls `callback` again.
-          'expired-callback': clearToken,
-          'error-callback': clearToken,
-        });
-      })
-      .catch(() => {
-        // No token is captured; the server-side Turnstile check then fails and the visitor sees the
-        // form-level error with the email fallback.
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [hasPath]);
-
-  const resetTurnstile = () => {
-    tokenRef.current = '';
-    if (widgetIdRef.current && window.turnstile) window.turnstile.reset(widgetIdRef.current);
-  };
+  const {
+    hostRef: turnstileHostRef,
+    token: turnstileToken,
+    reset: resetTurnstile,
+  } = useTurnstile(hasPath, 'lead');
 
   // Funnel events: which path was chosen, and the first time someone starts filling it in.
   const startedRef = useRef(false);
   useEffect(() => {
-    if (hasPath) track({ name: 'form_step', params: { lead_path: path } });
-  }, [hasPath, path]);
+    if (path) track({ name: 'form_step', params: { lead_path: path } });
+  }, [path]);
   const onFirstInput = () => {
     if (startedRef.current || !hasPath) return;
     startedRef.current = true;
@@ -418,19 +250,14 @@ export default function LeadForm() {
 
   const onSubmit = handleSubmit(async (values) => {
     setFormError(null);
-    const attribution = readAttribution();
     const payload: Record<string, unknown> = {
       path: values.path,
       name: values.name,
       email: values.email,
       company: values.company,
       consent: values.consent,
-      ...attribution,
-      ga_client_id: gaClientId(),
-      ga_session_id: gaSessionId(GA_MEASUREMENT_ID),
-      ga_debug: readFlag('debug'),
-      ga_internal: readFlag('internal'),
-      'cf-turnstile-response': tokenRef.current,
+      ...submissionContext(),
+      'cf-turnstile-response': turnstileToken(),
       website: values.website,
       started_at: startedAtRef.current,
     };
@@ -461,7 +288,7 @@ export default function LeadForm() {
         window.location.assign(`/thanks?path=${values.path}`);
         return;
       }
-      const data = (await response.json().catch(() => ({}))) as LeadErrorBody;
+      const data = (await response.json().catch(() => ({}))) as FormErrorBody;
       if (response.status === 400 && data.error === 'invalid' && data.fields) {
         for (const [field, message] of Object.entries(data.fields)) {
           if (field in defaultValues)
@@ -470,7 +297,7 @@ export default function LeadForm() {
         resetTurnstile();
         return;
       }
-      setFormError(errorCopyFor(data.error));
+      setFormError(errorCopyFor(data.error, formCopy.errors));
       resetTurnstile();
     } catch {
       setFormError(formCopy.errors.unavailable);
@@ -481,24 +308,31 @@ export default function LeadForm() {
   const budgetOptions = budgetBands[currency];
 
   return (
-    <form
-      noValidate
-      onSubmit={onSubmit}
-      onInput={onFirstInput}
-      className="grid max-w-xl gap-6"
-      aria-label="Contact form"
-    >
+    <div className="grid max-w-xl gap-6">
       <RadioGroup
         legend={formCopy.pathLegend}
-        options={leadPaths}
+        options={contactPaths}
         required
         error={errors.path ? formCopy.pathError : undefined}
         registration={register('path')}
         layout="row"
       />
 
+      {path === 'following' && (
+        <div className="grid gap-5">
+          <p className="text-muted">{followingCopy}</p>
+          <NewsletterForm source="lead_form" analyticsPath="following" idPrefix="following" />
+        </div>
+      )}
+
       {hasPath && (
-        <>
+        <form
+          noValidate
+          onSubmit={onSubmit}
+          onInput={onFirstInput}
+          className="grid gap-6"
+          aria-label="Contact form"
+        >
           <TextField
             id="lead-name"
             label={formCopy.labels.name}
@@ -603,66 +437,31 @@ export default function LeadForm() {
             </>
           )}
 
-          <div>
-            <label htmlFor="lead-consent" className="flex items-start gap-2.5 text-sm">
-              <input
-                id="lead-consent"
-                type="checkbox"
-                required
-                className="accent-accent mt-0.5 size-4"
-                aria-invalid={errors.consent ? true : undefined}
-                aria-describedby={errors.consent ? 'lead-consent-error' : undefined}
-                {...register('consent')}
-              />
-              <span>
-                {formCopy.consentPrefix}
-                <a className="link" href="/privacy">
-                  {formCopy.consentLinkText}
-                </a>
-                .
-              </span>
-            </label>
-            {errors.consent && (
-              <p id="lead-consent-error" className="text-accent mt-1.5 text-sm font-medium">
-                {errors.consent.message}
-              </p>
-            )}
-          </div>
+          <ConsentField
+            id="lead-consent"
+            prefix={formCopy.consentPrefix}
+            linkText={formCopy.consentLinkText}
+            error={errors.consent?.message}
+            registration={register('consent')}
+          />
 
-          {/* Honeypot: hidden from people, filled in by naive bots. Never shown, never focusable. */}
-          <div className="sr-only" aria-hidden="true">
-            <label htmlFor="lead-website">{formCopy.labels.honeypot}</label>
-            <input
-              id="lead-website"
-              type="text"
-              tabIndex={-1}
-              autoComplete="off"
-              {...register('website')}
-            />
-          </div>
+          <Honeypot
+            id="lead-website"
+            label={formCopy.labels.honeypot}
+            registration={register('website')}
+          />
 
           <div ref={turnstileHostRef} />
 
-          {formError && (
-            <p
-              role="alert"
-              className="rounded-brand border-accent text-accent border px-4 py-3 text-sm"
-            >
-              {formError}
-            </p>
-          )}
+          {formError && <FormAlert>{formError}</FormAlert>}
 
           <div>
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="rounded-brand bg-accent text-on-accent hover:bg-ink hover:text-bg inline-flex min-h-12 items-center justify-center gap-2 px-6 text-base font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-            >
+            <button type="submit" disabled={isSubmitting} className={submitClass}>
               {isSubmitting ? formCopy.submitting : formCopy.submit}
             </button>
           </div>
-        </>
+        </form>
       )}
-    </form>
+    </div>
   );
 }

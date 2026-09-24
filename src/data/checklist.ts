@@ -190,6 +190,13 @@ export const checklist = {
     "If you're weighing whether your app needs a server at all, or you're deep into a sync engine and something feels fragile, I'm happy to talk it through. I take on projects like this, from an MVP build to rescuing an app that's already in the field. Reach me via /contact.",
 } as const;
 
+// The band at the top of the footer on every page except /checklist itself (#111): a link, so no form
+// or Turnstile loads site-wide.
+export const checklistBand = {
+  text: 'Free: the Offline-first Android launch checklist, by email.',
+  link: 'Get the checklist',
+} as const;
+
 // Copy for the /checklist landing page.
 export const checklistPage = {
   eyebrow: 'Free checklist',
@@ -208,7 +215,7 @@ export const checklistPage = {
     'Keeping sensitive data safe and your Play Store declarations honest',
     "Release engineering: R8 rules, staged rollouts and CI you don't have to babysit",
   ],
+  jump: 'Get the checklist',
   formNote:
     "I'll email you the checklist once you confirm your address, plus the occasional note on what I'm building. Unsubscribe anytime.",
-  soon: 'Sign-up opens soon — check back shortly.',
 } as const;

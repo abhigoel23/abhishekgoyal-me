@@ -60,3 +60,32 @@ test('a well-formed submission shows the "form unavailable" message when the API
     "The form isn't available right now. Email contact@abhishekgoyal.me instead.",
   );
 });
+
+test('"Just following along" swaps the enquiry for an email-only sign-up', async ({ page }) => {
+  let body: Record<string, unknown> = {};
+  await page.route('**/api/subscribe', (route) => {
+    body = route.request().postDataJSON() as Record<string, unknown>;
+    return route.fulfill({ json: { ok: true } });
+  });
+  await openContact(page);
+  await page.getByRole('radio', { name: 'Just following along' }).check();
+  await expect(page.getByLabel(/^Your name/)).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Send enquiry' })).toHaveCount(0);
+
+  await page.getByRole('textbox', { name: /^Email/ }).fill('ada@example.com');
+  await page.getByLabel(/^Email me the checklist/).check();
+  await page.getByRole('button', { name: 'Email me the checklist' }).click();
+  await expect(page.getByRole('heading', { name: 'Check your inbox to confirm' })).toBeVisible();
+  expect(body).toMatchObject({ email: 'ada@example.com', source: 'lead_form' });
+});
+
+test('?path=following pre-selects the sign-up, and switching back restores the enquiry', async ({
+  page,
+}) => {
+  await openContact(page, '/contact?path=following');
+  await expect(page.getByRole('radio', { name: 'Just following along' })).toBeChecked();
+  await expect(page.getByRole('button', { name: 'Email me the checklist' })).toBeVisible();
+  await page.getByRole('radio', { name: 'A full-time role' }).check();
+  await expect(page.getByLabel(/^Role title/)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Email me the checklist' })).toHaveCount(0);
+});
