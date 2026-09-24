@@ -129,19 +129,19 @@ consumers and crons only run on a Worker's _deployed_ version, which is why PR p
 
 ## Production (live since 23 September 2026)
 
-| Piece           | Value                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------- |
-| Site            | `https://abhishekgoyal.me` (Worker custom domain on the apex; `www` 301s to it)             |
-| Worker          | `abhishekgoyal-me`, also on `abhishekgoyal-me.abhigoel23.workers.dev` (noindex)             |
-| Database        | D1 `abhishekgoyal-me`, migrations applied by CI before each deploy                          |
-| Queues          | `leads`, dead letters to `leads-dlq`                                                        |
-| Cron            | 03:30 UTC daily: re-sync, 18-month and 30-day purges, deep health check, alerts             |
-| Sheet           | "abhishekgoyal.me leads", `Leads`, `Bookings` and `Subscribers` tabs                        |
-| Newsletter      | Resend contacts in a production segment (`RESEND_SEGMENT_ID`), set up at the M5 gate (#114) |
-| Resend webhook  | `https://abhishekgoyal.me/api/resend-webhook`: `contact.updated`, `contact.deleted` (#114)  |
-| Service account | `leads-writer-prod@abhishekgoyal-me.iam.gserviceaccount.com` (separate from staging)        |
-| Analytics       | GA4 `G-PHG39RRGSZ` after consent, Cloudflare Web Analytics always                           |
-| Alerts          | email to `contact@abhishekgoyal.me` and Telegram, from the cron and the DLQ consumer        |
+| Piece           | Value                                                                                                               |
+| --------------- | ------------------------------------------------------------------------------------------------------------------- |
+| Site            | `https://abhishekgoyal.me` (Worker custom domain on the apex; `www` 301s to it)                                     |
+| Worker          | `abhishekgoyal-me`, also on `abhishekgoyal-me.abhigoel23.workers.dev` (noindex)                                     |
+| Database        | D1 `abhishekgoyal-me`, migrations applied by CI before each deploy                                                  |
+| Queues          | `leads`, dead letters to `leads-dlq`                                                                                |
+| Cron            | 03:30 UTC daily: re-sync, 18-month and 30-day purges, deep health check, alerts                                     |
+| Sheet           | "abhishekgoyal.me leads", `Leads`, `Bookings` and `Subscribers` tabs                                                |
+| Newsletter      | Resend contacts in the "abhishekgoyal.me newsletter" segment (`RESEND_SEGMENT_ID`), live since 24 September 2026    |
+| Resend webhook  | `https://abhishekgoyal.me/api/resend-webhook`: `contact.updated`, `contact.deleted`; secret `RESEND_WEBHOOK_SECRET` |
+| Service account | `leads-writer-prod@abhishekgoyal-me.iam.gserviceaccount.com` (separate from staging)                                |
+| Analytics       | GA4 `G-PHG39RRGSZ` after consent, Cloudflare Web Analytics always                                                   |
+| Alerts          | email to `contact@abhishekgoyal.me` and Telegram, from the cron and the DLQ consumer                                |
 
 `/api/lead` and `/api/subscribe` return 503 whenever `DB`, `LEAD_QUEUE`, `RATE_LIMITER` or
 `TURNSTILE_SECRET` is missing, so bindings can be added before the secrets that make the forms live. Until
