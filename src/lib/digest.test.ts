@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { digestDraft, isDay, postsToSend, UNSUBSCRIBE_PLACEHOLDER, WRITE_THIS } from './digest';
+import { digestDraft, isDay, postsToSend, WRITE_THIS } from './digest';
 
 const post = (pubDate: string, draft = false) => ({ pubDate, draft, title: pubDate });
 
@@ -62,9 +62,11 @@ describe('digestDraft', () => {
     expect(body).toContain('first note');
   });
 
-  it('always carries the unsubscribe link, the reply option and the gap to write', () => {
+  it('always carries the unsubscribe wording, the reply option and the gap to write', () => {
     const { html: body } = digestDraft({ ...base, posts: [a], first: false });
-    expect(body).toContain(`<a href="${UNSUBSCRIBE_PLACEHOLDER}">Unsubscribe</a>`);
+    // The link itself is Resend's Unsubscribe footer block, added in the editor (RUNBOOK).
+    expect(body).toContain('Unsubscribe with the link below');
+    expect(body).not.toContain('RESEND_UNSUBSCRIBE_URL');
     expect(body).toContain('reply UNSUBSCRIBE');
     expect(body).toContain(WRITE_THIS);
     expect(body).toContain(base.checklistUrl);

@@ -4,9 +4,6 @@
 
 export type DigestPost = { title: string; description: string; url: string };
 
-/** Resend replaces this with each contact's own unsubscribe link (docs/RUNBOOK.md → Sending a note). */
-export const UNSUBSCRIBE_PLACEHOLDER = '{{{RESEND_UNSUBSCRIBE_URL}}}';
-
 /** Marks the part Abhishek writes himself; `pnpm digest` warns while it's still in the draft. */
 export const WRITE_THIS = '✍️ WRITE THIS';
 
@@ -59,8 +56,9 @@ export function digestDraft(input: {
     '<hr>',
     `<p>The ${a(checklistUrl, 'Offline-first Android launch checklist')} is always there if you need it again. More at ${a(siteUrl, 'abhishekgoyal.me')}.</p>`,
     '<p>Abhishek</p>',
-    // Not escaped: Resend replaces the placeholder with each contact's own link.
-    `<p><small>You’re getting this because you signed up for the checklist at abhishekgoyal.me. <a href="${UNSUBSCRIBE_PLACEHOLDER}">Unsubscribe</a>, or reply UNSUBSCRIBE.</small></p>`,
+    // No unsubscribe link here: Resend's editor drops a link to {{{RESEND_UNSUBSCRIBE_URL}}}, so the
+    // Broadcast gets the editor's own Unsubscribe footer block, right after this line (RUNBOOK).
+    '<p><small>You’re getting this because you signed up for the checklist at abhishekgoyal.me. Unsubscribe with the link below, or reply UNSUBSCRIBE.</small></p>',
   ].join('\n');
   return { subject, html };
 }

@@ -210,8 +210,10 @@ most once a month ([GROWTH.md](./GROWTH.md#the-newsletter)). Claude drafts; you 
 3. Resend → **Broadcasts** → **Create broadcast**. From: `Abhishek Goyal <contact@abhishekgoyal.me>`;
    Reply-to: `contact@abhishekgoyal.me` (people may reply UNSUBSCRIBE); Subject from the draft. Open the
    editor's **code view** (`</>`) and paste the HTML there, not into the visual editor.
-4. Back in the visual editor, check the links are live and the last line's **Unsubscribe** points at
-   `{{{RESEND_UNSUBSCRIBE_URL}}}`: the privacy page promises one in every note.
+4. Back in the visual editor, check the links are live, then add Resend's **Unsubscribe footer** block as
+   the last element (type `/` and pick it). It fills in each subscriber's own link: the privacy page
+   promises one in every note. Don't write the link by hand: the editor drops a link to
+   `{{{RESEND_UNSUBSCRIBE_URL}}}`.
 5. Send it to the **staging** segment first (subscribe your own address there via the staging site),
    then check the email: links work and carry `utm_source=newsletter`, and **Unsubscribe** marks you
    unsubscribed in the staging Sheet.
