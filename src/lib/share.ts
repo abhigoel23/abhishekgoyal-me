@@ -1,6 +1,14 @@
-// Pure helpers behind `pnpm share <slug>` (scripts/share.mjs). No imports: Node loads this directly.
+// Pure helpers behind `pnpm share <slug>` (scripts/share.mjs) and the monthly review issue
+// (scripts/monthly-review.mjs). No imports: Node loads this directly.
 
-export type PostMeta = { title: string; description: string; tags: string[]; draft: boolean };
+export type PostMeta = {
+  title: string;
+  description: string;
+  /** As written, e.g. `2026-10-01`; empty if missing. */
+  pubDate: string;
+  tags: string[];
+  draft: boolean;
+};
 
 /** `url` with utm_source/utm_medium/utm_campaign set, replacing any already there. */
 export function campaignUrl(
@@ -44,7 +52,13 @@ export function parseFrontMatter(source: string): PostMeta {
     .split(',')
     .map(unquote)
     .filter((t) => t !== '');
-  return { title, description, tags, draft: fields.get('draft')?.trim() === 'true' };
+  return {
+    title,
+    description,
+    pubDate: unquote(fields.get('pubDate') ?? ''),
+    tags,
+    draft: fields.get('draft')?.trim() === 'true',
+  };
 }
 
 /** LinkedIn hashtags: `offline-first` → `#offlinefirst`. */

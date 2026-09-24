@@ -1,0 +1,57 @@
+name: Monthly review
+
+# Opens the month's review checklist (docs/GROWTH.md), one issue per month. The repo is public, so this
+# workflow has no secrets and reads no data: the lead and subscriber numbers are written to the private
+# Leads Sheet's Monthly tab by the Worker's cron (src/lib/server/monthly.ts).
+on:
+  schedule:
+    # 04:30 UTC on the 1st = 10:00 IST, an hour after the Worker's cron has written the Monthly row.
+    - cron: '30 4 1 * *'
+  workflow_dispatch:
+    inputs:
+      month:
+        description: 'Month to review, YYYY-MM (default: last month)'
+        required: false
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: monthly-review
+  cancel-in-progress: false
+
+jobs:
+  open:
+    name: open
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version-file: .nvmrc }
+      - id: sitemap
+        name: Count sitemap URLs
+        if: vars.PRODUCTION_URL != ''
+        run: |
+          count=$(curl -sS "${{ vars.PRODUCTION_URL }}/sitemap-0.xml" | grep -oE '<loc>' | wc -l)
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+      # The month goes through an env var, never into the script text; the script validates it.
+      - run: node scripts/monthly-review.mjs
+        env:
+          MONTH: ${{ inputs.month }}
+          SITEMAP_URLS: ${{ steps.sitemap.outputs.count }}
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const { title, body } = JSON.parse(require('fs').readFileSync('monthly-review.json', 'utf8'));
+            const { owner, repo } = context.repo;
+            const existing = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'all', labels: 'routine', per_page: 100,
+            });
+            const found = existing.find((issue) => issue.title === title);
+            if (found) {
+              core.notice(`${title} already exists: #${found.number}`);
+              return;
+            }
+            const { data } = await github.rest.issues.create({ owner, repo, title, body, labels: ['routine'] });
+            core.notice(`Opened #${data.number}: ${title}`);

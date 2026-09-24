@@ -50,6 +50,7 @@ Steps still `failed` or `pending` after the next 03:30 UTC run have an alert wit
 | `Delivery still failing after re-sync`        | Read `last_error` (query below), fix, and the next daily run re-syncs it ([details](#re-run-delivery-now))              |
 | `Sheet retention cleanup failed`              | Usually the same as a Sheets health failure                                                                             |
 | `Deleting unsubscribed subscribers failed`    | The Sheet or a Resend contact delete failed. Nothing was deleted from D1 for those, so the next run retries             |
+| `Recording YYYY-MM in the Monthly tab failed` | See [The Monthly row is missing](#the-monthly-row-is-missing). The cron retries daily through the 7th                   |
 | `Health check failed · resend_contacts: …`    | `RESEND_CONTACTS_KEY` revoked or not full access, or the segment was deleted → rotate the key / fix `RESEND_SEGMENT_ID` |
 
 ```bash
@@ -67,6 +68,28 @@ manual trigger for a deployed cron. To check a fix sooner, run the same code loc
 build: `CLOUDFLARE_ENV=staging pnpm build`, then `pnpm exec wrangler dev --test-scheduled`, then open
 `http://localhost:8787/cdn-cgi/handler/scheduled`. That uses the local D1, so it proves the fix, not the
 remote rows. Those follow at the next daily run.
+
+## The Monthly row is missing
+
+The cron writes last month's row to the Leads Sheet's **Monthly** tab on the 1st (`src/lib/server/monthly.ts`,
+[GROWTH.md](./GROWTH.md#the-monthly-tab)) and retries daily through the 7th. Workers Logs show one
+`monthly` line per run: `YYYY-MM recorded`, `already recorded`, `outside window`, `not configured` or
+`failed`.
+
+- **`Unable to parse range: Monthly!…`**: the tab doesn't exist, or was renamed. Create a tab named exactly
+  `Monthly`; the next run writes the header and the row.
+- **Any Sheets error**: as for the other Sheets alerts above.
+- **To test the cron for a given date** against the test Sheet: `CLOUDFLARE_ENV=staging pnpm build`, start the
+  `worker-scheduled` config in `.claude/launch.json` (`wrangler dev --test-scheduled`), then open
+  `http://localhost:8787/cdn-cgi/handler/scheduled?cron=30+3+*+*+*&time=<ms since epoch>`. `time` becomes
+  the cron's `scheduledTime`, e.g. `1790825400000` = 1 Oct 2026, 03:30 UTC.
+- **After the 7th**: the cron no longer tries. Fill the row by hand from the counts:
+
+```bash
+pnpm exec wrangler d1 execute DB --remote --command \
+  "SELECT path, COUNT(*) FROM leads WHERE created_at >= '2026-10-01' AND created_at < '2026-11-01'
+   AND COALESCE(ga_debug, '') <> '1' AND COALESCE(ga_internal, '') <> '1' GROUP BY path"
+```
 
 ## Rotate a secret
 

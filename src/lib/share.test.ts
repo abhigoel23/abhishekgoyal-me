@@ -44,6 +44,7 @@ describe('parseFrontMatter', () => {
     expect(meta).toEqual({
       title: "Offline-first: it's a contract",
       description: "Lessons from Pulse's sync engine",
+      pubDate: '2026-10-01',
       tags: ['offline-first', 'kotlin-multiplatform'],
       draft: true,
     });
@@ -66,6 +67,7 @@ describe('parseFrontMatter', () => {
       const meta = parseFrontMatter(readFileSync(new URL(file, dir), 'utf8'));
       expect(meta.title, file).not.toMatch(/^['"]/);
       expect(meta.tags.length, file).toBeGreaterThan(0);
+      expect(meta.pubDate, file).toMatch(/^\d{4}-\d{2}-\d{2}$/);
     }
   });
 });
