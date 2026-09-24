@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { stubTurnstile } from './turnstile';
 import { checklist, checklistBand, checklistPage, checklistPdf } from '../../src/data/checklist';
 import { newsletterCopy } from '../../src/data/subscribe';
 
@@ -36,6 +37,7 @@ test('a sign-up shows "Check your inbox to confirm" and posts the checklist sour
   page,
 }) => {
   let body: Record<string, unknown> = {};
+  await stubTurnstile(page);
   await page.route('**/api/subscribe', (route) => {
     body = route.request().postDataJSON() as Record<string, unknown>;
     return route.fulfill({ json: { ok: true } });
@@ -54,6 +56,7 @@ test('a sign-up shows "Check your inbox to confirm" and posts the checklist sour
 });
 
 test('an error from the endpoint is shown, and the form stays', async ({ page }) => {
+  await stubTurnstile(page);
   await page.route('**/api/subscribe', (route) =>
     route.fulfill({ status: 429, json: { ok: false, error: 'rate_limited' } }),
   );
