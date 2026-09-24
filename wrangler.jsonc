@@ -72,7 +72,7 @@
         // Where emailed links point (the confirmation link must reach this environment's D1).
         "SITE_ORIGIN": "https://abhishekgoyal-me-staging.abhigoel23.workers.dev",
         // Resend segment "Newsletter (staging)" (#110). An id, not a secret.
-        "RESEND_SEGMENT_ID": "",
+        "RESEND_SEGMENT_ID": "934f6d41-a783-450c-a943-d47272baa2cd",
       },
       "d1_databases": [
         {
