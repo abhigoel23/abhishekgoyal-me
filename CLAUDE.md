@@ -17,6 +17,7 @@ deployed as one Cloudflare Worker (static assets + `/api/*`). Roadmap: GitHub Mi
 | Lighthouse gate       | `pnpm lighthouse` (after `pnpm build`)                                      |
 | Private resume PDF    | `RESUME_PHONE="+91 …" pnpm resume` (after `pnpm build`)                     |
 | Favicons              | `pnpm icons`                                                                |
+| Cross-post links      | `pnpm share <slug>` (prints LinkedIn + dev.to links; see docs/CONTENT.md)   |
 
 pnpm 12 has no `-s` flag; use `--silent`.
 

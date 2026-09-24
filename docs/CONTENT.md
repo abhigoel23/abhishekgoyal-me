@@ -149,17 +149,33 @@ The fact-check checklist used on the two seed posts:
 
 ## Cross-posting
 
-The site (abhishekgoyal.me) is always the original. After a post is live here:
+The site (abhishekgoyal.me) is always the original. Posts go to **LinkedIn** and **dev.to** only
+(platforms and their UTM values: `src/data/share.ts`). Once the post is live and the production deploy
+has finished, run:
 
-- **dev.to, Medium, Hashnode**: publish there after the site post is live, and set their canonical URL
-  field to the abhishekgoyal.me post URL, so search engines credit this site as the source.
-- **LinkedIn**: LinkedIn has no canonical-URL support, so post a short summary plus a link to the post
-  rather than the full text.
-- Only set `canonicalUrl` in the front matter when a post _first ran elsewhere_ (the rare reverse case).
-  When set, the page's `<link rel="canonical">` points at that other URL while the share image and
-  BlogPosting JSON-LD stay pointed at this site (`src/pages/writing/[slug].astro`).
-- Add UTM parameters to any link you share from another platform, following the convention in
-  [`docs/ANALYTICS.md`'s UTM convention](./ANALYTICS.md#utm-convention).
+```bash
+pnpm share <slug>
+```
+
+It prints the canonical URL, a starting LinkedIn post with a UTM link and hashtags, and the dev.to
+checks. It only prints; it posts nothing.
+
+- **LinkedIn** has no canonical-URL support, so post a short summary in your own words plus the link,
+  never the full text. Keep every claim to what the post says.
+- **dev.to** imports each new post from `https://abhishekgoyal.me/rss.xml` as a draft, with the canonical
+  URL and tags already set, and adds its own "Originally published at abhishekgoyal.me" line (don't add
+  another). Check the draft's front matter and preview as `pnpm share` lists, then publish. That link
+  carries no UTM params, so its visits show in GA4 as dev.to referrals.
+- Tick the Post issue's cross-post box when both are done.
+
+One-time dev.to setup (done in #133): [dev.to/settings/extensions](https://dev.to/settings/extensions) →
+**Publishing to DEV Community from RSS** → feed URL `https://abhishekgoyal.me/rss.xml`, **Mark the RSS
+source as canonical URL by default** on, **Replace self-referential links with DEV Community-specific
+links** off (links should lead back to this site) → **Save Feed Settings**.
+
+The reverse case is rare: set `canonicalUrl` in the front matter only when a post _first ran elsewhere_.
+The page's `<link rel="canonical">` then points at that other URL, while the share image and
+BlogPosting JSON-LD stay pointed at this site (`src/pages/writing/[slug].astro`).
 
 ## Case studies, services and other copy
 
