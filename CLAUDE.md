@@ -18,6 +18,7 @@ deployed as one Cloudflare Worker (static assets + `/api/*`). Roadmap: GitHub Mi
 | Private resume PDF    | `RESUME_PHONE="+91 …" pnpm resume` (after `pnpm build`)                     |
 | Favicons              | `pnpm icons`                                                                |
 | Cross-post links      | `pnpm share <slug>` (prints LinkedIn + dev.to links; see docs/CONTENT.md)   |
+| Newsletter draft      | `pnpm digest [last note date]` (prints Markdown for Resend Broadcasts)      |
 
 pnpm 12 has no `-s` flag; use `--silent`.
 

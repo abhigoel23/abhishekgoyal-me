@@ -23,6 +23,7 @@
     "resume": "node scripts/resume-pdf.mjs --private",
     "icons": "node scripts/build-icons.mjs",
     "share": "node scripts/share.mjs",
+    "digest": "node scripts/digest.mjs",
     "prepare": "husky"
   },
   "dependencies": {

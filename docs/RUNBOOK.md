@@ -198,8 +198,24 @@ subscribed. Resend → Webhooks → the endpoint → recent deliveries:
 Deliveries that failed can be re-sent from that page once fixed. Nothing is ever emailed to an
 unsubscribed contact meanwhile: Resend itself enforces the unsubscribe.
 
-**Sending a note.** Resend → Broadcasts, to the environment's segment. Keep Resend's unsubscribe link in
-the footer (`{{{RESEND_UNSUBSCRIBE_URL}}}`): the privacy page promises one in every note.
+**Sending a note.** Only when there's something new (a post, or real news on what you're building), and at
+most once a month ([GROWTH.md](./GROWTH.md#the-newsletter)). Claude drafts; you press send.
+
+1. `pnpm digest <date of the last note>` prints a Markdown draft: subject, the posts published since then
+   (future-dated posts are left out until their day), newsletter UTM links, the checklist link and the
+   unsubscribe footer. Find the last note's date in Resend → Broadcasts. Run it with no date for the very
+   first note.
+2. Replace the `✍️ WRITE THIS` gap with two or three sentences in your own words. Every claim must match
+   the resume, as on the site.
+3. Resend → **Broadcasts** → **Create broadcast**. From: `Abhishek Goyal <contact@abhishekgoyal.me>`;
+   Reply-to: `contact@abhishekgoyal.me` (people may reply UNSUBSCRIBE); Subject from the draft. Paste the
+   body: the editor converts the Markdown.
+4. Check that the last line's **Unsubscribe** link survived pasting and points at
+   `{{{RESEND_UNSUBSCRIBE_URL}}}`: the privacy page promises one in every note.
+5. Send it to the **staging** segment first (subscribe your own address there via the staging site),
+   then check the email: links work and carry `utm_source=newsletter`, and **Unsubscribe** marks you
+   unsubscribed in the staging Sheet.
+6. Duplicate the Broadcast to the **production** segment and send.
 
 ## Roll back a deploy
 

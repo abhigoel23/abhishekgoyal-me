@@ -55,6 +55,15 @@ It writes the header row itself the first time.
 The staging test Sheet has a Monthly tab too, because the staging Worker runs the same cron.
 Only counts are recorded, never names or addresses, so the tab adds no personal data to the Sheet.
 
+## The newsletter
+
+Subscribers were promised "occasional notes on what I'm building", so a note goes out only when there's
+something new, and at most once a month: new posts since the last note, a few lines on what you're
+building, and the checklist link. Drafted with `pnpm digest`, sent from Resend Broadcasts
+([RUNBOOK → Sending a note](./RUNBOOK.md#newsletter-subscribers)). Its links carry
+`utm_source=newsletter&utm_medium=email&utm_campaign=digest-<date>`, so GA4 and the Sheets attribute
+visits and leads to the note that brought them.
+
 ## The monthly review
 
 At 10:00 IST on the 1st, `.github/workflows/monthly-review.yml` opens **Monthly review YYYY-MM**

@@ -72,7 +72,10 @@ export function reviewBody(
     '- [ ] Every lead this month was answered; first-touch source noted; spam deleted',
     '- [ ] Failed deliveries in the Monthly row is 0; if not, RUNBOOK',
     '',
-    '**5. Decide**',
+    '**5. Newsletter**',
+    "- [ ] Something new since the last note, and none sent this month? Draft it with `pnpm digest <last note's date>` (RUNBOOK → Sending a note)",
+    '',
+    '**6. Decide**',
     '- [ ] One line in Notes: what changed, and what to try next (experiments: docs/GROWTH.md)',
     '- [ ] Close this issue',
   ].join('\n');
