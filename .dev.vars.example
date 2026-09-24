@@ -17,6 +17,13 @@ GOOGLE_SA_KEY=
 RESEND_API_KEY=
 # Telegram (#59): bot token from @BotFather, and the chat id of your chat with the bot. Staging messages
 # are prefixed [staging].
+# Resend contacts (#110): a FULL-access key, used only to add confirmed subscribers to the segment
+# (a sending key can't manage contacts), and the webhook signing secret ("whsec_…") from Resend →
+# Webhooks, for unsubscribes. The segment id is a plain var in wrangler.jsonc.
+RESEND_CONTACTS_KEY=
+# Local/e2e only: a dummy secret so tests/lead can sign webhook events. Staging and production get the
+# real one from Resend.
+RESEND_WEBHOOK_SECRET=whsec_bG9jYWwtZTJlLXdlYmhvb2stc2VjcmV0
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
 

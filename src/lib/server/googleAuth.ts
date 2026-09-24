@@ -81,3 +81,17 @@ export async function getAccessToken(
 export function clearTokenCache() {
   cached = undefined;
 }
+
+/** A Sheets token and the Sheet id, or an error naming what's missing (fails only that step). */
+export async function sheetsAccess(
+  env: Pick<Env, 'GOOGLE_SA_EMAIL' | 'GOOGLE_SA_KEY' | 'SHEET_ID'>,
+) {
+  if (!env.GOOGLE_SA_EMAIL || !env.GOOGLE_SA_KEY || !env.SHEET_ID) {
+    throw new Error('Sheets not configured (GOOGLE_SA_EMAIL, GOOGLE_SA_KEY, SHEET_ID)');
+  }
+  const token = await getAccessToken(
+    { email: env.GOOGLE_SA_EMAIL, privateKeyPem: env.GOOGLE_SA_KEY },
+    SHEETS_SCOPE,
+  );
+  return { token, sheetId: env.SHEET_ID };
+}

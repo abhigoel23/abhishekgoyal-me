@@ -3,7 +3,17 @@ import { clearTokenCache, getAccessToken, signJwt, SHEETS_SCOPE } from './google
 import type { LeadRow } from './leadStore';
 import { retryDelaySeconds } from './outbox';
 import { sanitizeCell } from './sanitize';
-import { appendLead, expiredRowRuns, LEAD_HEADERS, leadToRow, purgeLeadRows } from './sheets';
+import {
+  appendLead,
+  expiredRowRuns,
+  LEAD_HEADERS,
+  leadToRow,
+  purgeLeadRows,
+  setSubscriberStatus,
+  SUBSCRIBER_HEADERS,
+  subscriberToRow,
+} from './sheets';
+import type { SubscriberRow } from './subscriberStore';
 
 const NOW = new Date('2026-09-22T10:00:00Z');
 
@@ -201,5 +211,42 @@ describe('Sheet retention', () => {
     );
     expect(await purgeLeadRows('tok', 'SHEET', cutoff, fetcher)).toBe(0);
     expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('Subscribers tab', () => {
+  const subscriber = {
+    subscriber_id: 's-1',
+    confirmed_at: '2026-09-24T10:00:00.000Z',
+    email: 'asha@acme.in',
+    source: 'checklist',
+    utm_campaign: '=HYPERLINK("x")',
+  } as SubscriberRow;
+
+  it('writes one sanitised row with a Subscribed status', () => {
+    const row = subscriberToRow(subscriber);
+    expect(row).toHaveLength(SUBSCRIBER_HEADERS.length);
+    expect(row[SUBSCRIBER_HEADERS.indexOf('Status')]).toBe('Subscribed');
+    expect(row[SUBSCRIBER_HEADERS.indexOf('UTM campaign')]).toBe(`'=HYPERLINK("x")`);
+  });
+
+  it('sets Status on every row for the subscriber, and nothing when there is none', async () => {
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(
+        Response.json({ values: [['Subscriber ID'], ['s-1'], ['s-2'], ['s-1']] }),
+      )
+      .mockResolvedValueOnce(Response.json({}));
+    expect(await setSubscriberStatus('t', 'sheet', 's-1', 'Unsubscribed', fetcher)).toBe(2);
+    const update = JSON.parse(fetcher.mock.calls[1]![1]!.body as string);
+    expect(update.valueInputOption).toBe('RAW');
+    expect(update.data.map((d: { range: string }) => d.range)).toEqual([
+      'Subscribers!E2',
+      'Subscribers!E4',
+    ]);
+
+    const none = vi.fn<typeof fetch>(async () => Response.json({ values: [['Subscriber ID']] }));
+    expect(await setSubscriberStatus('t', 'sheet', 's-9', 'Unsubscribed', none)).toBe(0);
+    expect(none).toHaveBeenCalledTimes(1);
   });
 });

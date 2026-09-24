@@ -22,13 +22,15 @@ pnpm exec wrangler d1 execute DB --remote --command \
 Add `--env staging` for staging. A `skipped` step is not a failure: it was left out on purpose, and
 `last_error` says why:
 
-| `last_error`           | Step            | Meaning                                                                 |
-| ---------------------- | --------------- | ----------------------------------------------------------------------- |
-| `rate_limited_24h`     | `autoreply`     | This address already got an auto-reply in the last 24 hours (the limit) |
-| `reserved_email`       | `autoreply`     | A test address such as `@example.com`, which is never emailed           |
-| `no_email`             | `autoreply`     | The record has no email address                                         |
-| `no_analytics_consent` | `ga`            | The visitor didn't accept analytics, so there is no GA client id        |
-| `not_pending`          | `confirm_email` | The subscriber confirmed or unsubscribed before the email went out      |
+| `last_error`           | Step                                          | Meaning                                                                 |
+| ---------------------- | --------------------------------------------- | ----------------------------------------------------------------------- |
+| `rate_limited_24h`     | `autoreply`                                   | This address already got an auto-reply in the last 24 hours (the limit) |
+| `reserved_email`       | `autoreply`, subscriber emails, `audience`    | A test address such as `@example.com`, which is never emailed           |
+| `no_email`             | `autoreply`                                   | The record has no email address                                         |
+| `no_analytics_consent` | `ga` (leads and subscribers)                  | The visitor didn't accept analytics, so there is no GA client id        |
+| `not_pending`          | `confirm_email`                               | The subscriber confirmed or unsubscribed before the email went out      |
+| `not_confirmed`        | `sheets`, `audience`, `checklist_email`, `ga` | The subscriber unsubscribed before these ran                            |
+| `not_unsubscribed`     | `sheet_status`                                | They signed up again before the Sheet was marked Unsubscribed           |
 
 ```bash
 pnpm exec wrangler d1 execute DB --remote --command \
