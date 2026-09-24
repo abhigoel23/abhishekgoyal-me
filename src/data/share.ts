@@ -8,5 +8,7 @@ export type SharePlatform = {
 
 export const sharePlatforms = {
   linkedin: { name: 'LinkedIn', utmSource: 'linkedin', utmMedium: 'social' },
+  // Posts reach dev.to through its RSS import, which adds its own untagged "Originally published" link.
+  // These values are for links added there by hand, e.g. the profile's website URL.
   devto: { name: 'dev.to', utmSource: 'devto', utmMedium: 'social' },
 } as const satisfies Record<string, SharePlatform>;

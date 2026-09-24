@@ -46,10 +46,10 @@ ${link(linkedin)}
 ${hashtags(post.tags).join(' ')}
 
 ── ${devto.name} ───────────────────────────────────────────
-The RSS import creates a draft with the canonical URL already set.
+The RSS import creates a draft with the canonical URL and tags already set, and dev.to adds its own
+"Originally published at abhishekgoyal.me" line, so don't add one.
 1. Open https://dev.to/dashboard and find the imported draft.
-2. Check that the canonical URL in the post options is ${canonical}
-3. Check code blocks and images, then add the tags: ${devtoTags(post.tags).join(', ')}
-4. End the post with:
-   *Originally published on [abhishekgoyal.me](${link(devto)}).*
-5. Publish.`);
+2. In the editor, check the front matter: canonical_url: ${canonical}
+   and tags: ${devtoTags(post.tags).join(',')}
+3. Open the preview: headings, code blocks and images render, and links go to abhishekgoyal.me.
+4. Publish.`);

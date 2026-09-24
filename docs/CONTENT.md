@@ -157,14 +157,15 @@ has finished, run:
 pnpm share <slug>
 ```
 
-It prints the canonical URL, a starting LinkedIn post with a UTM link and hashtags, and the dev.to steps
-with tags and an "Originally published on" line. It only prints; it posts nothing.
+It prints the canonical URL, a starting LinkedIn post with a UTM link and hashtags, and the dev.to
+checks. It only prints; it posts nothing.
 
 - **LinkedIn** has no canonical-URL support, so post a short summary in your own words plus the link,
   never the full text. Keep every claim to what the post says.
 - **dev.to** imports each new post from `https://abhishekgoyal.me/rss.xml` as a draft, with the canonical
-  URL already set. Open the draft, check the canonical URL, code blocks and images, add the tags and the
-  closing line from `pnpm share`, then publish.
+  URL and tags already set, and adds its own "Originally published at abhishekgoyal.me" line (don't add
+  another). Check the draft's front matter and preview as `pnpm share` lists, then publish. That link
+  carries no UTM params, so its visits show in GA4 as dev.to referrals.
 - Tick the Post issue's cross-post box when both are done.
 
 One-time dev.to setup (done in #133): [dev.to/settings/extensions](https://dev.to/settings/extensions) →

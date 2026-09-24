@@ -186,7 +186,8 @@ https://abhishekgoyal.me/?utm_source=linkedin&utm_medium=social&utm_campaign=lau
 ```
 
 For a cross-posted blog post, `utm_campaign` is the post's slug. `pnpm share <slug>` builds these links
-from `src/data/share.ts`: `utm_source=linkedin` or `devto`, with `utm_medium=social`. The canonical URL
+from `src/data/share.ts` (`utm_source=linkedin`, `utm_medium=social`). Links added by hand on dev.to, such
+as the profile's website URL, use `utm_source=devto&utm_medium=social` (`utm_campaign=profile` there). The canonical URL
 itself never carries UTM params.
 
 `src/components/Attribution.astro` captures `source_page`, the three UTM params and a cross-site
