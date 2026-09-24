@@ -13,8 +13,11 @@ import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
 import { alertText, notificationSteps, sendEmail, sendTelegram } from './notifications';
 import { deliverLead, runSteps, skip, type StepHandlers } from './outbox';
 import { appendBooking, appendLead } from './sheets';
+import { deliverSubscriber, subscriberHandlers } from './subscriberDelivery';
 
-export type DeliveryMessage = { kind: 'lead' | 'booking'; id: string };
+// A subscriber's sign-up message also carries the raw confirmation token (never logged or stored).
+export type DeliveryMessage =
+  { kind: 'lead' | 'booking'; id: string } | { kind: 'subscriber'; id: string; token?: string };
 
 async function sheetsAccess(env: Env) {
   if (!env.GOOGLE_SA_EMAIL || !env.GOOGLE_SA_KEY || !env.SHEET_ID) {
@@ -95,8 +98,11 @@ export function alertTransports(env: Env): AlertTransport[] {
   return transports;
 }
 
-/** Runs the pending steps for one queue message (a lead or a booking event). */
+/** Runs the pending steps for one queue message (a lead, a booking event or a subscriber). */
 export async function deliver(db: D1Database, message: DeliveryMessage, env: Env) {
+  if (message.kind === 'subscriber') {
+    return deliverSubscriber(db, message.id, subscriberHandlers(env, db, message.token));
+  }
   if (message.kind === 'booking') {
     const event = await getBookingEvent(db, message.id);
     return runSteps(db, 'booking', message.id, event, BOOKING_STEPS, bookingHandlers(env));

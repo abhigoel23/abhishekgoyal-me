@@ -39,6 +39,29 @@ export const autoReply = {
   footer,
 };
 
+// Double opt-in (#109). The link is /subscribe/confirm#t=<token>; the page has a Confirm button, so a
+// mail scanner opening the link confirms nothing.
+export const confirmSubscription = {
+  subject: 'Confirm your email to get the checklist',
+  lines: (link: string) => [
+    'Hi,',
+    '',
+    "Please confirm your email address and I'll send you the Offline-first Android launch checklist:",
+    '',
+    link,
+    '',
+    'The link works for 7 days. Once you confirm, I may also send occasional notes on what I am',
+    'building; every one has an unsubscribe link.',
+    '',
+    "If you didn't ask for this, ignore this email and you won't hear from me.",
+  ],
+  signature,
+  footer: [
+    '—',
+    `You're receiving this because this address was entered on ${new URL(profile.url).host}.`,
+  ],
+};
+
 export const notify = {
   project: (name: string, budget: string) => `New project lead: ${name} · ${budget}`,
   role: (company: string, roleTitle: string) => `New role enquiry: ${company} · ${roleTitle}`,

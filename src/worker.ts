@@ -10,6 +10,7 @@ import {
   type DeliveryMessage,
 } from './lib/server/delivery';
 import { retryDelaySeconds } from './lib/server/outbox';
+import { subscriberHandlers } from './lib/server/subscriberDelivery';
 
 export default {
   fetch: (request, env, ctx) => handle(request, env, ctx),
@@ -40,8 +41,10 @@ export default {
       try {
         const { failed } = await deliver(db, body, env);
         if (failed.length) {
+          // kind + id only: a subscriber message also carries its confirmation token.
           console.error('delivery failed', {
-            ...body,
+            kind: body.kind,
+            id: body.id,
             failed,
             attempt: message.attempts,
           });
@@ -50,7 +53,7 @@ export default {
           message.ack();
         }
       } catch (error) {
-        console.error('delivery error', { ...body, error: String(error) });
+        console.error('delivery error', { kind: body.kind, id: body.id, error: String(error) });
         message.retry({ delaySeconds: retryDelaySeconds(message.attempts) });
       }
     }
@@ -62,8 +65,12 @@ export default {
     if (!env.DB) return;
     await dailyMaintenance(
       env.DB,
-      leadHandlers(env),
-      bookingHandlers(env),
+      {
+        lead: leadHandlers(env),
+        booking: bookingHandlers(env),
+        // No token here: a re-sent confirmation gets a fresh one.
+        subscriber: subscriberHandlers(env, env.DB, undefined),
+      },
       deepChecks(env),
       alertTransports(env),
       sheetRetention(env),

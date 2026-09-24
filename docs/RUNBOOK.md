@@ -22,12 +22,13 @@ pnpm exec wrangler d1 execute DB --remote --command \
 Add `--env staging` for staging. A `skipped` step is not a failure: it was left out on purpose, and
 `last_error` says why:
 
-| `last_error`           | Step        | Meaning                                                                 |
-| ---------------------- | ----------- | ----------------------------------------------------------------------- |
-| `rate_limited_24h`     | `autoreply` | This address already got an auto-reply in the last 24 hours (the limit) |
-| `reserved_email`       | `autoreply` | A test address such as `@example.com`, which is never emailed           |
-| `no_email`             | `autoreply` | The record has no email address                                         |
-| `no_analytics_consent` | `ga`        | The visitor didn't accept analytics, so there is no GA client id        |
+| `last_error`           | Step            | Meaning                                                                 |
+| ---------------------- | --------------- | ----------------------------------------------------------------------- |
+| `rate_limited_24h`     | `autoreply`     | This address already got an auto-reply in the last 24 hours (the limit) |
+| `reserved_email`       | `autoreply`     | A test address such as `@example.com`, which is never emailed           |
+| `no_email`             | `autoreply`     | The record has no email address                                         |
+| `no_analytics_consent` | `ga`            | The visitor didn't accept analytics, so there is no GA client id        |
+| `not_pending`          | `confirm_email` | The subscriber confirmed or unsubscribed before the email went out      |
 
 ```bash
 pnpm exec wrangler d1 execute DB --remote --command \
@@ -125,7 +126,9 @@ pnpm exec wrangler rollback --message "why"
 
 Add `--env staging` for staging. A rollback doesn't undo D1 migrations; write a new migration instead.
 That's why deploy-production applies migrations before deploying, and why migrations only add things
-(ADR 003): the version you roll back to must still work on the new schema.
+(ADR 003): the version you roll back to must still work on the new schema. Widening a rule counts:
+`0003_subscribers.sql` rebuilds `outbox_status` so it also accepts `subscriber` rows, and older code,
+which only writes `lead` and `booking`, still works on it.
 
 **Rollback drill:** Actions → CI/CD → Run workflow on `main` with _drill_rollback_ ticked. It deploys,
 runs the smoke test, then fails on purpose, so the rollback step runs. Check that `wrangler deployments

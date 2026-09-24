@@ -1,0 +1,100 @@
+---
+// Double opt-in (#109). The emailed link is /subscribe/confirm#t=<token>: the token lives in the URL
+// fragment, so it never reaches a server log, a Referer header or analytics. The page confirms nothing
+// by itself (mail scanners open links); the button POSTs the token to /api/subscribe/confirm.
+import Button from '../../components/Button.astro';
+import Container from '../../components/Container.astro';
+import { confirmCopy } from '../../data/subscribe';
+import { pages } from '../../data/pages';
+import Base from '../../layouts/Base.astro';
+---
+
+<Base {...pages['/subscribe/confirm']} noindex>
+  <Container class="py-20 sm:py-28">
+    <div data-confirm-state="ask">
+      <p class="eyebrow mb-3">{confirmCopy.eyebrow}</p>
+      <h1 class="text-h1 max-w-2xl">{confirmCopy.heading}</h1>
+      <p class="mt-5 max-w-xl text-lead text-muted">{confirmCopy.lead}</p>
+      <noscript>
+        <p class="mt-5 max-w-xl">{confirmCopy.noscript}</p>
+      </noscript>
+      <Button class="mt-8" size="lg" data-confirm-button disabled>
+        {confirmCopy.button}
+      </Button>
+      <script is:inline>
+        // Runs while the page is parsed, before any module script (analytics included): move the
+        // token from the URL onto the button and drop it from the address bar and history.
+        (() => {
+          const button = document.querySelector('[data-confirm-button]');
+          if (button)
+            button.dataset.token = new URLSearchParams(location.hash.slice(1)).get('t') ?? '';
+          if (location.hash) history.replaceState(null, '', location.pathname);
+        })();
+      </script>
+      <p class="mt-4 text-muted" role="alert" data-confirm-error hidden>
+        {confirmCopy.error}
+      </p>
+    </div>
+
+    <div data-confirm-state="done" hidden>
+      <h1 class="text-h1 max-w-2xl" tabindex="-1">
+        {confirmCopy.done.heading}
+      </h1>
+      <p class="mt-5 max-w-xl text-lead text-muted">{confirmCopy.done.body}</p>
+    </div>
+
+    <div data-confirm-state="invalid" hidden>
+      <h1 class="text-h1 max-w-2xl" tabindex="-1">
+        {confirmCopy.invalid.heading}
+      </h1>
+      <p class="mt-5 max-w-xl text-lead text-muted">{confirmCopy.invalid.body}</p>
+      <p class="mt-8">
+        <a class="link font-medium" href={confirmCopy.invalid.link.href}>
+          {confirmCopy.invalid.link.label}
+        </a>
+      </p>
+    </div>
+  </Container>
+</Base>
+
+<script>
+  import { confirmCopy } from '../../data/subscribe';
+  import { confirmTokenPattern } from '../../lib/subscribe';
+
+  const show = (state: 'ask' | 'done' | 'invalid') => {
+    for (const el of document.querySelectorAll<HTMLElement>('[data-confirm-state]')) {
+      el.hidden = el.dataset.confirmState !== state;
+    }
+    document.querySelector<HTMLElement>(`[data-confirm-state="${state}"] h1`)?.focus();
+  };
+
+  const button = document.querySelector<HTMLButtonElement>('[data-confirm-button]');
+  // Set by the inline script above, which already removed it from the URL.
+  const token = button?.dataset.token ?? '';
+  const error = document.querySelector<HTMLElement>('[data-confirm-error]');
+
+  if (!confirmTokenPattern.test(token)) {
+    show('invalid');
+  } else if (button) {
+    button.disabled = false;
+    button.addEventListener('click', async () => {
+      button.disabled = true;
+      button.textContent = confirmCopy.working;
+      if (error) error.hidden = true;
+      try {
+        const res = await fetch('/api/subscribe/confirm', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ token }),
+        });
+        if (res.ok) return show('done');
+        if (res.status === 400) return show('invalid');
+        throw new Error(String(res.status));
+      } catch {
+        if (error) error.hidden = false;
+        button.disabled = false;
+        button.textContent = confirmCopy.button;
+      }
+    });
+  }
+</script>

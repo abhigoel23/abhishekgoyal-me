@@ -6,6 +6,7 @@ import { checkTelegram } from './notifications';
 import { BOOKING_STEPS, getBookingEvent, type BookingHandlers } from './bookings';
 import { deliverLead, runSteps, type RefKind, type StepHandlers } from './outbox';
 import { purgeBookingRows, purgeLeadRows, readSheetTitle } from './sheets';
+import { deliverSubscriber, type SubscriberHandlers } from './subscriberDelivery';
 
 export const RETENTION_MONTHS = 18;
 // Rows younger than this may still be in the queue's own retries; leave them to it.
@@ -34,12 +35,14 @@ export async function refsToResync(db: D1Database, kind: RefKind, steps: string[
   return results.map((r) => r.ref_id);
 }
 
-export async function resync(
-  db: D1Database,
-  leadHandlers: StepHandlers,
-  bookingHandlers: BookingHandlers,
-  now: Date,
-) {
+export type AllHandlers = {
+  lead: StepHandlers;
+  booking: BookingHandlers;
+  subscriber: SubscriberHandlers;
+};
+
+export async function resync(db: D1Database, handlers: AllHandlers, now: Date) {
+  const { lead: leadHandlers, booking: bookingHandlers, subscriber: subscriberHandlers } = handlers;
   const stillFailing: string[] = [];
   const leadIds = await refsToResync(db, 'lead', Object.keys(leadHandlers), now);
   for (const id of leadIds) {
@@ -52,7 +55,15 @@ export async function resync(
     const { failed } = await runSteps(db, 'booking', ref, event, BOOKING_STEPS, bookingHandlers);
     if (failed.length) stillFailing.push(`booking ${ref}: ${failed.join(', ')}`);
   }
-  return { attempted: leadIds.length + bookingRefs.length, stillFailing };
+  const subscriberIds = await refsToResync(db, 'subscriber', Object.keys(subscriberHandlers), now);
+  for (const id of subscriberIds) {
+    const { failed } = await deliverSubscriber(db, id, subscriberHandlers);
+    if (failed.length) stillFailing.push(`subscriber ${id}: ${failed.join(', ')}`);
+  }
+  return {
+    attempted: leadIds.length + bookingRefs.length + subscriberIds.length,
+    stillFailing,
+  };
 }
 
 /** Deletes leads and bookings older than the retention period, with their outbox rows. */
@@ -133,14 +144,13 @@ export function sheetRetention(env: Env) {
 
 export async function dailyMaintenance(
   db: D1Database,
-  handlers: StepHandlers,
-  bookingHandlers: BookingHandlers,
+  handlers: AllHandlers,
   checks: HealthChecks,
   transports: AlertTransport[],
   purgeSheet?: (cutoffIso: string) => Promise<number>,
   now = new Date(),
 ) {
-  const synced = await resync(db, handlers, bookingHandlers, now);
+  const synced = await resync(db, handlers, now);
   const purged = await purge(db, now);
   let sheetRowsPurged: number | string = 'not configured';
   if (purgeSheet) {

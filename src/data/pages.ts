@@ -68,6 +68,10 @@ export const pages = {
     description:
       'The printable, downloadable version of the offline-first Android launch checklist.',
   },
+  '/subscribe/confirm': {
+    title: 'Confirm your email',
+    description: 'Confirm your email address to get the offline-first Android launch checklist.',
+  },
   '/thanks': {
     title: 'Thanks',
     description:
