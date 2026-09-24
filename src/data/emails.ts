@@ -62,6 +62,26 @@ export const confirmSubscription = {
   ],
 };
 
+// Sent once the address is confirmed (#110): the checklist link. The PDF itself is public and noindex.
+export const checklistDelivery = {
+  subject: 'Your Offline-first Android launch checklist',
+  lines: (pdfUrl: string) => [
+    'Hi,',
+    '',
+    "Thanks for confirming. Here's the checklist:",
+    '',
+    pdfUrl,
+    '',
+    'If one of the checks raises a question about your own app, reply to this email. I read every reply.',
+  ],
+  signature,
+  footer: [
+    '—',
+    `You're receiving this because you signed up on ${new URL(profile.url).host}.`,
+    'Occasional notes come with an unsubscribe link. To be removed now, reply with UNSUBSCRIBE.',
+  ],
+};
+
 export const notify = {
   project: (name: string, budget: string) => `New project lead: ${name} · ${budget}`,
   role: (company: string, roleTitle: string) => `New role enquiry: ${company} · ${roleTitle}`,

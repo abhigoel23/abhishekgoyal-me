@@ -1,6 +1,6 @@
 // Newsletter double opt-in (#109), against the local staging build and its throwaway D1. The raw token
 // only ever exists in the email, so the tests plant a known token's hash in D1 and open its link.
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, createHmac, randomBytes } from 'node:crypto';
 import { expect, test, type APIRequestContext } from '@playwright/test';
 import { PORT } from '../../playwright.lead.config';
 import { count, query } from './d1';
@@ -129,4 +129,55 @@ test('bots and bad input are rejected, storing nothing', async ({ request }) => 
   });
   expect(crossOrigin.status()).toBe(403);
   expect(count(`SELECT count(*) FROM subscribers WHERE email = '${email}'`)).toBe(0);
+});
+
+// Signed like Resend (Svix) with the dummy secret in .dev.vars.example.
+const WEBHOOK_SECRET = Buffer.from('local-e2e-webhook-secret');
+function resendEvent(request: APIRequestContext, event: unknown, secret = WEBHOOK_SECRET) {
+  const body = JSON.stringify(event);
+  const id = `msg_${Date.now()}`;
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const signature = createHmac('sha256', secret)
+    .update(`${id}.${timestamp}.${body}`)
+    .digest('base64');
+  return request.post('/api/resend-webhook', {
+    headers: {
+      'content-type': 'application/json',
+      'svix-id': id,
+      'svix-timestamp': timestamp,
+      'svix-signature': `v1,${signature}`,
+    },
+    data: body,
+  });
+}
+
+test('a signed Resend unsubscribe marks the subscriber; an unsigned one is refused', async ({
+  page,
+  request,
+}) => {
+  const email = newEmail('unsub');
+  await signup(request, email);
+  const token = newToken();
+  plantToken(email, token);
+  await page.goto(`/subscribe/confirm#t=${token}`);
+  await page.getByRole('button', { name: 'Confirm my email' }).click();
+  await expect(page.getByRole('heading', { name: "You're confirmed" })).toBeVisible();
+
+  const unsubscribe = { type: 'contact.updated', data: { email, unsubscribed: true } };
+  const forged = await resendEvent(request, unsubscribe, Buffer.from('not-the-secret'));
+  expect(forged.status()).toBe(401);
+  expect(statusOf(email)).toBe('confirmed');
+
+  expect((await resendEvent(request, unsubscribe)).status()).toBe(200);
+  expect(statusOf(email)).toBe('unsubscribed');
+  expect(
+    count(
+      `SELECT count(*) FROM outbox_status o JOIN subscribers s ON o.ref_id = s.subscriber_id
+       WHERE s.email = '${email}' AND o.step = 'sheet_status'`,
+    ),
+  ).toBe(1);
+
+  // Signing up again starts a fresh double opt-in.
+  expect((await signup(request, email)).status()).toBe(200);
+  expect(statusOf(email)).toBe('pending');
 });

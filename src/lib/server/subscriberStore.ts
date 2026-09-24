@@ -5,8 +5,10 @@ import type { Subscribe } from '../subscribe';
 
 /** Sent once per sign-up (and again on a repeat sign-up while pending). */
 export const SIGNUP_STEPS = ['confirm_email'] as const;
-/** Run once the address is confirmed. Handlers arrive in #110; until then these rows stay pending. */
+/** Run once the address is confirmed (#110). */
 export const CONFIRMED_STEPS = ['sheets', 'audience', 'checklist_email', 'ga'] as const;
+/** Run after an unsubscribe arrives from Resend's webhook. */
+export const UNSUBSCRIBE_STEPS = ['sheet_status'] as const;
 
 export const TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 /** At most one confirmation email per address in this window. */
@@ -224,4 +226,58 @@ export async function confirmToken(
     ),
   ]);
   return update!.meta.changes === 1 ? { ok: true, subscriberId: row.subscriber_id } : { ok: false };
+}
+
+/**
+ * Marks an address unsubscribed (from Resend's webhook) and queues the Sheet update. Returns the
+ * subscriber id if something changed; null for unknown addresses (e.g. another environment's contact)
+ * and for addresses that were already unsubscribed.
+ */
+export async function markUnsubscribed(db: D1Database, email: string, now: Date) {
+  const at = now.toISOString();
+  const row = await db
+    .prepare(`SELECT subscriber_id FROM subscribers WHERE email = ? AND status != 'unsubscribed'`)
+    .bind(email.trim().toLowerCase())
+    .first<{ subscriber_id: string }>();
+  if (!row) return null;
+  const [update] = await db.batch([
+    db
+      .prepare(
+        `UPDATE subscribers SET status = 'unsubscribed', unsubscribed_at = ?, updated_at = ?,
+           confirm_token_hash = NULL, token_expires_at = NULL
+         WHERE subscriber_id = ? AND status != 'unsubscribed'`,
+      )
+      .bind(at, at, row.subscriber_id),
+    ...UNSUBSCRIBE_STEPS.map((step) =>
+      db
+        .prepare(
+          `INSERT INTO outbox_status (ref_kind, ref_id, step, status, updated_at)
+           VALUES ('subscriber', ?, ?, 'pending', ?)
+           ON CONFLICT (ref_kind, ref_id, step)
+             DO UPDATE SET status = 'pending', last_error = NULL, updated_at = excluded.updated_at`,
+        )
+        .bind(row.subscriber_id, step, at),
+    ),
+  ]);
+  return update!.meta.changes === 1 ? row.subscriber_id : null;
+}
+
+/**
+ * Pending sign-ups nobody confirmed are deleted this long after their last sign-up (updated_at, so a
+ * re-subscriber isn't purged the day they sign up again), with their outbox rows.
+ */
+export const PENDING_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+
+export async function purgeUnconfirmed(db: D1Database, now: Date) {
+  const cutoff = new Date(now.getTime() - PENDING_RETENTION_MS).toISOString();
+  const results = await db.batch([
+    db
+      .prepare(
+        `DELETE FROM outbox_status WHERE ref_kind = 'subscriber' AND ref_id IN
+           (SELECT subscriber_id FROM subscribers WHERE status = 'pending' AND updated_at < ?)`,
+      )
+      .bind(cutoff),
+    db.prepare(`DELETE FROM subscribers WHERE status = 'pending' AND updated_at < ?`).bind(cutoff),
+  ]);
+  return results[1]!.meta.changes;
 }

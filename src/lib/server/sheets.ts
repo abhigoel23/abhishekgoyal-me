@@ -2,6 +2,7 @@
 // written as their labels. Rows go in with valueInputOption=RAW and every cell passes sanitizeCell.
 import { budgetBands, leadPaths, serviceOptions, timelines, workModes } from '../../data/lead';
 import type { LeadRow } from './leadStore';
+import type { SubscriberRow } from './subscriberStore';
 import { sanitizeCell } from './sanitize';
 
 const API = 'https://sheets.googleapis.com/v4/spreadsheets';
@@ -237,3 +238,80 @@ export const purgeBookingRows = (
   cutoffIso: string,
   fetcher: typeof fetch = fetch,
 ) => purgeRows(token, sheetId, 'Bookings', BOOKING_HEADERS, cutoffIso, fetcher);
+
+// Newsletter subscribers (#110): one row per confirmed address. The Worker writes the row on confirm and
+// flips `Status` when someone unsubscribes; nothing else is edited.
+const SUBSCRIBER_COLUMNS: [header: string, cell: (s: SubscriberRow) => string | null][] = [
+  ['Subscriber ID', (s) => s.subscriber_id],
+  ['Confirmed (UTC)', (s) => s.confirmed_at],
+  ['Email', (s) => s.email],
+  ['Source', (s) => s.source],
+  ['Status', () => 'Subscribed'],
+  ['Source page', (s) => s.source_page],
+  ['UTM source', (s) => s.utm_source],
+  ['UTM medium', (s) => s.utm_medium],
+  ['UTM campaign', (s) => s.utm_campaign],
+  ['Referrer', (s) => s.referrer],
+];
+
+export const SUBSCRIBER_HEADERS = SUBSCRIBER_COLUMNS.map(([header]) => header);
+export const SUBSCRIBERS_TAB = 'Subscribers';
+
+export function subscriberToRow(subscriber: SubscriberRow): string[] {
+  return SUBSCRIBER_COLUMNS.map(([, cell]) => sanitizeCell(cell(subscriber)));
+}
+
+export async function appendSubscriber(
+  token: string,
+  sheetId: string,
+  subscriber: SubscriberRow,
+  fetcher: typeof fetch = fetch,
+) {
+  await appendRow(
+    token,
+    sheetId,
+    SUBSCRIBERS_TAB,
+    SUBSCRIBER_HEADERS,
+    subscriberToRow(subscriber),
+    fetcher,
+  );
+}
+
+/**
+ * Sets `Status` on every row for this subscriber (a re-subscriber has more than one). Returns the rows
+ * updated; 0 if the row was never written, which is fine: there is nothing to mark.
+ */
+export async function setSubscriberStatus(
+  token: string,
+  sheetId: string,
+  subscriberId: string,
+  status: string,
+  fetcher: typeof fetch = fetch,
+) {
+  const idRange = encodeURIComponent(`${SUBSCRIBERS_TAB}!A:A`);
+  const data = (await sheetsFetch(token, `${API}/${sheetId}/values/${idRange}`, {}, fetcher)) as {
+    values?: string[][];
+  };
+  const column = String.fromCharCode(65 + SUBSCRIBER_HEADERS.indexOf('Status'));
+  const rows = (data.values ?? [])
+    .map((row, i) => [i + 1, row[0]] as const) // 1-based sheet rows
+    .filter(([n, id]) => n > 1 && id === subscriberId)
+    .map(([n]) => n);
+  if (!rows.length) return 0;
+  await sheetsFetch(
+    token,
+    `${API}/${sheetId}/values:batchUpdate`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        valueInputOption: 'RAW',
+        data: rows.map((n) => ({
+          range: `${SUBSCRIBERS_TAB}!${column}${n}`,
+          values: [[sanitizeCell(status)]],
+        })),
+      }),
+    },
+    fetcher,
+  );
+  return rows.length;
+}

@@ -9,7 +9,7 @@ import {
   type BookingHandlers,
 } from './bookings';
 import { sendGenerateLead } from './ga';
-import { getAccessToken, SHEETS_SCOPE } from './googleAuth';
+import { sheetsAccess } from './googleAuth';
 import { alertText, notificationSteps, sendEmail, sendTelegram } from './notifications';
 import { deliverLead, runSteps, skip, type StepHandlers } from './outbox';
 import { appendBooking, appendLead } from './sheets';
@@ -18,17 +18,6 @@ import { deliverSubscriber, subscriberHandlers } from './subscriberDelivery';
 // A subscriber's sign-up message also carries the raw confirmation token (never logged or stored).
 export type DeliveryMessage =
   { kind: 'lead' | 'booking'; id: string } | { kind: 'subscriber'; id: string; token?: string };
-
-async function sheetsAccess(env: Env) {
-  if (!env.GOOGLE_SA_EMAIL || !env.GOOGLE_SA_KEY || !env.SHEET_ID) {
-    throw new Error('Sheets not configured (GOOGLE_SA_EMAIL, GOOGLE_SA_KEY, SHEET_ID)');
-  }
-  const token = await getAccessToken(
-    { email: env.GOOGLE_SA_EMAIL, privateKeyPem: env.GOOGLE_SA_KEY },
-    SHEETS_SCOPE,
-  );
-  return { token, sheetId: env.SHEET_ID };
-}
 
 export function leadHandlers(env: Env): StepHandlers {
   return {

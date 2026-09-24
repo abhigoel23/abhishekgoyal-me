@@ -1,4 +1,5 @@
-// Server-side GA4 conversion via the Measurement Protocol (the lead's `ga` delivery step). Sent only
+// Server-side GA4 conversions via the Measurement Protocol (the `ga` delivery steps for leads and
+// subscribers). Sent only
 // when the form carried a GA client id, which exists only if the visitor consented to analytics.
 // No PII: path, budget band and source only.
 import type { LeadRow } from './leadStore';
@@ -37,6 +38,64 @@ export async function sendGenerateLead(
   fetcher: typeof fetch = fetch,
 ): Promise<StepResult> {
   if (!lead.ga_client_id) return skip('no_analytics_consent');
+  await sendMeasurement(generateLeadEvent(lead), config, lead.ga_debug === '1', fetcher, {
+    lead: lead.lead_id,
+    session: lead.ga_session_id ?? 'missing',
+  });
+  return 'done';
+}
+
+/** The ids and flags an event is sent with; leads and subscribers both carry them. */
+type GaIds = {
+  ga_client_id: string | null;
+  ga_session_id: string | null;
+  ga_debug: string | null;
+  ga_internal: string | null;
+};
+
+/** `sign_up` (#110): a newsletter address was confirmed. Key event, like generate_lead. */
+export function signUpEvent(ids: GaIds, method: string) {
+  return {
+    client_id: ids.ga_client_id!,
+    events: [
+      {
+        name: 'sign_up',
+        params: {
+          method,
+          engagement_time_msec: 1,
+          // Confirming usually happens later, often on another device, so this session id is from
+          // the sign-up visit; GA may not join it to that session if it has ended.
+          ...(ids.ga_session_id ? { session_id: ids.ga_session_id } : {}),
+          ...(ids.ga_debug === '1' ? { debug_mode: 1 } : {}),
+          ...(ids.ga_internal === '1' ? { traffic_type: 'internal' } : {}),
+        },
+      },
+    ],
+  };
+}
+
+export async function sendSignUp(
+  ids: GaIds & { subscriber_id: string | null },
+  method: string,
+  config: GaConfig,
+  fetcher: typeof fetch = fetch,
+): Promise<StepResult> {
+  if (!ids.ga_client_id) return skip('no_analytics_consent');
+  await sendMeasurement(signUpEvent(ids, method), config, ids.ga_debug === '1', fetcher, {
+    subscriber: ids.subscriber_id,
+    session: ids.ga_session_id ?? 'missing',
+  });
+  return 'done';
+}
+
+/** Sends one Measurement Protocol payload. Throws on failure so the outbox step retries. */
+async function sendMeasurement(
+  payload: object,
+  config: GaConfig,
+  debug: boolean,
+  fetcher: typeof fetch,
+  logFields: Record<string, unknown>,
+) {
   const production = config.environment === 'production';
   // Outside production, use the validation endpoint: GA checks the payload but records nothing, so
   // staging never pollutes the real reports.
@@ -47,7 +106,7 @@ export async function sendGenerateLead(
     measurement_id: config.measurementId,
     api_secret: config.apiSecret,
   })}`;
-  const body = JSON.stringify(generateLeadEvent(lead));
+  const body = JSON.stringify(payload);
   const res = await fetcher(url, { method: 'POST', body });
   if (!res.ok) throw new Error(`GA ${res.status}`);
   if (!production) {
@@ -57,11 +116,11 @@ export async function sendGenerateLead(
     if (validationMessages.length) {
       throw new Error(`GA validation: ${validationMessages.map((m) => m.description).join('; ')}`);
     }
-    return 'done';
+    return;
   }
-  // The live endpoint answers 204 whatever it thinks of the payload, so a debug lead is mirrored to
+  // The live endpoint answers 204 whatever it thinks of the payload, so a debug event is mirrored to
   // the validation endpoint: a rejected event then shows up in the Worker logs instead of vanishing.
-  if (lead.ga_debug === '1') {
+  if (debug) {
     try {
       const check = await fetcher(url.replace('/mp/collect', '/debug/mp/collect'), {
         method: 'POST',
@@ -70,14 +129,9 @@ export async function sendGenerateLead(
       const { validationMessages = [] } = (await check.json()) as {
         validationMessages?: { description: string }[];
       };
-      console.log('GA debug lead', {
-        lead: lead.lead_id,
-        session: lead.ga_session_id ?? 'missing',
-        validationMessages,
-      });
+      console.log('GA debug event', { ...logFields, validationMessages });
     } catch (error) {
-      console.log('GA debug check failed', { lead: lead.lead_id, error: String(error) });
+      console.log('GA debug check failed', { ...logFields, error: String(error) });
     }
   }
-  return 'done';
 }

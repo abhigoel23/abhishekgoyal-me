@@ -6,7 +6,9 @@ import { checkTelegram } from './notifications';
 import { BOOKING_STEPS, getBookingEvent, type BookingHandlers } from './bookings';
 import { deliverLead, runSteps, type RefKind, type StepHandlers } from './outbox';
 import { purgeBookingRows, purgeLeadRows, readSheetTitle } from './sheets';
+import { checkSegment } from './resendContacts';
 import { deliverSubscriber, type SubscriberHandlers } from './subscriberDelivery';
+import { purgeUnconfirmed } from './subscriberStore';
 
 export const RETENTION_MONTHS = 18;
 // Rows younger than this may still be in the queue's own retries; leave them to it.
@@ -107,11 +109,19 @@ export async function runHealthChecks(checks: HealthChecks) {
 }
 
 /**
- * Deep checks with real credentials (read-only). Resend isn't checked here: a sending-only key can't
- * call any read endpoint, so a broken key shows up as failed notify steps and their alerts instead.
+ * Deep checks with real credentials (read-only). The Resend sending key isn't checked: it can't call
+ * any read endpoint, so a broken key shows up as failed notify steps and their alerts instead. The
+ * full-access contacts key is checked by reading the newsletter segment.
  */
 export function deepChecks(env: Env): HealthChecks {
+  // Checked once configured (production sets them at the M5 gate, #114), so an environment that
+  // hasn't switched the newsletter on doesn't alert every day.
+  const contacts: HealthChecks =
+    env.RESEND_CONTACTS_KEY && env.RESEND_SEGMENT_ID
+      ? { resend_contacts: () => checkSegment(env.RESEND_CONTACTS_KEY, env.RESEND_SEGMENT_ID) }
+      : {};
   return {
+    ...contacts,
     sheets: async () => {
       if (!env.GOOGLE_SA_EMAIL || !env.GOOGLE_SA_KEY || !env.SHEET_ID) {
         throw new Error('not configured');
@@ -151,7 +161,10 @@ export async function dailyMaintenance(
   now = new Date(),
 ) {
   const synced = await resync(db, handlers, now);
-  const purged = await purge(db, now);
+  const purged = {
+    ...(await purge(db, now)),
+    unconfirmedSubscribers: await purgeUnconfirmed(db, now),
+  };
   let sheetRowsPurged: number | string = 'not configured';
   if (purgeSheet) {
     try {

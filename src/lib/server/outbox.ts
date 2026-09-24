@@ -16,7 +16,9 @@ export type SkipReason =
   | 'reserved_email' // an RFC 2606 test address such as @example.com: never emailed
   | 'no_email'
   | 'no_analytics_consent' // no GA client id: the visitor didn't accept analytics
-  | 'not_pending'; // a subscriber confirmed or unsubscribed before the confirmation email went out
+  | 'not_pending' // a subscriber confirmed or unsubscribed before the confirmation email went out
+  | 'not_confirmed' // a subscriber unsubscribed before the post-confirm steps ran
+  | 'not_unsubscribed'; // re-subscribed before the Sheet's Status was set to Unsubscribed
 export type StepResult = 'done' | { skipped: SkipReason };
 export const skip = (reason: SkipReason): StepResult => ({ skipped: reason });
 export type Handlers<S extends string, R> = Partial<Record<S, (record: R) => Promise<StepResult>>>;
