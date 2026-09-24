@@ -58,6 +58,16 @@ export const pages = {
       'Start a project or ask about a full-time role. Tell Abhishek Goyal what you need and hear back within 2 working days.',
     ogTitle: 'Start a project, or ask about a full-time role',
   },
+  '/checklist': {
+    title: 'Offline-first Android launch checklist',
+    description:
+      'A free, practical checklist to run through before you ship an Android app that has to work without a connection: data model, sync, uploads, conflicts, privacy and release engineering.',
+  },
+  '/checklist/print': {
+    title: 'Offline-first Android launch checklist (printable)',
+    description:
+      'The printable, downloadable version of the offline-first Android launch checklist.',
+  },
   '/thanks': {
     title: 'Thanks',
     description:

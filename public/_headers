@@ -2,3 +2,8 @@
 # The custom domain abhishekgoyal.me is unaffected.
 https://:host.abhigoel23.workers.dev/*
   X-Robots-Tag: noindex, nofollow
+
+# The checklist PDF is public (the delivery email links to it, #110) but not yet indexed: the sign-up
+# form it belongs to hasn't shipped (#111).
+/checklist/offline-first-android-launch-checklist.pdf
+  X-Robots-Tag: noindex
