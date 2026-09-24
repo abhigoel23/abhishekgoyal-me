@@ -142,8 +142,8 @@ The fact-check checklist used on the two seed posts:
 - **Team work is credited.** "I designed the sync contract with the backend and web teams" — not "I
   designed the sync contract," which would erase the other teams.
 - **Past tense for products you no longer work on.** Pulse is described in the past tense ("owned",
-  "designed", "showed"): Abhishek left in May 2025 and the app has since been rewritten, so present tense
-  would describe a product he can't vouch for today.
+  "designed", "showed"): Abhishek left in May 2025, so present tense would describe a product he can't
+  vouch for today. (The React Native rewrite he led shipped before he left.)
 - **Plans are called plans.** Anything not yet shipped (a staged rollout, a feature not yet released) is
   described as a plan, not as something already delivered.
 

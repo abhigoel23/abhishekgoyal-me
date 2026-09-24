@@ -36,7 +36,13 @@ the two. The field UIs are usable by non-technical staff with no training.
 ## One codebase: the React Native rewrite
 
 In 2025 I led a full rewrite of both native apps into a single **React Native** codebase. I architected it
-and built it alongside the team, and we completed it in six months.
+and built it alongside the team, and we completed it in six months, before I left in May 2025.
+
+The reason was maintenance and speed: with two native apps, every feature was built twice, and one codebase
+lets features and fixes reach Android and iOS at once. The native apps' behaviour was replicated in React
+Native rather than redesigned. I built the core myself (sync, offline storage and uploads), and the team
+built the screens and features on top. The new app rolled out gradually, with the native app still
+available while users moved over.
 
 ## Releases that stopped being events
 
