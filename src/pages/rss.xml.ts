@@ -7,7 +7,7 @@ import { render } from 'astro:content';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
 import { getPosts } from '../lib/posts';
-import { absoluteUrls, SITE_URL } from '../lib/seo';
+import { feedHtml, SITE_URL } from '../lib/seo';
 
 export const GET: APIRoute = async () => {
   const posts = await getPosts();
@@ -18,7 +18,7 @@ export const GET: APIRoute = async () => {
     posts.map(async (post) => {
       const { Content } = await render(post);
       // Full post HTML for feed readers. A post that can't render fails the build, like its page would.
-      const content = absoluteUrls(await container.renderToString(Content));
+      const content = feedHtml(await container.renderToString(Content));
       return {
         title: post.data.title,
         description: post.data.description,
@@ -36,6 +36,8 @@ export const GET: APIRoute = async () => {
     site: SITE_URL,
     items,
     trailingSlash: false,
-    customData: '<language>en-in</language>',
+    xmlns: { atom: 'http://www.w3.org/2005/Atom' },
+    // The feed's own URL, which the W3C validator asks for.
+    customData: `<language>en-in</language><atom:link href="${SITE_URL}/rss.xml" rel="self" type="application/rss+xml"/>`,
   });
 };
