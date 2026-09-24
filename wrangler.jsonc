@@ -20,9 +20,8 @@
     "GOOGLE_SA_EMAIL": "leads-writer-prod@abhishekgoyal-me.iam.gserviceaccount.com",
     // Where emailed links point: the confirmation link must reach this environment's D1.
     "SITE_ORIGIN": "https://abhishekgoyal.me",
-    // Resend segment for newsletter subscribers (#110). An id, not a secret. Set at the M5 gate (#114);
-    // until then the audience step fails and retries, which can't happen before sign-up is linked.
-    "RESEND_SEGMENT_ID": "",
+    // Resend segment for newsletter subscribers ("abhishekgoyal.me newsletter"). An id, not a secret.
+    "RESEND_SEGMENT_ID": "207cf504-2de6-4e4c-91e0-40da8d93004a",
   },
   // /api/lead returns 503 until TURNSTILE_SECRET is set, so these bindings can go live before the
   // delivery secrets do. TURNSTILE_SECRET is loaded last (docs/RUNBOOK.md).
