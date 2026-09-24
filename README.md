@@ -42,5 +42,6 @@ Merging to `main` builds and deploys through GitHub Actions (`.github/workflows/
 - [Runbook](docs/RUNBOOK.md): health checks, alerts, rotating secrets, deletion requests, rollbacks
 - [Analytics](docs/ANALYTICS.md): what is tracked, the consent model, and how to check it
 - [DNS](docs/DNS.md): the zone, the launch cutover and email records
+- [Content](docs/CONTENT.md): publishing a post, front matter, images, cross-posting, and where copy lives
 - [Architecture decisions](docs/decisions/)
 - `CLAUDE.md`: conventions for AI-assisted work in this repo
