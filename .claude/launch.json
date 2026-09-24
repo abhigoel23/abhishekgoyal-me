@@ -6,6 +6,12 @@
       "runtimeExecutable": "/opt/homebrew/bin/pnpm",
       "runtimeArgs": ["dev"],
       "port": 4321
+    },
+    {
+      "name": "worker-scheduled",
+      "runtimeExecutable": "/opt/homebrew/bin/pnpm",
+      "runtimeArgs": ["exec", "wrangler", "dev", "--test-scheduled", "--port", "8787"],
+      "port": 8787
     }
   ]
 }

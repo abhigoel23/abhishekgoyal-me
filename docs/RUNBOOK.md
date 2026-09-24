@@ -79,6 +79,10 @@ The cron writes last month's row to the Leads Sheet's **Monthly** tab on the 1st
 - **`Unable to parse range: Monthly!…`**: the tab doesn't exist, or was renamed. Create a tab named exactly
   `Monthly`; the next run writes the header and the row.
 - **Any Sheets error**: as for the other Sheets alerts above.
+- **To test the cron for a given date** against the test Sheet: `CLOUDFLARE_ENV=staging pnpm build`, start the
+  `worker-scheduled` config in `.claude/launch.json` (`wrangler dev --test-scheduled`), then open
+  `http://localhost:8787/cdn-cgi/handler/scheduled?cron=30+3+*+*+*&time=<ms since epoch>`. `time` becomes
+  the cron's `scheduledTime`, e.g. `1790825400000` = 1 Oct 2026, 03:30 UTC.
 - **After the 7th**: the cron no longer tries. Fill the row by hand from the counts:
 
 ```bash
