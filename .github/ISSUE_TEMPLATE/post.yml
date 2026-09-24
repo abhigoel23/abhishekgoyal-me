@@ -1,0 +1,63 @@
+name: Post
+description: One blog post, from a docs/TOPICS.md topic to live and cross-posted (see docs/CONTENT.md).
+title: 'Post: <working title>'
+labels: ['type:content', 'routine']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One issue per post, including skipped ones. The target is one post every 2 weeks. To skip one,
+        close this issue as **not planned** and give the reason, so the monthly review can count it.
+  - type: input
+    id: topic
+    attributes:
+      label: Topic
+      description: The row number and working title from docs/TOPICS.md.
+      placeholder: '#3: What a sync contract should say'
+    validations:
+      required: true
+  - type: input
+    id: slug
+    attributes:
+      label: Slug
+      description: Becomes /writing/<slug> and the branch content/<slug>.
+      placeholder: sync-contract
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: >-
+        Every fact the post relies on, each quoted from src/data/career.ts, src/data/resume.ts or a case
+        study in src/content/work/. If a claim isn't in these files, it doesn't go in the post.
+      placeholder: |
+        - career.ts: "designed the sync contract (payloads, upload semantics, failure behaviour) with the backend and web teams"
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      value: |
+        **Draft**
+        - [ ] TOPICS.md status set to `planned`
+        - [ ] Drafted on branch `content/<slug>`; front matter as in CONTENT.md (quoted title, description ≤ 160 characters, lowercase tags)
+
+        **Fact-check (CONTENT.md → Writing rules), claim by claim**
+        - [ ] Every claim is in one of the sources above; no invented metrics
+        - [ ] Ownership worded exactly as the resume words it; team work credited
+        - [ ] "Reported" stays "reported"; plans are called plans
+        - [ ] Past tense for products Abhishek no longer works on (Pulse, the video-hiring app)
+        - [ ] The video-hiring client stays anonymous (no name, logo or screens); only blurred HelperBook screenshots
+
+        **Ship**
+        - [ ] PR preview checked; `pubDate` set to the merge day
+        - [ ] Merged, the production deploy and smoke test passed, and the post is live
+        - [ ] TOPICS.md status set to `published (/writing/<slug>)`
+
+        **After it's live**
+        - [ ] Cross-posted with a canonical link to abhishekgoyal.me and UTM links (CONTENT.md → Cross-posting)
+        - [ ] Added to the next monthly digest
+    validations:
+      required: true
