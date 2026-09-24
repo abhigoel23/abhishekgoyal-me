@@ -160,8 +160,9 @@ pnpm share <slug>
 It prints the canonical URL, a starting LinkedIn post with a UTM link and hashtags, and the dev.to
 checks. It only prints; it posts nothing.
 
-- **LinkedIn** has no canonical-URL support, so post a short summary in your own words plus the link,
-  never the full text. Keep every claim to what the post says.
+- **LinkedIn** has no canonical-URL support, so post a short summary plus the link, never the full text.
+  The summary is drafted with the post, in its PR description, and fact-checked against the post in the
+  same pass; `pnpm share` supplies the UTM link and hashtags.
 - **dev.to** imports each new post from `https://abhishekgoyal.me/rss.xml` as a draft, with the canonical
   URL and tags already set, and adds its own "Originally published at abhishekgoyal.me" line (don't add
   another). Check the draft's front matter and preview as `pnpm share` lists, then publish. That link
