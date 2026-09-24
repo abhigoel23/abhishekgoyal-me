@@ -185,6 +185,10 @@ LinkedIn post announcing the site:
 https://abhishekgoyal.me/?utm_source=linkedin&utm_medium=social&utm_campaign=launch
 ```
 
+For a cross-posted blog post, `utm_campaign` is the post's slug. `pnpm share <slug>` builds these links
+from `src/data/share.ts`: `utm_source=linkedin` or `devto`, with `utm_medium=social`. The canonical URL
+itself never carries UTM params.
+
 `src/components/Attribution.astro` captures `source_page`, the three UTM params and a cross-site
 `referrer` into `sessionStorage` on first landing, so a later visit to `/contact` (without the query
 string still attached) carries the same first-touch attribution. Both forms read that
