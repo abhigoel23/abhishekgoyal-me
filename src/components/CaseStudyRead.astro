@@ -1,0 +1,41 @@
+---
+// case_study_read (#112): the end of the case study's text has scrolled into view AND the visitor has
+// been on the page for at least 20 seconds, so a flick to the bottom doesn't count as a read. Once per
+// page view. Like every browser event, a no-op until analytics consent (src/lib/track.ts).
+type Props = { slug: string };
+const { slug } = Astro.props;
+---
+
+<div data-case-study-end={slug} aria-hidden="true"></div>
+
+<script>
+  import { track } from '../lib/track';
+
+  const MIN_READ_MS = 20_000;
+  const marker = document.querySelector<HTMLElement>('[data-case-study-end]');
+  const slug = marker?.dataset.caseStudyEnd;
+
+  if (marker && slug && 'IntersectionObserver' in window) {
+    const shownAt = performance.now();
+    let sent = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const send = () => {
+      if (sent) return;
+      sent = true;
+      observer.disconnect();
+      track({ name: 'case_study_read', params: { case_study: slug } });
+    };
+    const observer = new IntersectionObserver((entries) => {
+      if (!entries.some((entry) => entry.isIntersecting)) {
+        // Scrolled back up before the 20 s were over: wait for the end to come back into view.
+        clearTimeout(timer);
+        timer = undefined;
+        return;
+      }
+      const wait = MIN_READ_MS - (performance.now() - shownAt);
+      if (wait <= 0) send();
+      else timer ??= setTimeout(send, wait);
+    });
+    observer.observe(marker);
+  }
+</script>

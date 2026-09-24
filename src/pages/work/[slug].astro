@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import Button from '../../components/Button.astro';
 import Container from '../../components/Container.astro';
 import Tag from '../../components/Tag.astro';
+import CaseStudyRead from '../../components/CaseStudyRead.astro';
 import { primaryCta } from '../../data/nav';
 import Base from '../../layouts/Base.astro';
 
@@ -73,6 +74,7 @@ const caseStudyJsonLd = {
     <article class="prose">
       <Content />
     </article>
+    <CaseStudyRead slug={entry.id} />
     {d.links.length > 0 && (
       <p class="mt-10 flex flex-wrap gap-4">
         {d.links.map((link) => (
