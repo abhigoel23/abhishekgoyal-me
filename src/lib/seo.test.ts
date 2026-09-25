@@ -11,6 +11,7 @@ import {
   personJsonLd,
   professionalServiceJsonLd,
   serializeJsonLd,
+  serviceJsonLd,
 } from './seo';
 
 describe('pageTitle', () => {
@@ -146,5 +147,21 @@ describe('feedHtml', () => {
         '<pre class="shiki" style="--shiki-light:#000"><a href="/rss.xml" style="color:red">x</a></pre>',
       ),
     ).toBe('<pre class="shiki"><a href="https://abhishekgoyal.me/rss.xml">x</a></pre>');
+  });
+});
+
+describe('serviceJsonLd', () => {
+  it('describes one service page, provided by the person', () => {
+    const node = serviceJsonLd({
+      id: 'offline-first',
+      title: 'Offline-first apps',
+      summary: 'No signal, no loss.',
+    });
+    expect(node).toMatchObject({
+      '@type': 'Service',
+      name: 'Offline-first apps',
+      url: 'https://abhishekgoyal.me/services/offline-first',
+      provider: { '@id': 'https://abhishekgoyal.me/#person' },
+    });
   });
 });

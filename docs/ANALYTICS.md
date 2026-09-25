@@ -74,6 +74,8 @@ The CTA ids currently in the markup, all sent as `cta_click` except where noted:
 | `hire_request_interview`                               | `src/pages/hire.astro`          |
 | `hire_request_interview_footer`                        | `src/pages/hire.astro`          |
 | `footer_checklist`                                     | `src/components/Footer.astro`   |
+| `service_start_project`                                | `src/pages/services/[id].astro` |
+| `service_start_project_footer`                         | `src/pages/services/[id].astro` |
 | `book_call` (fires `book_call_click`, not `cta_click`) | `src/components/BookCall.astro` |
 
 `track()` (`src/lib/track.ts`) is a no-op until `gtag` exists on `window`, which only happens after

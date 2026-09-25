@@ -29,7 +29,15 @@ import { faqJsonLd, professionalServiceJsonLd } from '../lib/seo';
     <ul class="grid gap-6 md:grid-cols-2">
       {services.map((service) => (
         <li id={service.id} class="flex flex-col rounded-brand border border-line p-6 sm:p-8">
-          <h2 class="text-h3">{service.title}</h2>
+          <h2 class="text-h3">
+            {service.page ? (
+              <a class="hover:text-accent" href={`/services/${service.id}`}>
+                {service.title}
+              </a>
+            ) : (
+              service.title
+            )}
+          </h2>
           <p class="mt-3 text-muted">{service.summary}</p>
           <h3 class="mt-6 font-sans text-sm font-semibold tracking-normal">What's included</h3>
           <ul class="mt-3 space-y-2">
@@ -42,7 +50,12 @@ import { faqJsonLd, professionalServiceJsonLd } from '../lib/seo';
               </li>
             ))}
           </ul>
-          <p class="mt-auto pt-6 text-sm">
+          <p class="mt-auto flex flex-wrap gap-x-6 gap-y-2 pt-6 text-sm">
+            {service.page && (
+              <a class="link font-medium" href={`/services/${service.id}`}>
+                More on {service.title.toLowerCase()} →
+              </a>
+            )}
             <a class="link" href={service.proof.href}>
               Proof: {service.proof.label} →
             </a>

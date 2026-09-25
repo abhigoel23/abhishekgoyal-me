@@ -25,7 +25,7 @@ export const pages = {
   '/services': {
     title: 'Services',
     description:
-      'Mobile engineering services: MVP builds, app rescue and modernisation, Kotlin Multiplatform migration and fractional mobile leadership.',
+      'Mobile engineering services: MVP builds, offline-first apps, app rescue and modernisation, Kotlin Multiplatform migration and fractional mobile leadership.',
     ogTitle: 'MVP builds, app rescues, KMP migrations and fractional mobile leadership',
   },
   '/writing': {

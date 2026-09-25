@@ -1,11 +1,37 @@
 // Services page content. Proof links point at case studies; claims about past work must match the resume.
 
+/**
+ * A service's own landing page at /services/<id>, written for one search query (docs/SEO.md). Services
+ * without one stay as cards on /services.
+ */
+export type ServicePage = {
+  /** The search query this page is written for (docs/SEO.md). Not rendered. */
+  query: string;
+  /** Browser title, before " · Abhishek Goyal". */
+  title: string;
+  description: string;
+  heading: string;
+  intro: string;
+  /** "Sounds familiar?": the searcher's problems, in their words. */
+  problems: string[];
+  /** Heading over the approach steps. */
+  approachTitle: string;
+  approach: { title: string; body: string }[];
+  /** Headline numbers from the resume, shown as a proof strip. */
+  outcomes: { value: string; label: string }[];
+  faqs: { question: string; answer: string }[];
+  related: { label: string; href: string }[];
+  /** Heading of the closing call to action. */
+  ctaHeading: string;
+};
+
 export type Service = {
   id: string;
   title: string;
   summary: string;
   includes: string[];
   proof: { label: string; href: string };
+  page?: ServicePage;
 };
 
 export const services: Service[] = [
@@ -22,6 +48,101 @@ export const services: Service[] = [
       'Store release: signing, Data Safety, staged rollout',
     ],
     proof: { label: 'HelperBook case study', href: '/work/helperbook' },
+  },
+  {
+    id: 'offline-first',
+    title: 'Offline-first apps',
+    summary:
+      'Apps that keep working with no signal and never lose what people entered: the phone as the source of truth, and sync designed with your backend team rather than bolted on.',
+    includes: [
+      'A data model with the device as the source of truth',
+      'A sync contract agreed with your backend team',
+      'Background upload queues for photos and files',
+      'Conflict handling and sync status people can see',
+    ],
+    proof: { label: 'Pulse case study', href: '/work/pulse' },
+    page: {
+      query: 'offline first mobile app',
+      title: 'Offline-first mobile app development',
+      description:
+        'Offline-first Android and iOS app development: local-first data, sync designed with your backend, reliable background uploads and conflict handling. Proven on an app with 20,000+ field users and no data-loss incidents in 4.5 years.',
+      heading: 'Offline-first mobile apps that don’t lose your users’ work',
+      intro:
+        'Your users work where the signal doesn’t reach: on site, in the field, on the move. I build apps where the phone’s database is the source of truth and sync is designed up front, so work is never blocked by a missing connection and never lost when it comes back.',
+      problems: [
+        'People lose work when the connection drops, or can’t start until it comes back.',
+        'Photos and files upload unreliably, and nobody can tell what actually reached the server.',
+        'A record edited on two devices ends up with one version silently overwriting the other.',
+        'The app works in the office and fails in the field.',
+      ],
+      approachTitle: 'What makes it hold up in the field',
+      approach: [
+        {
+          title: 'Contract before code',
+          body: 'I agree the sync contract with your backend team first: payloads, upload semantics and what happens when something fails. Then both sides build against it.',
+        },
+        {
+          title: 'The phone is the source of truth',
+          body: 'Work is saved to a local database the moment it’s entered. A new record gets a local ID straight away and is remapped when the server assigns one, and retries reuse that ID, so a flaky connection never creates duplicates.',
+        },
+        {
+          title: 'Uploads that can’t block each other',
+          body: 'Photos go up in the background while people keep working, and a form is only submitted once its media is confirmed. A failed upload is marked, retried and, if it fails again, raised with the user. It never holds up the rest of the queue.',
+        },
+        {
+          title: 'Sync people can see',
+          body: 'The app shows what’s still uploading, so “I submitted it” and “the server has it” are never confused. When a record was changed on two devices, the user is warned and can keep their version instead of losing it silently.',
+        },
+        {
+          title: 'No server at all, when that’s better',
+          body: 'Some data shouldn’t leave the phone. HelperBook keeps household wage records on the device only, with user-owned export and restore, which keeps it outside data-fiduciary scope under India’s DPDP Act.',
+        },
+      ],
+      outcomes: [
+        { value: '20,000+', label: 'field users in 10+ countries on an offline-first app I led' },
+        { value: '0', label: 'data-loss incidents reported in 4.5 years of field use' },
+        { value: '500+', label: 'questions in a single inspection, filled in offline' },
+        { value: '1,000+', label: 'photos per inspection, uploaded in the background' },
+      ],
+      faqs: [
+        {
+          question: 'Do I need offline-first, or is caching enough?',
+          answer:
+            'Caching helps people read data they’ve already loaded. If they need to create or change data without a connection, and that work must not be lost, you need offline-first: a local database, a sync queue and a plan for conflicts.',
+        },
+        {
+          question: 'Can you add offline support to an existing app?',
+          answer:
+            'Yes, usually one flow at a time: start with the screens where people create data, move them onto a local database, then add the upload queue and sync. A paid discovery sprint maps which flows matter and in what order.',
+        },
+        {
+          question: 'Android only, or iOS too?',
+          answer:
+            'Both. The Pulse offline engine ran in native Android (Kotlin) and iOS (Swift) clients at feature parity, and later in one React Native codebase.',
+        },
+        {
+          question: 'What about sensitive data?',
+          answer:
+            'If data doesn’t need to leave the phone, it shouldn’t. HelperBook keeps wage records on the device only, and its crash reports carry no names or amounts.',
+        },
+      ],
+      related: [
+        {
+          label: 'Pulse: offline-first inspections for 100+ enterprise clients',
+          href: '/work/pulse',
+        },
+        { label: 'HelperBook: a local-only Android app', href: '/work/helperbook' },
+        {
+          label: 'Offline-first with a server: lessons from Pulse’s sync engine',
+          href: '/writing/offline-first-sync-lessons',
+        },
+        {
+          label: 'Offline-first with no server: why HelperBook is local-only',
+          href: '/writing/offline-first-without-a-server',
+        },
+      ],
+      ctaHeading: 'Tell me where your users lose signal',
+    },
   },
   {
     id: 'rescue',
