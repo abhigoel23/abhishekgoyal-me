@@ -1,44 +1,135 @@
 ---
-title: Pulse offline-sync engine
-summary: The offline-first mobile engine behind an enterprise inspection platform that grew to 100+ B2B clients. No data-loss incidents reported in 4.5 years of field use.
+title: 'Pulse: offline-first inspections for 100+ enterprise clients'
+summary: The offline-first mobile engine behind an enterprise inspection platform that grew to 100+ B2B clients and 20,000+ field users in 10+ countries. No data-loss incidents reported in 4.5 years of field use.
 role: Head of Mobility / Lead Mobile Engineer
 period: Jan 2021 – May 2025
 client: Aim North Technologies (Pulse Business Solutions)
 platform: Android and iOS, native then React Native
-stack: [Kotlin, Swift, React Native, SQLite, GitHub Actions, Fastlane]
+stack: [Kotlin, Swift, UIKit, React Native, SQLite, GitHub Actions, Fastlane]
 order: 2
+outcomes:
+  - value: '100+'
+    label: B2B enterprise clients
+  - value: '20,000+'
+    label: field users in 10+ countries
+  - value: '4.7★'
+    label: from 3,300+ Google Play reviews
+  - value: '0'
+    label: data-loss incidents reported in 4.5 years
+links:
+  - label: Pulse on Google Play
+    href: https://play.google.com/store/apps/details?id=com.innovative.pulsepro
 ---
 
-## The job
+## The problem
 
-I owned mobile for the Pulse enterprise inspection platform, Android and iOS end to end. I architected the mobile engine from an early prototype to **100+ B2B enterprise clients**.
+Pulse is an inspection and compliance platform for businesses that run many sites. Auditors walk a hotel,
+a kitchen, a warehouse or a public site with a checklist, take photos as evidence, and the results land on
+a dashboard for the people who need to act on them.
 
-## A sync contract first
+The people doing that work are not in an office. They are on site, often with no signal, and they are
+rarely technical. If the app loses an inspection, the evidence is gone and the
+audit has to be done again.
 
-I designed the sync contract with the backend and web teams: payloads, upload
-semantics and failure behaviour. Then I implemented both native clients against it.
+Clients during my time ranged from hotel groups and restaurant chains to logistics, engineering and a
+public-sector deployment: **Accor** (Pullman, Mövenpick), **Tim Hortons**, **Rebel Foods**, **Travel Food
+Services**, **Leica**, **Battery Smart**, **Fichtner**, **Nippon Logistics** and a Middle Eastern royal
+commission.
 
-## Built for auditors without signal
+## The constraints
 
-Auditors inspect sites with no connectivity, so the data layer is offline-first:
+- **No connectivity is the normal case**, not an edge case. The app has to work fully offline.
+- **Inspections are large:** templates of **500+ questions** and **1,000+ photos** in a single inspection.
+- **Users with no training.** The field UI has to be obvious to non-technical staff on their first day.
+- **Two platforms** at feature parity, Android and iOS, then one shared codebase.
+- **A small team** of 4–6 mobile engineers, shipping for enterprise clients.
 
-- a **dynamic form builder** for inspection forms
-- a **background media upload queue**
-- a **local SQLite cache**
+## My role
 
-**No data-loss incidents were reported in 4.5 years of field use.**
+I was Head of Mobility and owned mobile end to end, from an early prototype to 100+ enterprise clients and
+20,000+ field users in 10+ countries.
+
+- **Architecture:** I designed the mobile engine and the sync contract, and wrote both native clients.
+- **Team:** I led 4–6 mobile engineers. I interviewed candidates, and set the code-review, sprint and
+  release process.
+- **Stakeholders:** I worked directly with the founders, clients and the sales team on scope and deadlines.
+
+## Contract before code
+
+Before writing the clients, I agreed the sync contract with the backend and web teams: the payloads, the
+upload semantics and what happens when something fails. Then I implemented both native clients against it.
+Settling that first meant three teams could build in parallel without guessing at each other's behaviour.
+
+## An offline-first engine
+
+The device is where the work happens, so the data layer is built around it:
+
+- a **dynamic form builder** that renders any inspection template, including ones with 500+ questions
+- a **local SQLite cache** that holds every inspection until the server confirms it
+- a **background media upload queue** for the photos, which can run to 1,000+ per inspection
+
+Four design decisions made that hold up in the field. The
+[sync lessons post](/writing/offline-first-sync-lessons) covers each in more depth.
+
+**Records get an identity before the server has one.** An inspection starts with a temporary local ID. When
+the device reconnects, the server assigns a real ID, and every answer, photo and queue entry is remapped to
+it. Retries reuse the server ID, so a flaky connection can't create duplicate inspections.
+
+**Photos upload first, and the form waits for them.** Media uploads in the background while the auditor is
+still working. The form is only submitted once every photo is confirmed. The server never holds a
+"completed" inspection with evidence missing.
+
+**Sync status is visible.** Auditors weren't sure their work had reached the server, because "I submitted
+it" and "it's on the server" looked the same. The app shows upload progress and how many items are left,
+so they can see which state they're in.
+
+**Conflicts warn instead of silently overwriting.** When a record was edited on two devices before either
+synced, last write wins by default. The user is warned and can keep their own version instead.
+
+Failures on the upload pipeline were logged and monitored, so a stuck upload showed up instead of
+disappearing. Over **4.5 years of field use, no data-loss incidents were reported.**
+
+## When the upload queue got stuck
+
+The first version of the queue had a flaw: when one photo failed to upload, the whole queue stopped behind
+it. One bad upload held back every photo after it.
+
+The fix had three parts:
+
+- **A failed status for each photo.** A photo that fails is marked as failed and set aside, and the rest of
+  the photos keep uploading normally.
+- **A retry on submit.** When the auditor submits the audit, the failed photos are sent again.
+- **The user as the last resort.** If a photo fails a second time, the app asks the auditor to upload it
+  again, instead of dropping it silently.
+
+The lesson I took from it: a queue should never let one item's failure block the others. Every item needs
+its own state, and the person who took the photo should hear about a failure while they can still act on it.
 
 ## Two native clients, kept in parity
 
-I wrote and shipped the Swift/iOS client to the App Store alongside Android, with feature parity between
-the two. The field UIs are usable by non-technical staff with no training.
+I wrote the Android client in Kotlin and the iOS client in **Swift with UIKit**, and shipped both to the
+stores at feature parity. The field UI is usable by non-technical staff with no training. On Google Play the
+app is rated **4.7★ from 3,300+ reviews**.
 
 ## One codebase: the React Native rewrite
 
-In 2025 I led a full rewrite of both native apps into a single **React Native** codebase. I architected it
-and built it alongside the team, and we completed it in six months.
+Keeping two native apps at parity meant building every feature twice. In 2025 I led a full rewrite of both
+apps into a single **React Native** codebase. I architected it and built it alongside the team, and we
+completed it in six months. It replaced both native apps in production.
 
 ## Releases that stopped being events
 
-I introduced the release process with GitHub Actions and Fastlane: a predictable bi-weekly cadence and
-same-day hotfixes, replacing manual builds.
+Releases used to be manual builds. I introduced **GitHub Actions and Fastlane**. That gave us a predictable
+bi-weekly release cadence, and same-day hotfixes when a client needed one.
+
+## Results
+
+| What                 | Result                                                       |
+| -------------------- | ------------------------------------------------------------ |
+| Clients              | 100+ B2B enterprise clients, including Accor and Tim Hortons |
+| Reach                | 20,000+ field users in 10+ countries                         |
+| Reliability          | No data-loss incidents reported in 4.5 years of field use    |
+| Scale per inspection | 500+ questions and 1,000+ photos, captured offline           |
+| Store rating         | 4.7★ from 3,300+ reviews on Google Play                      |
+| Release process      | Manual builds → bi-weekly releases, same-day hotfixes        |
+| Codebases            | Two native apps → one React Native app, in six months        |
