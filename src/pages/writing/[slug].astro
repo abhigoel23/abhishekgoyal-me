@@ -4,6 +4,7 @@ import { Image } from 'astro:assets';
 import Button from '../../components/Button.astro';
 import Container from '../../components/Container.astro';
 import Tag from '../../components/Tag.astro';
+import PostOffer from '../../components/PostOffer.astro';
 import { primaryCta } from '../../data/nav';
 import Base from '../../layouts/Base.astro';
 import { formatPostDate, isPublished } from '../../lib/posts';
@@ -93,6 +94,11 @@ const blogJsonLd = blogPostingJsonLd({
     <article class="prose">
       <Content />
     </article>
+    {d.offer && (
+      <div class="mt-12">
+        <PostOffer offer={d.offer} />
+      </div>
+    )}
   </Container>
 
   <Container class="py-16 sm:py-20">

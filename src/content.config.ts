@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { services } from './data/services';
 
 // Case studies. Every fact must be traceable to resume/resume.html (see CLAUDE.md).
 const work = defineCollection({
@@ -30,6 +31,12 @@ const work = defineCollection({
     }),
 });
 
+// Offers a post can end with (src/components/PostOffer.astro). Unknown service ids fail the build.
+const postOffers = [
+  'checklist',
+  ...services.flatMap((service) => (service.page ? [`service:${service.id}`] : [])),
+] as [string, ...string[]];
+
 // Blog posts. Drafts are excluded from production builds (see src/lib/posts.ts).
 const writing = defineCollection({
   loader: glob({ pattern: '*.mdx', base: './src/content/writing' }),
@@ -47,6 +54,8 @@ const writing = defineCollection({
         heroAlt: z.string().optional(),
         /** Only set when the post first ran elsewhere. */
         canonicalUrl: z.url().optional(),
+        /** The offer box at the end: the checklist, or a service page (`service:<id>`, a service with a page). */
+        offer: z.enum(postOffers).optional(),
       })
       .refine((data) => !data.heroImage || !!data.heroAlt, {
         message: 'heroAlt is required when heroImage is set',
