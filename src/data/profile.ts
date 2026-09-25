@@ -9,13 +9,13 @@ export const profile = {
     'Founding Mobile Engineer — Android / Kotlin / Compose / KMP · Native iOS · React Native · 0-to-1 Specialist',
   positioning: 'I build mobile products from zero to shipped, and own every step in between.',
   intro:
-    'Mobile engineer with 13 years on Android and iOS, owning products end to end. Most recently I designed and built HelperBook, a fully offline household-payroll app, and took it to Play Store closed beta.',
+    'Mobile engineer with 13 years on Android and iOS, owning products end to end. Most recently I designed and built HelperBook, a fully offline household-payroll app, and shipped it on Google Play.',
   location: { city: 'Gurugram', country: 'India' },
   pillars: ['0-to-1', 'Offline-first', 'Privacy by design', 'End-to-end ownership'],
   stats: [
     { value: '13', label: 'years building mobile apps' },
     { value: '100+', label: 'B2B clients on an offline-first engine I architected' },
-    { value: '4', label: 'greenfield Android builds, owned end to end' },
+    { value: '20,000+', label: 'field users in 10+ countries on an app I led' },
   ],
   knowsAbout: [
     'Android',

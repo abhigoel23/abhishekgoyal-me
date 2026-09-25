@@ -28,7 +28,7 @@ export const career: Job[] = [
     highlights: [
       '**No signup, no server:** records live on-device via SQLDelight in a shared KMP module, with user-owned export/restore. Keeping wage data off any server keeps the app outside data-fiduciary scope under DPDP, and gives households a reason to enter real numbers.',
       '**Product rules in the data model:** unmarked days default to present so a worker is never underpaid; half-days deduct exactly half; settlement statements are generated bilingually (English/Hindi) so employer and helper can both read every line.',
-      '**Release engineering:** signed AAB with R8 rules for SQLDelight and kotlinx-serialization, Crashlytics with no names or amounts in logs, Data Safety declarations, staged-rollout plan. Closed beta with 12–20 households; Compose, min SDK 24, target API 35.',
+      '**Release engineering:** signed AAB with R8 rules for SQLDelight and kotlinx-serialization, Crashlytics with no names or amounts in logs, Data Safety declarations, staged-rollout plan. Live on Google Play; Compose, min SDK 24, target API 35.',
     ],
     href: '/work/helperbook',
   },
@@ -52,15 +52,15 @@ export const career: Job[] = [
     period: 'Jan 2021 – May 2025',
     location: 'Noida',
     about:
-      'Owned the Pulse inspection platform’s Android and iOS apps, from early prototype to 100+ B2B clients on an offline-first sync engine, then led the 2025 React Native rewrite.',
+      'Owned the Pulse inspection platform’s Android and iOS apps, from early prototype to 100+ B2B clients and 20,000+ field users in 10+ countries, led a team of 4–6 mobile engineers, then led the 2025 React Native rewrite.',
     subtitle:
       'Owned mobile for the Pulse enterprise inspection platform: Android and iOS end to end.',
     highlights: [
-      'Architected the mobile engine from early prototype to **100+ B2B enterprise clients**; designed the sync contract (payloads, upload semantics, failure behaviour) with the backend and web teams, then implemented both native clients against it.',
-      'Engineered the offline-first data layer (dynamic form builder, background media upload queue, local SQLite cache) for auditors working without connectivity; no data-loss incidents reported in 4.5 years of field use.',
-      'Wrote and shipped the Swift/iOS client to the App Store alongside Android with feature parity; field UIs usable by non-technical staff with no training.',
-      '2025: led a full rewrite of both native apps into one **React Native** codebase, architected and co-built with the team in six months.',
-      'Introduced GitHub Actions + Fastlane releases: bi-weekly cadence and same-day hotfixes, replacing manual builds.',
+      'Architected the mobile engine from early prototype to **100+ B2B clients** and **20,000+ field users in 10+ countries** (Accor, Tim Hortons, Rebel Foods, Leica); designed the sync contract with the backend and web teams, then built both native clients against it.',
+      'Engineered the offline-first data layer (dynamic form builder, background media upload queue, local SQLite cache) for auditors without connectivity, handling inspections of 500+ questions and 1,000+ photos; no data-loss incidents reported in 4.5 years of field use.',
+      'Shipped the Swift/UIKit iOS client to the App Store alongside Android with feature parity; the Android app is rated **4.7★ from 3,300+ reviews**.',
+      'Led **4–6 mobile engineers**: interviewed candidates, set the review and sprint process, and introduced GitHub Actions + Fastlane releases (bi-weekly cadence, same-day hotfixes).',
+      '2025: led a full rewrite of both native apps into one **React Native** codebase, architected and co-built with the team in six months; now in production.',
     ],
     href: '/work/pulse',
   },
@@ -70,9 +70,9 @@ export const career: Job[] = [
     period: 'May 2018 – Jan 2021',
     location: 'Mumbai',
     about:
-      'Enterprise Android apps serving 10,000+ daily active users, tuned for low memory and fast cold start, across 8 major product cycles with founders, PMs and designers.',
+      'Enterprise Android retail and FMCG audit apps for field reps, serving 10,000+ daily active users, tuned for low memory and fast cold start, across 8 major product cycles with founders, PMs and designers.',
     highlights: [
-      'Enterprise Android apps serving **10,000+ daily active users**, tuned for low memory and fast cold start; shipped 8 major product cycles with founders, PMs, and designers.',
+      'Enterprise Android retail/FMCG audit apps for field reps, serving **10,000+ daily active users**, tuned for low memory and fast cold start; shipped 8 major product cycles with founders, PMs, and designers, and guided junior developers.',
       'Owned chart-heavy reporting dashboards rendering large result sets, kept responsive on the low-end devices field teams actually carried.',
     ],
   },

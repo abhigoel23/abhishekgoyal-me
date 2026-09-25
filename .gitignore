@@ -44,3 +44,6 @@ worker-configuration.d.ts
 
 # scripts/monthly-review.mjs output
 monthly-review.json
+
+# private notes (experience interview etc.)
+notes/

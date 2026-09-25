@@ -10,7 +10,7 @@ export const aboutIntro = [
 export const values = [
   {
     title: '0-to-1',
-    body: 'I’ve owned four greenfield Android builds end to end, most recently HelperBook, from the first commit to Play Store closed beta.',
+    body: 'I’ve owned four greenfield Android builds end to end, most recently HelperBook, from the first commit to a public release on Google Play.',
   },
   {
     title: 'Offline-first',

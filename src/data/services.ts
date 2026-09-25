@@ -18,6 +18,7 @@ export const services: Service[] = [
       'Scoping the first release with you',
       'Architecture and data model, offline-first where it matters',
       'The app itself, in Jetpack Compose or your chosen stack',
+      'A simple backend when you need one, in Firebase or Django',
       'Store release: signing, Data Safety, staged rollout',
     ],
     proof: { label: 'HelperBook case study', href: '/work/helperbook' },
@@ -39,12 +40,12 @@ export const services: Service[] = [
     id: 'kmp',
     title: 'Kotlin Multiplatform migration',
     summary:
-      'Share business logic and data between Android and iOS with Kotlin Multiplatform, one module at a time.',
+      'Start sharing code between Android and iOS with a Kotlin Multiplatform data layer, the way HelperBook does, then grow it one module at a time.',
     includes: [
       'Deciding what to share and what stays native',
       'Shared module design with a SQLDelight data layer',
       'Incremental adoption alongside your existing apps',
-      'Build and release setup for both platforms',
+      'Build setup for the shared module in your existing release process',
     ],
     proof: { label: 'HelperBook case study', href: '/work/helperbook' },
   },
@@ -85,7 +86,7 @@ export const process = [
 export const engagements = [
   {
     title: 'Paid discovery',
-    body: 'A fixed-fee sprint of 1–2 weeks: audit or product scoping, ending in a plan and estimate.',
+    body: 'A fixed fee of ₹60,000 (US$900) for about a week: audit or product scoping, ending in a plan and estimate.',
     recommended: true,
   },
   {
@@ -132,6 +133,11 @@ export const faqs = [
     question: 'Who owns the code?',
     answer:
       'You do, once each milestone is paid. I work in my repository, give you read access from the start so you can see every commit, and transfer the code to yours at each paid milestone.',
+  },
+  {
+    question: 'Is there anything you don’t take on?',
+    answer:
+      'Games, and crypto or gambling products. Everything else with a mobile app at its core is worth a conversation.',
   },
   {
     question: 'How do we start?',

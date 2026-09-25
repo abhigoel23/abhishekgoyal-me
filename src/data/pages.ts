@@ -43,7 +43,7 @@ export const pages = {
   '/hire': {
     title: 'Hire me',
     description:
-      'Hiring a mobile engineer? Abhishek Goyal is open to full-time roles owning mobile end to end: remote, in Delhi NCR, or relocating abroad.',
+      'Hiring a mobile engineer? Abhishek Goyal is open to full-time roles owning mobile end to end: remote, or hybrid or on-site in Delhi NCR.',
     ogTitle: 'Hiring a mobile engineer? Resume, availability and how to reach me',
   },
   '/resume': {
