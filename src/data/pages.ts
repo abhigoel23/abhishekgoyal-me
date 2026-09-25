@@ -11,21 +11,25 @@ export type PageMeta = {
 };
 
 export const pages = {
+  // The titles and descriptions for /, /work and /services name what people search for (docs/SEO.md),
+  // not just the name: only people who already know him search for that. Share images keep their own
+  // headlines (ogTitle).
   '/': {
-    title: `${profile.name} — ${profile.jobTitle}`,
-    description: profile.positioning,
+    title: `${profile.name} — Android, iOS and offline-first mobile app developer`,
+    description:
+      'Mobile app developer for startups and product teams: Android, iOS, Kotlin Multiplatform and React Native. 13 years, from MVPs to an app with 20,000+ users.',
     ogTitle: profile.positioning,
   },
   '/work': {
-    title: 'Work',
+    title: 'Mobile app case studies',
     description:
-      'Case studies from 13 years of mobile engineering: HelperBook, the Pulse offline-sync engine and a video-first hiring app.',
+      'Mobile app case studies: an offline-first inspection app with 20,000+ field users, a household salary app on a shared KMP data layer, and a video hiring app.',
     ogTitle: 'Case studies: mobile products taken from zero to shipped',
   },
   '/services': {
-    title: 'Services',
+    title: 'Mobile app development services',
     description:
-      'Mobile engineering services: MVP builds, offline-first apps, app rescue and modernisation, Kotlin Multiplatform migration and fractional mobile leadership.',
+      'Mobile app development for startups: MVP builds, offline-first apps, app rescue and Compose migration, Kotlin Multiplatform and fractional mobile leadership.',
     ogTitle: 'MVP builds, app rescues, KMP migrations and fractional mobile leadership',
   },
   '/writing': {
