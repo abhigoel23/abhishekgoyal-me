@@ -53,8 +53,8 @@ export const pages = {
   '/resume': {
     title: 'Resume',
     description:
-      'Resume of Abhishek Goyal, Founding Mobile Engineer: Android, Kotlin, Compose, KMP, native iOS and React Native. 13 years, 0-to-1 builds.',
-    ogTitle: 'Resume: Founding Mobile Engineer, 13 years on Android and iOS',
+      'Resume of Abhishek Goyal, Hands-on Mobile Architect: Android, Kotlin, Compose, KMP, native iOS and React Native. 13 years, 0-to-1 builds.',
+    ogTitle: 'Resume: Hands-on Mobile Architect, 13 years on Android and iOS',
   },
   '/contact': {
     title: 'Contact',
