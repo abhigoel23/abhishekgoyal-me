@@ -169,6 +169,86 @@ export const services: Service[] = [
       'Build setup for the shared module in your existing release process',
     ],
     proof: { label: 'HelperBook case study', href: '/work/helperbook' },
+    page: {
+      query: 'is kotlin multiplatform worth it',
+      title: 'Kotlin Multiplatform development and adoption',
+      description:
+        'Kotlin Multiplatform development: decide what to share between Android and iOS, start with a shared SQLDelight data layer, and adopt it without a rewrite. From an engineer who has shipped native, Kotlin Multiplatform and React Native apps.',
+      heading: 'Is Kotlin Multiplatform worth it for your app? Start with the data layer',
+      intro:
+        'Kotlin Multiplatform lets Android and iOS share business logic and data while each keeps a fully native UI. I help teams decide whether it’s worth it for their product, then adopt it one module at a time, starting where sharing pays off first.',
+      problems: [
+        'Every feature is built twice, once in Kotlin and once in Swift, and the two drift apart.',
+        'Business rules behave slightly differently on Android and iOS, and users notice.',
+        'You’re weighing a full cross-platform rewrite, but don’t want to give up native UI.',
+        'You’ve heard Kotlin Multiplatform is ready for production, but not how to start without stopping feature work.',
+      ],
+      approachTitle: 'How I’d adopt it in your app',
+      approach: [
+        {
+          title: 'Decide what to share, and what stays native',
+          body: 'Business rules, data models and storage are good candidates for shared code. Screens, platform features like the camera, and anything that has to feel native usually stay native. The right split depends on your product and team, not on the tool.',
+        },
+        {
+          title: 'Start with the data layer',
+          body: 'HelperBook keeps its records in a shared Kotlin Multiplatform module with a SQLDelight database, so the schema and queries are written once. It’s the lowest-risk place to begin: no UI changes, and the shared code is easy to test on its own.',
+        },
+        {
+          title: 'Adopt it alongside the apps you have',
+          body: 'The shared module is added to your existing Android and iOS apps. Nothing is rewritten in one go, and feature work carries on while more code moves into the module.',
+        },
+        {
+          title: 'Make release builds safe',
+          body: 'Shared code has to survive code shrinking and serialisation. HelperBook ships with R8 rules written for SQLDelight and kotlinx-serialization, so obfuscation doesn’t break the database layer or the export format.',
+        },
+        {
+          title: 'Say so when it isn’t the right call',
+          body: 'If your team works in JavaScript, or one codebase for the UI matters more than a native feel, React Native can be the better choice. I led the rewrite of two native apps into one React Native codebase at Pulse, and I’ll recommend it when it fits.',
+        },
+      ],
+      outcomes: [
+        { value: '13', label: 'years building Android and iOS apps' },
+        {
+          value: '3',
+          label: 'approaches shipped to production: native, Kotlin Multiplatform, React Native',
+        },
+        { value: '6 months', label: 'to rewrite two native apps into one React Native codebase' },
+      ],
+      faqs: [
+        {
+          question: 'Is Kotlin Multiplatform ready for production?',
+          answer:
+            'For sharing logic and data, yes. HelperBook’s data layer runs in a shared Kotlin Multiplatform module in production on Google Play. HelperBook ships on Android today, and the shared module means an iOS app can reuse that data layer instead of rewriting it.',
+        },
+        {
+          question: 'Kotlin Multiplatform, React Native or Flutter?',
+          answer:
+            'I’ve shipped native Android and iOS apps, a shared Kotlin Multiplatform module and a full React Native rewrite, and I recommend one based on your team, timeline and which parts must be native. I haven’t shipped a Flutter app, so I won’t argue for or against it from experience.',
+        },
+        {
+          question: 'Do we have to rewrite our apps?',
+          answer:
+            'No. Adoption is incremental: one shared module added to the apps you already have, then more code moves into it as it proves itself.',
+        },
+        {
+          question: 'How does an engagement start?',
+          answer:
+            'With a paid discovery sprint: I review both codebases, recommend what to share first, and write a plan and estimate you can use with anyone.',
+        },
+      ],
+      related: [
+        {
+          label: 'HelperBook: a local-only Android app with a shared KMP data layer',
+          href: '/work/helperbook',
+        },
+        {
+          label: 'Offline-first with no server: why HelperBook is local-only',
+          href: '/writing/offline-first-without-a-server',
+        },
+        { label: 'Pulse: from two native apps to one React Native codebase', href: '/work/pulse' },
+      ],
+      ctaHeading: 'Tell me about your two codebases',
+    },
   },
   {
     id: 'fractional',
