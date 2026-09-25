@@ -34,19 +34,20 @@ Hire and decide pages come first: they are fewer searches but much closer to a l
 
 ### Service pages (hire)
 
-| Page                        | Primary query                    | Variants from autocomplete                                                                                                | Proof on the page                                      | Status  |
-| --------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------- |
-| `/services/mvp`             | mvp app development for startups | mobile app development company for startups · custom mobile app development for startups · freelance mobile app developer | HelperBook, video-hiring app (100% of the client)      | planned |
-| `/services/offline-first` ¹ | offline first mobile app         | offline first mobile app architecture · offline first android app · offline first architecture android                    | Pulse (0 data-loss incidents in 4.5 years), HelperBook | planned |
-| `/services/kmp`             | is kotlin multiplatform worth it | kotlin multiplatform in production · kotlin multiplatform shared business logic · kotlin multiplatform shared module      | HelperBook's shared data layer (Android in production) | planned |
-| `/services/rescue`          | migrate xml to jetpack compose ² | jetpack compose vs xml · migrate xml views to jetpack compose                                                             | Pulse release process, Compose builds                  | planned |
-| `/services/fractional`      | none (no autocomplete demand)    | none                                                                                                                      | Pulse: led 4–6 engineers                               | no SEO  |
-| `/services/india` ³         | hire android app developer india | best android app developer in india · hire react native developer india · freelancer mobile app developer in india        | All of the above; IST, Delhi NCR                       | planned |
+| Page                        | Primary query                    | Variants from autocomplete                                                                                                | Proof on the page                                      | Status |
+| --------------------------- | -------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------ |
+| `/services/mvp`             | mvp app development for startups | mobile app development company for startups · custom mobile app development for startups · freelance mobile app developer | HelperBook, video-hiring app (100% of the client)      | live   |
+| `/services/offline-first` ¹ | offline first mobile app         | offline first mobile app architecture · offline first android app · offline first architecture android                    | Pulse (0 data-loss incidents in 4.5 years), HelperBook | live   |
+| `/services/kmp`             | is kotlin multiplatform worth it | kotlin multiplatform in production · kotlin multiplatform shared business logic · kotlin multiplatform shared module      | HelperBook's shared data layer (Android in production) | live   |
+| `/services/rescue`          | migrate xml to jetpack compose ² | jetpack compose vs xml · migrate xml views to jetpack compose                                                             | Pulse release process, Compose builds                  | live   |
+| `/services/fractional`      | none (no autocomplete demand)    | none                                                                                                                      | Pulse: led 4–6 engineers                               | no SEO |
+| `/services/india` ³         | hire android app developer india | best android app developer in india · hire react native developer india · freelancer mobile app developer in india        | All of the above; IST, Delhi NCR                       | live   |
 
 1. A new service page, confirmed by Abhishek on 2026-09-25. Offline-first is the strongest differentiator
    (Pulse, HelperBook, EzHealth) and until now sat inside the MVP service.
-2. Abhishek confirmed a real XML-to-Compose migration (2026-09-25). Before the page is written, add it to
-   `src/data/career.ts` under the job where it happened, so the page's claim is traceable.
+2. The XML-to-Compose migration Abhishek has done was in a private project, so the page doesn't claim
+   one. It claims production Compose (video-hiring, HelperBook) and describes the screen-by-screen
+   migration as the offer, with release and rescue proof from Pulse and Retail Quotient.
 3. Indian clients are billed in INR (confirmed 2026-09-25). Still to confirm: meeting in person in Delhi NCR.
 
 `/services/fractional` stays as it is: nobody searches for the term, so it sells through referrals and
