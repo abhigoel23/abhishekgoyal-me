@@ -162,6 +162,17 @@ describe('serviceJsonLd', () => {
       name: 'Offline-first apps',
       url: 'https://abhishekgoyal.me/services/offline-first',
       provider: { '@id': 'https://abhishekgoyal.me/#person' },
+      areaServed: 'Worldwide',
     });
+  });
+
+  it('narrows areaServed for a regional page', () => {
+    const node = serviceJsonLd({
+      id: 'india',
+      title: 'India',
+      summary: 'Rupees.',
+      areaServed: 'IN',
+    });
+    expect(node.areaServed).toBe('IN');
   });
 });

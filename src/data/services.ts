@@ -32,6 +32,11 @@ export type Service = {
   includes: string[];
   proof: { label: string; href: string };
   page?: ServicePage;
+  /** false: the page is built, but the service isn't a card on /services, an option on the contact form or
+   * an offer in the catalog JSON-LD (e.g. the India page, which is about where, not what). */
+  listed?: boolean;
+  /** schema.org areaServed for the page's Service JSON-LD. Defaults to worldwide. */
+  areaServed?: string;
 };
 
 // Shared by the /services FAQ and the MVP page.
@@ -338,7 +343,109 @@ export const services: Service[] = [
     ],
     proof: { label: 'Pulse case study', href: '/work/pulse' },
   },
+  {
+    id: 'india',
+    title: 'Mobile app development in India',
+    summary:
+      'Android, React Native and Kotlin Multiplatform apps for Indian startups and product teams, quoted and invoiced in rupees, on IST, and on-site in Delhi NCR.',
+    includes: [
+      'Native Android, React Native or Kotlin Multiplatform apps',
+      'Quotes and invoices in rupees (INR)',
+      'IST working hours, and on-site meetings in Delhi NCR',
+      'Hindi localisation, as shipped in HelperBook',
+      'Design that keeps India’s DPDP Act in mind',
+    ],
+    proof: { label: 'Pulse case study', href: '/work/pulse' },
+    listed: false,
+    areaServed: 'IN',
+    page: {
+      query: 'hire android app developer india',
+      title: 'Hire an Android app developer in India',
+      description:
+        'Hire a senior Android and React Native app developer in India: 13 years of experience, based in Gurugram, billing in rupees. Led an app used by Rebel Foods, Travel Food Services and Battery Smart, and built HelperBook for Indian households.',
+      heading: 'A senior Android and React Native developer in Gurugram, billing in rupees',
+      intro:
+        'I’m a mobile engineer in Gurugram with 13 years on Android and iOS. I work with Indian startups and product teams to build, rescue or take over their apps: quoted and invoiced in rupees, on IST, and on-site in Delhi NCR when it helps.',
+      problems: [
+        'You need someone senior who owns the app end to end, not a team you have to manage.',
+        'You want quotes and invoices in rupees, and someone who works your hours.',
+        'Your app handles personal data, and you want it designed with India’s DPDP Act in mind.',
+        'Your users need the app in Hindi as well as English.',
+      ],
+      approachTitle: 'Why teams in India work with me',
+      approach: [
+        {
+          title: 'Built for Indian users',
+          body: 'HelperBook is built for Indian households: Hindi localisation, salary statements in both English and Hindi, and wage data that never leaves the phone.',
+        },
+        {
+          title: 'Proven with Indian brands',
+          body: 'The Pulse inspection app I led was used by Indian companies including Rebel Foods, Travel Food Services and Battery Smart, alongside global clients such as Accor and Tim Hortons.',
+        },
+        {
+          title: 'Rupees, IST and Delhi NCR',
+          body: 'Quotes and invoices in INR, working hours on IST, and on-site meetings in Delhi NCR when a whiteboard beats a call.',
+        },
+        {
+          title: 'Built for the phones your users carry',
+          body: 'At Retail Quotient I tuned enterprise Android apps for low memory and fast cold start, and kept chart-heavy dashboards responsive on the low-end devices field teams actually carried.',
+        },
+        {
+          title: 'DPDP-aware by design',
+          body: 'Keeping HelperBook’s wage data on the device keeps it outside data-fiduciary scope under the DPDP Act, and its crash reports carry no names or amounts.',
+        },
+      ],
+      outcomes: [
+        { value: '13', label: 'years building Android and iOS apps' },
+        { value: '100+', label: 'B2B clients, including Indian brands, on an app I led' },
+        { value: '10,000+', label: 'daily active users on enterprise Android apps I built' },
+        { value: '₹60,000', label: 'fixed-price discovery sprint to start' },
+      ],
+      faqs: [
+        {
+          question: 'Do you bill in rupees?',
+          answer:
+            'Yes. Indian clients are quoted and invoiced in rupees. Projects start with a paid discovery sprint: a fixed ₹60,000 for about a week, ending in a written plan and estimate.',
+        },
+        {
+          question: 'Can we meet in person?',
+          answer:
+            'Yes, in Delhi NCR. I’m based in Gurugram and work on IST. Elsewhere in India we work remotely, with calls whenever they help.',
+        },
+        {
+          question: 'Android, React Native or both platforms?',
+          answer:
+            'Whatever your users need first. I’ve shipped native Android and iOS apps, a shared Kotlin Multiplatform data layer and a React Native app, so the choice follows your product rather than what I know.',
+        },
+        {
+          question: 'Are you a freelancer or an agency?',
+          answer:
+            'An independent engineer: you work with me directly, from the first call to the release.',
+        },
+      ],
+      related: [
+        { label: 'MVP app development for startups', href: '/services/mvp' },
+        { label: 'Offline-first mobile app development', href: '/services/offline-first' },
+        { label: 'HelperBook: built for Indian households', href: '/work/helperbook' },
+        {
+          label: 'Pulse: offline-first inspections for 100+ enterprise clients',
+          href: '/work/pulse',
+        },
+      ],
+      ctaHeading: 'Tell me about your app and your timeline',
+    },
+  },
 ];
+
+/** Services offered as such: cards on /services and the home page, contact-form options, catalog JSON-LD. */
+export const listedServices = services.filter((service) => service.listed !== false);
+
+/** The hub's pointer to the India page, which isn't a card. */
+export const indiaLink = {
+  text: 'Working with a team in India?',
+  label: 'Rupees, IST and Delhi NCR',
+  href: '/services/india',
+};
 
 export const process = [
   {
