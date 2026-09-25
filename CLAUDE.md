@@ -5,19 +5,20 @@ deployed as one Cloudflare Worker (static assets + `/api/*`). Roadmap: GitHub Mi
 
 ## Commands (pnpm 12, Node 26; Homebrew binaries: prefix shells with `eval "$(/opt/homebrew/bin/brew shellenv)"`)
 
-| Task                  | Command                                                                     |
-| --------------------- | --------------------------------------------------------------------------- |
-| Dev server            | `pnpm dev`                                                                  |
-| Build                 | `pnpm build`                                                                |
-| Run built Worker      | `pnpm preview` (`wrangler dev`, :8787 by default)                           |
-| Lint + format + types | `pnpm check`                                                                |
-| Unit tests            | `pnpm test` (Vitest, `src/**/*.test.ts`)                                    |
-| E2E smoke             | `pnpm test:e2e` (Playwright; `BASE_URL=` to target a deployed URL)          |
-| E2E lead flow         | `pnpm test:lead` (staging build + throwaway local D1; never a deployed URL) |
-| Lighthouse gate       | `pnpm lighthouse` (after `pnpm build`)                                      |
-| Private resume PDF    | `RESUME_PHONE="+91 …" pnpm resume` (after `pnpm build`)                     |
-| Favicons              | `pnpm icons`                                                                |
-| Cross-post links      | `pnpm share <slug>` (prints LinkedIn + dev.to links; see docs/CONTENT.md)   |
+| Task                  | Command                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------ |
+| Dev server            | `pnpm dev`                                                                                             |
+| Build                 | `pnpm build`                                                                                           |
+| Run built Worker      | `pnpm preview` (`wrangler dev`, :8787 by default)                                                      |
+| Lint + format + types | `pnpm check`                                                                                           |
+| Unit tests            | `pnpm test` (Vitest, `src/**/*.test.ts`)                                                               |
+| E2E smoke             | `pnpm test:e2e` (Playwright; `BASE_URL=` to target a deployed URL)                                     |
+| E2E lead flow         | `pnpm test:lead` (staging build + throwaway local D1; never a deployed URL)                            |
+| Lighthouse gate       | `pnpm lighthouse` (after `pnpm build`)                                                                 |
+| Private resume PDF    | `RESUME_PHONE="+91 …" pnpm resume` (after `pnpm build`)                                                |
+| Favicons              | `pnpm icons`                                                                                           |
+| Cross-post links      | `pnpm share <slug>` (prints LinkedIn + dev.to links; see docs/CONTENT.md)                              |
+| Newsletter note       | `pnpm digest [last note date]` → `newsletter/<date>.html`; send: `gh workflow run send-newsletter.yml` |
 
 pnpm 12 has no `-s` flag; use `--silent`.
 

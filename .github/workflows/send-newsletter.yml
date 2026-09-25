@@ -1,0 +1,69 @@
+name: Send newsletter
+run-name: Newsletter ${{ inputs.note }} → ${{ inputs.target }}
+
+# Sends a merged note (newsletter/<date>.html) through Resend's Broadcast API (docs/RUNBOOK.md → Sending a
+# note). Started by hand, or by Claude with `gh workflow run`, and only after Abhishek says yes in chat.
+# Production is refused unless the same note at the same commit already went out as a test, and
+# refused if it already went to production. The repo is public: the logs show only broadcast IDs.
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: 'Note date: sends newsletter/<date>.html'
+        required: true
+      target:
+        description: 'test = the staging segment (your own address); production = every subscriber'
+        type: choice
+        options: [test, production]
+        required: true
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: newsletter
+  cancel-in-progress: false
+
+jobs:
+  send:
+    name: send
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Only from main
+        if: github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::Send newsletter only runs from main, so every note sent has been reviewed and merged."
+          exit 1
+      - name: Production needs a test send first, and only goes once
+        if: inputs.target == 'production'
+        uses: actions/github-script@v8
+        env:
+          NOTE: ${{ inputs.note }}
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+              owner, repo, workflow_id: 'send-newsletter.yml', status: 'success', per_page: 100,
+            });
+            const note = process.env.NOTE;
+            const sentToProduction = runs.find((r) => r.display_title === `Newsletter ${note} → production`);
+            if (sentToProduction) {
+              core.setFailed(`Note ${note} already went to production: ${sentToProduction.html_url}`);
+              return;
+            }
+            const tested = runs.find(
+              (r) => r.display_title === `Newsletter ${note} → test` && r.head_sha === context.sha,
+            );
+            if (!tested) {
+              core.setFailed(`Send note ${note} as a test first, from this commit (${context.sha.slice(0, 7)}).`);
+            }
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with: { node-version-file: .nvmrc }
+      - run: node scripts/newsletter-send.mjs
+        env:
+          NOTE: ${{ inputs.note }}
+          TARGET: ${{ inputs.target }}
+          RESEND_BROADCAST_KEY: ${{ secrets.RESEND_BROADCAST_KEY }}

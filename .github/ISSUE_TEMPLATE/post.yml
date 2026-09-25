@@ -60,6 +60,6 @@ body:
         **After it's live**
         - [ ] dev.to: imported draft checked and published (`pnpm share <slug>` lists the checks)
         - [ ] LinkedIn: the drafted post published (CONTENT.md → Cross-posting)
-        - [ ] Added to the next monthly digest
+        - [ ] Included in the next newsletter note (`pnpm digest`)
     validations:
       required: true

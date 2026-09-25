@@ -198,8 +198,29 @@ subscribed. Resend → Webhooks → the endpoint → recent deliveries:
 Deliveries that failed can be re-sent from that page once fixed. Nothing is ever emailed to an
 unsubscribed contact meanwhile: Resend itself enforces the unsubscribe.
 
-**Sending a note.** Resend → Broadcasts, to the environment's segment. Keep Resend's unsubscribe link in
-the footer (`{{{RESEND_UNSUBSCRIBE_URL}}}`): the privacy page promises one in every note.
+**Sending a note.** Only when there's something new (a post, or real news on what you're building), and at
+most once a month ([GROWTH.md](./GROWTH.md#the-newsletter)). Notes go through Resend's Broadcast API, not
+its editor: the editor drops pasted links, and it drops a pasted link to `{{{RESEND_UNSUBSCRIBE_URL}}}`
+(both tested on staging, 2026-09-24). Through the API, every note carries each subscriber's own
+unsubscribe link, which the privacy page promises.
+
+1. `pnpm digest <date of the last note>` writes `newsletter/<today>.html`: the subject (first line), the
+   posts published since the last note (future-dated posts wait for their day), newsletter UTM links, the
+   checklist link and the unsubscribe footer. With no date it includes every post (the very first note).
+   The last note is the newest file in `newsletter/`.
+2. Replace the `✍️ WRITE THIS` paragraph with two or three sentences in Abhishek's words. Every claim
+   must match the resume. Open a PR, fact-check it like a post, and merge.
+3. **Test:** Actions → **Send newsletter** → Run workflow on `main`, note = the date, target = `test`
+   (or `gh workflow run send-newsletter.yml -f note=<date> -f target=test`). It goes to the staging
+   segment with `[TEST]` in the subject. Your address must be subscribed there (sign up on the staging
+   site). Check the links, `utm_source=newsletter`, and that Unsubscribe works.
+4. **Production:** the same with target = `production`. The workflow refuses unless that note went out as
+   a test from the same commit, and refuses a note already sent to production. Claude runs this only
+   after an explicit yes in chat.
+
+The send script (`scripts/newsletter-send.mjs`) also refuses a note that still has the `✍️ WRITE THIS`
+gap or has no unsubscribe link. It needs the GitHub secret `RESEND_BROADCAST_KEY`: a Resend API key with
+**Full access** (a sending-only key can't create broadcasts). Rotate it like the other Resend keys.
 
 ## Roll back a deploy
 
