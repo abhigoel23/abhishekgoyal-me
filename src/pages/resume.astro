@@ -248,6 +248,10 @@ const contactLines: ContactItem[][] = [
       padding: 16px;
       font-size: 10pt;
     }
+    /* Dates, place and note stay on one line in the PDF, but must wrap on a small phone. */
+    .job-meta {
+      white-space: normal;
+    }
     .job-head {
       flex-direction: column;
       gap: 0;
