@@ -33,6 +33,8 @@ jobs:
         env:
           BASE_URL: ${{ vars.PRODUCTION_URL }}
           LIGHTHOUSE_GATE_ALL: '1'
+          # Median of 3 for performance, which swings with the runner's load; one re-check for the rest.
+          LIGHTHOUSE_RUNS: '3'
 
   links:
     name: links
