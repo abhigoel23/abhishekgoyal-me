@@ -1,0 +1,77 @@
+name: Experiment
+description: One CTA change, tested honestly on a low-traffic site (docs/GROWTH.md → Experiments).
+title: 'Experiment: <the change>'
+labels: ['routine']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One experiment at a time. Fill in everything above **Result** before the change is merged, and
+        don't edit it afterwards. The decision rule is written before anyone sees the new numbers.
+  - type: textarea
+    id: hypothesis
+    attributes:
+      label: Hypothesis
+      description: 'If we change X, then Y happens, because Z. Z comes from the monthly review, not a hunch.'
+      placeholder: '(Example) If the header CTA says "Book an intro call" instead of "Start a project", more visitors will click it, because [what the monthly review showed].'
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: The one change
+      description: >-
+        Which `data-cta` (docs/ANALYTICS.md → CTA ids), on which pages, and the exact before and after. Keep
+        the `data-cta` id when only the wording or look changes, or before and after can't be compared.
+      placeholder: '(Example) `header_start_project`, every page: label "Start a project" → "Book an intro call" (src/data/nav.ts)'
+    validations:
+      required: true
+  - type: textarea
+    id: metric
+    attributes:
+      label: Metric
+      description: >-
+        One number, and where to read it. Usually the CTA's clicks per 100 views of the page it's on: GA4 →
+        Explore → Source / medium → CTA clicks tab, divided by that page's views. Leads (Monthly tab) are
+        too few to show a difference; record them anyway.
+      placeholder: 'header_start_project clicks per 100 page views (GA4, consented visitors)'
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Windows and decision rule
+      description: >-
+        Baseline: the same number of weeks just before the change. Test: 4–8 weeks from the day the change
+        is live. Write the rule now: the minimum clicks in both windows (below it, the result is
+        inconclusive), and what counts as better.
+      placeholder: |
+        Baseline: 2026-10-01 → 2026-10-28 (4 weeks). Test: 4 weeks from the deploy.
+        At least 30 clicks in each window, or the result is inconclusive.
+        Keep the change if the rate is at least 25% higher; revert if it's lower; otherwise keep whichever reads better and record "no clear difference".
+    validations:
+      required: true
+  - type: textarea
+    id: checklist
+    attributes:
+      label: Checklist
+      value: |
+        - [ ] Nothing else about this CTA or its page changes during the test window
+        - [ ] The change ships in its own PR ("Refs" this issue); the day it went live: ____
+        - [ ] Other things that happened during the window (posts, newsletter notes, spikes in Source / medium): ____
+        - [ ] Numbers recorded below for both windows
+        - [ ] Decision applied: kept, or reverted in a PR
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Result
+      description: Fill in at the end. "Inconclusive" and "no clear difference" are results too.
+      value: |
+        | Window   | Dates | CTA clicks | Page views | Clicks per 100 views | Leads (Monthly tab) |
+        | -------- | ----- | ---------- | ---------- | -------------------- | ------------------- |
+        | Baseline |       |            |            |                      |                     |
+        | Test     |       |            |            |                      |                     |
+
+        Decision:

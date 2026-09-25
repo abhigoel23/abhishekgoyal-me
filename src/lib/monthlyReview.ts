@@ -76,7 +76,8 @@ export function reviewBody(
     "- [ ] Something new since the last note, and none sent this month? Draft it with `pnpm digest <last note's date>`, then send it test → production (RUNBOOK → Sending a note)",
     '',
     '**6. Decide**',
-    '- [ ] One line in Notes: what changed, and what to try next (experiments: docs/GROWTH.md)',
+    '- [ ] An experiment running? If its test window has ended, record the result in its issue (docs/GROWTH.md → Experiments)',
+    '- [ ] One line in Notes: what changed, and what to try next; a new experiment starts from an Experiment issue',
     '- [ ] Close this issue',
   ].join('\n');
 }
