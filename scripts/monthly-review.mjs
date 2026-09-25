@@ -4,6 +4,7 @@
 import { readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { profile } from '../src/data/profile.ts';
+import { services } from '../src/data/services.ts';
 import { isMonth, lastMonth, reviewBody, reviewTitle } from '../src/lib/monthlyReview.ts';
 import { parseFrontMatter } from '../src/lib/share.ts';
 
@@ -24,11 +25,16 @@ const posts = readdirSync(dir)
   .sort((a, b) => a.pubDate.localeCompare(b.pubDate))
   .map((p) => ({ title: p.title, url: `${profile.url}/writing/${p.slug}` }));
 
+// Every service with its own page, and the query it's written for (docs/SEO.md).
+const searchTargets = services.flatMap((s) =>
+  s.page ? [{ url: `${profile.url}/services/${s.id}`, query: s.page.query }] : [],
+);
+
 const sitemap = Number.parseInt(process.env.SITEMAP_URLS ?? '', 10);
 const repo = process.env.GITHUB_REPOSITORY ?? 'abhigoel23/abhishekgoyal-me';
 const issue = {
   title: reviewTitle(month),
-  body: reviewBody(month, posts, repo, Number.isNaN(sitemap) ? undefined : sitemap),
+  body: reviewBody(month, posts, repo, Number.isNaN(sitemap) ? undefined : sitemap, searchTargets),
 };
 writeFileSync('monthly-review.json', JSON.stringify(issue));
 console.log(`${issue.title}\n\n${issue.body}`);

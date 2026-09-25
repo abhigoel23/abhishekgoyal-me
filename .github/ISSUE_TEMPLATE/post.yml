@@ -17,6 +17,16 @@ body:
     validations:
       required: true
   - type: input
+    id: query
+    attributes:
+      label: Target query
+      description: >-
+        The one search the post is written for, from docs/SEO.md or the Target query column in
+        docs/TOPICS.md. Check it still appears in Google autocomplete before drafting.
+      placeholder: kotlin multiplatform vs react native
+    validations:
+      required: true
+  - type: input
     id: slug
     attributes:
       label: Slug
@@ -43,6 +53,8 @@ body:
         **Draft**
         - [ ] TOPICS.md status set to `planned`
         - [ ] Drafted on branch `content/<slug>`; front matter as in CONTENT.md (quoted title, description ≤ 160 characters, lowercase tags)
+        - [ ] The target query's wording is in the title or description, and the post answers it
+        - [ ] Links to one service page (the "Links to" column in docs/SEO.md), and `offer` is set in the front matter
 
         **Fact-check (CONTENT.md → Writing rules), claim by claim**
         - [ ] Every claim is in one of the sources above; no invented metrics

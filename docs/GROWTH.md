@@ -50,7 +50,7 @@ It writes the header row itself the first time.
 | O–P Indexed pages (GSC), Sitemap URLs | You        | Search Console; the sitemap count is in the review issue                               |
 | Q–R Search clicks, Search impressions | You        | Search Console → Performance, last month                                               |
 | S Posts published                     | You        | From the review issue                                                                  |
-| T Notes                               | You        | What changed, top queries and pages, what to try next                                  |
+| T Notes                               | You        | What changed, top queries and pages, service-page search numbers, what to try next     |
 
 The staging test Sheet has a Monthly tab too, because the staging Worker runs the same cron.
 Only counts are recorded, never names or addresses, so the tab adds no personal data to the Sheet.
@@ -94,7 +94,8 @@ with its rule written in advance is honest about what it can show.
 
 At 10:00 IST on the 1st, `.github/workflows/monthly-review.yml` opens **Monthly review YYYY-MM**
 (label `routine`, no milestone). It holds the checklist, posts published that month, a link to skipped
-Post issues, and the live sitemap's URL count, but no lead or subscriber numbers. Work through it, fill in
+Post issues, the live sitemap's URL count, and each service page with the search query it's written for
+([SEO.md](./SEO.md)), but no lead or subscriber numbers. Work through it, fill in
 the Monthly row, then close the issue.
 
 To open one by hand (for example, for a missed month): Actions → Monthly review → Run workflow, with

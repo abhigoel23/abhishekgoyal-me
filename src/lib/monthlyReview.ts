@@ -4,6 +4,8 @@
 // No imports: Node loads this directly.
 
 export type PublishedPost = { title: string; url: string };
+/** A page written for one search query (docs/SEO.md), checked in Search Console each month. */
+export type SearchTarget = { url: string; query: string };
 
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 
@@ -36,6 +38,7 @@ export function reviewBody(
   posts: PublishedPost[],
   repo: string,
   sitemapUrls?: number,
+  searchTargets: SearchTarget[] = [],
 ): string {
   const [year, m] = month.split('-').map(Number);
   const lastDay = new Date(Date.UTC(year!, m!, 0)).toISOString().slice(0, 10);
@@ -63,6 +66,9 @@ export function reviewBody(
     '**2. Search Console** (last month)',
     '- [ ] Indexing → Pages: **Indexed pages**, and anything new under "Why pages aren\'t indexed"',
     '- [ ] Performance: **Search clicks** and **impressions**; top 3 queries and pages in Notes',
+    `- [ ] Performance → Pages, filtered to URLs containing \`/services/\`: clicks and impressions for each service page, in Notes (docs/SEO.md → The map)`,
+    ...searchTargets.map((t) => `  - ${t.url} (written for “${t.query}”)`),
+    "- [ ] Performance → Queries: impressions and average position for each post's primary query in docs/SEO.md → Posts, in Notes. A page or query with impressions but no clicks: check its title and description",
     '',
     '**3. GA4** (only visitors who accept the consent bar)',
     '- [ ] Explore, with the date range set to this month: **Lead funnel** (both tabs), **Landing pages by conversion**, **Source / medium** (and its CTA clicks tab)',
