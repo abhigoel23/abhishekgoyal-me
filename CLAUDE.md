@@ -3,17 +3,20 @@
 Personal-brand site for Abhishek Goyal (mobile engineer), with lead capture. Astro 7 + React islands,
 deployed as one Cloudflare Worker (static assets + `/api/*`). Roadmap: GitHub Milestones M0–M6.
 
-## Commands (pnpm 12, Node 26; Homebrew binaries: prefix shells with `eval "$(/opt/homebrew/bin/brew shellenv)"`)
+## Commands (pnpm 12, Node 26; Homebrew is on PATH via `~/.claude/settings.json` `env`, so no shellenv prefix)
 
 | Task                  | Command                                                                                                |
 | --------------------- | ------------------------------------------------------------------------------------------------------ |
 | Dev server            | `pnpm dev`                                                                                             |
+| Pre-ship gate         | `pnpm verify` (check + unit tests, ~25s); run `pnpm build` only when the build pipeline changes        |
 | Build                 | `pnpm build`                                                                                           |
 | Run built Worker      | `pnpm preview` (`wrangler dev`, :8787 by default)                                                      |
 | Lint + format + types | `pnpm check`                                                                                           |
 | Unit tests            | `pnpm test` (Vitest, `src/**/*.test.ts`)                                                               |
 | E2E smoke             | `pnpm test:e2e` (Playwright; `BASE_URL=` to target a deployed URL)                                     |
 | E2E lead flow         | `pnpm test:lead` (staging build + throwaway local D1; never a deployed URL)                            |
+| Ship a PR             | `pnpm ship <issue#> "<type: subject>"` → commit, push, PR, wait on required checks; prints `READY`     |
+| Merge a PR            | `pnpm ship:merge <pr#>` (squash, delete branch, back to `main`); never watch the main run              |
 | Lighthouse gate       | `pnpm lighthouse` (after `pnpm build`)                                                                 |
 | Private resume PDF    | `RESUME_PHONE="+91 …" pnpm resume` (after `pnpm build`)                                                |
 | Favicons              | `pnpm icons`                                                                                           |
@@ -47,6 +50,16 @@ pnpm 12 has no `-s` flag; use `--silent`.
 - Content and copy live in data files (`src/data/profile.ts`, MDX), never hardcoded in components.
 - Every claim on the site must match the resume; no invented metrics.
 - Secrets only in `.dev.vars` (git-ignored) or Worker/GitHub secrets. Never commit or print them.
+
+## Shipping & token hygiene
+
+- One session per Issue; start fresh after merge. `/compact` past ~150K context.
+- Plan first, and ask every open question in one AskUserQuestion round (up to 4), not one at a time.
+- Before shipping: `pnpm verify`. Commit hooks already run eslint/prettier on staged files; don't run prettier by hand.
+- Run `pnpm ship` in the background and keep working (next Issue's branch) while CI runs; on `FAILED`, hand the
+  log tail to `ci-triage`. Don't poll with `sleep` / `gh run view`, and don't wait on lighthouse or deploy-preview.
+- Never `Read` PDFs or images to check text: `pdftotext` / `pdfinfo`, or `get_page_text` / `read_page` in the
+  browser. Screenshots only as final visual proof, at `scale: 0.5`.
 
 ## Don't
 

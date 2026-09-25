@@ -222,6 +222,22 @@ The send script (`scripts/newsletter-send.mjs`) also refuses a note that still h
 gap or has no unsubscribe link. It needs the GitHub secret `RESEND_BROADCAST_KEY`: a Resend API key with
 **Full access** (a sending-only key can't create broadcasts). Rotate it like the other Resend keys.
 
+## Ship a change
+
+From a `feat|fix|chore|content|docs|test/<slug>` branch, after `pnpm verify`:
+
+```sh
+pnpm ship 123 "feat: what changed"   # commit (staged files, or everything if nothing is staged), push,
+                                     # open the PR "feat: what changed (#123)" with "Closes #123",
+                                     # then wait on the required checks only
+pnpm ship:merge 124                  # squash-merge PR #124, delete the branch, pull main
+```
+
+`ship` ends with `READY <url>` or `FAILED <url>` plus the last 60 lines of the failed job's log. Fix, then run
+the same `pnpm ship` again: it commits, pushes and waits on the existing PR. Lighthouse and the preview deploy
+still run but aren't required, so `ship` doesn't wait for them. After a merge, the main run deploys and rolls
+itself back if the production smoke test fails; GitHub emails on a failed run.
+
 ## Roll back a deploy
 
 Production deploys roll back automatically when the smoke test fails. To roll back by hand:
