@@ -117,6 +117,10 @@ Keeping two native apps at parity meant building every feature twice. In 2025 I 
 apps into a single **React Native** codebase. I architected it and built it alongside the team, and we
 completed it in six months. It replaced both native apps in production.
 
+React Native fitted the situation: one codebase suited the timeline and budget, the web app was already
+built in React, and the screens were the same on both platforms. The hardest part of the port was
+reliable background uploads, which the offline engine depended on.
+
 ## Releases that stopped being events
 
 Releases used to be manual builds. I introduced **GitHub Actions and Fastlane**. That gave us a predictable

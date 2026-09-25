@@ -1,0 +1,99 @@
+---
+title: "Native, Kotlin Multiplatform or React Native: how I'd choose"
+description: 'How I choose between native, Kotlin Multiplatform and React Native: features first, then the trade-offs. With what I learned rewriting Pulse.'
+pubDate: 2026-09-25
+tags: [kotlin-multiplatform, react-native, android, ios]
+---
+
+"Should we build this in Kotlin Multiplatform or React Native?" is a question teams often ask before
+anyone has written down what the app has to do. That's backwards. I've shipped all three approaches to production: native Android and iOS apps, a shared Kotlin
+Multiplatform data layer in HelperBook, and a React Native rewrite of two native apps at Pulse. The
+framework has never been the first decision. The features are.
+
+## Start with the features, not the framework
+
+Before choosing anything, I list what the app actually has to do, and which of those things lean on the
+platform. Camera capture, video playback, background work, offline data, sensors, OS integrations. Then I
+weigh each option against that list, along with the team that will maintain it and the time and money
+available.
+
+Most of the heat in "Kotlin Multiplatform vs React Native" debates comes from people comparing the tools in
+the abstract. For a specific app, the answer is usually much clearer than the debate suggests.
+
+## When I'd stay fully native
+
+Sharing code is not free, so sometimes the right amount to share is none.
+
+- **The market is on one platform.** HelperBook is for Indian households, where Android is the phone
+  most people carry, so it shipped on Android first. Its records still live in a shared Kotlin
+  Multiplatform module with SQLDelight, so an iOS app could reuse that data layer rather than rewrite it,
+  but the app itself is native Android.
+- **The app leans hard on platform APIs.** On a video-first hiring platform I built 100% of the Android
+  client, and the core of it was CameraX capture, Media3 playback and on-device speech transcription. That
+  is exactly the kind of work where you want the platform's own APIs directly, not through a layer.
+- **The two apps look and behave differently.** If the Android and iOS versions don't share much UI or
+  flow, a shared UI codebase saves less than it costs.
+
+## When Kotlin Multiplatform fits
+
+Kotlin Multiplatform shares business logic and data while each platform keeps a fully native UI. I reach
+for it when:
+
+- **Native apps already exist.** You can add a shared module to the apps you have and move code into it
+  gradually, instead of rewriting both.
+- **The team writes Kotlin.** Android developers can own the shared code without learning a new stack.
+- **The business logic is complex and must match on both platforms.** Rules, calculations and offline
+  data that behave slightly differently on Android and iOS are a bug factory. Writing them once removes a
+  whole class of problems.
+- **Native feel matters.** The UI stays Jetpack Compose on Android and SwiftUI or UIKit on iOS.
+
+## When React Native fits
+
+React Native gives you one codebase for the UI as well as the logic. I recommend it when the timeline is
+short and the budget is small, and one team has to ship both platforms quickly. It also makes more sense
+when the screens are the same on both platforms, and when there's already a React web team whose skills
+carry over.
+
+## Performance, honestly
+
+People search for "Kotlin Multiplatform vs React Native performance" a lot, so here's my view. Kotlin
+Multiplatform keeps the UI fully native, and native UI is smoother. For most business apps (forms, lists,
+dashboards) React Native is fine, and the difference users feel comes far more from the architecture than
+from the framework.
+
+I haven't shipped a Flutter app, so I won't argue for or against it from experience. It's a real option;
+it's just not one I can speak to first-hand.
+
+## What Pulse taught me
+
+At Pulse I owned mobile, Android and iOS, from an early prototype to 100+ B2B enterprise clients. For
+years it ran as two native apps, Kotlin on Android and Swift on iOS, kept at feature parity. Keeping two
+native apps at parity meant building every feature twice.
+
+In 2025 I led the rewrite of both apps into one React Native codebase, architected and co-built with the
+team in six months, and it replaced both native apps in production. React Native fitted the situation:
+one codebase suited the timeline and budget, the web app was already built in React, and the screens were
+the same on both platforms.
+
+The hardest part of the port was reliable background uploads, which the offline engine depended on. The
+inspections could run to 500+ questions and 1,000+ photos, captured offline and uploaded in the background
+once a connection came back, so the upload behaviour had to be as dependable after the rewrite as before
+it.
+
+Looking back, React Native was a reasonable call for that timeline, budget and team. Knowing what I know
+now, I'd weigh Kotlin Multiplatform harder for an app with that much offline logic. The sync rules and the
+upload queue are exactly the kind of code you want written once and shared, while each platform keeps its
+own native background APIs.
+
+## How I'd decide for your app
+
+| If your app…                                                        | I'd lean towards     |
+| ------------------------------------------------------------------- | -------------------- |
+| Targets one platform first, or leans hard on camera, video, sensors | Native               |
+| Already has native apps, or complex logic that must match on both   | Kotlin Multiplatform |
+| Needs both platforms fast, on a small budget, with the same screens | React Native         |
+
+None of these is a rule. They're where I start, and the feature list decides the rest. If you're weighing
+this for a real app, [here's how I help teams adopt Kotlin Multiplatform](/services/kmp), and every
+engagement starts with a paid discovery sprint that ends in a written recommendation you can use with
+anyone.
