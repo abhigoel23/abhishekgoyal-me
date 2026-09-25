@@ -43,12 +43,11 @@ Hire and decide pages come first: they are fewer searches but much closer to a l
 | `/services/fractional`      | none (no autocomplete demand)    | none                                                                                                                      | Pulse: led 4–6 engineers                               | no SEO  |
 | `/services/india` ³         | hire android app developer india | best android app developer in india · hire react native developer india · freelancer mobile app developer in india        | All of the above; IST, Delhi NCR                       | planned |
 
-1. A new service page. Offline-first is the strongest differentiator (Pulse, HelperBook, EzHealth) and
-   today sits inside the MVP service. Needs Abhishek's OK.
-2. The rescue service lists "Compose migration", but the resume shows Compose only in greenfield builds.
-   Before targeting this query, confirm a real XML-to-Compose migration, or target "android app
-   modernisation" copy without the migration claim.
-3. Needs from Abhishek: billing Indian clients in INR, and meeting in person in Delhi NCR.
+1. A new service page, confirmed by Abhishek on 2026-09-25. Offline-first is the strongest differentiator
+   (Pulse, HelperBook, EzHealth) and until now sat inside the MVP service.
+2. Abhishek confirmed a real XML-to-Compose migration (2026-09-25). Before the page is written, add it to
+   `src/data/career.ts` under the job where it happened, so the page's claim is traceable.
+3. Indian clients are billed in INR (confirmed 2026-09-25). Still to confirm: meeting in person in Delhi NCR.
 
 `/services/fractional` stays as it is: nobody searches for the term, so it sells through referrals and
 the other pages, not search.

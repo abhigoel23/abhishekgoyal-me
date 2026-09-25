@@ -1,8 +1,9 @@
 // Every page the site builds, for e2e tests that must cover all of them: static pages from the registry
-// plus one per case study and published post. (Collections can't be imported here, so entries come from
+// plus one per case study, service page and published post. (Collections can't be imported here, so entries come from
 // their files.)
 import { readdirSync, readFileSync } from 'node:fs';
 import { pages } from '../../src/data/pages';
+import { services } from '../../src/data/services';
 
 const entries = (dir: string) => readdirSync(dir).filter((file) => file.endsWith('.mdx'));
 
@@ -16,6 +17,7 @@ const isDraft = (file: string) =>
 export const routes = [
   ...Object.keys(pages),
   ...entries('src/content/work').map((file) => `/work/${file.replace(/\.mdx$/, '')}`),
+  ...services.filter((service) => service.page).map((service) => `/services/${service.id}`),
   ...entries('src/content/writing')
     .filter((file) => !isDraft(file))
     .map((file) => `/writing/${file.replace(/\.mdx$/, '')}`),
