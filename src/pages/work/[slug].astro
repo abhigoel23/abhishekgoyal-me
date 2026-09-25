@@ -5,6 +5,7 @@ import Button from '../../components/Button.astro';
 import Container from '../../components/Container.astro';
 import Tag from '../../components/Tag.astro';
 import CaseStudyRead from '../../components/CaseStudyRead.astro';
+import ProofStrip from '../../components/ProofStrip.astro';
 import { primaryCta } from '../../data/nav';
 import Base from '../../layouts/Base.astro';
 
@@ -52,8 +53,18 @@ const caseStudyJsonLd = {
     </p>
     <h1 class="text-h1 max-w-3xl">{d.title}</h1>
     <p class="mt-5 max-w-2xl text-lead text-muted">{d.summary}</p>
+    {d.outcomes.length > 0 && (
+      <div class="mt-10">
+        <ProofStrip stats={d.outcomes} />
+      </div>
+    )}
 
-    <dl class="mt-12 grid gap-6 border-y border-line py-8 sm:grid-cols-2 lg:grid-cols-4">
+    <dl
+      class:list={[
+        'grid gap-6 py-8 sm:grid-cols-2 lg:grid-cols-4',
+        d.outcomes.length > 0 ? 'border-b border-line' : 'mt-12 border-y border-line',
+      ]}
+    >
       {facts.map(([label, value]) => (
         <div>
           <dt class="eyebrow">{label}</dt>

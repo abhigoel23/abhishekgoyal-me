@@ -153,6 +153,23 @@
     border: 1px solid var(--line);
     border-radius: var(--brand-radius);
   }
+  & table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+  & th,
+  & td {
+    padding: 0.6em 1em 0.6em 0;
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--line);
+  }
+  & th {
+    font-weight: 600;
+    color: var(--muted);
+  }
 }
 
 /* Shiki code blocks: light colours are inline; use the dark theme's with the site's dark mode. */

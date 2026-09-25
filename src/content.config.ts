@@ -18,6 +18,11 @@ const work = defineCollection({
       stack: z.array(z.string()),
       order: z.number(),
       featured: z.boolean().default(true),
+      /** Headline results shown under the title. Each must be traceable to the resume. */
+      outcomes: z
+        .array(z.object({ value: z.string(), label: z.string() }))
+        .max(4)
+        .default([]),
       links: z.array(z.object({ label: z.string(), href: z.url() })).default([]),
       screens: z.array(z.object({ src: image(), alt: z.string() })).default([]),
       /** Shown under the screenshots, e.g. why data is blurred. */
