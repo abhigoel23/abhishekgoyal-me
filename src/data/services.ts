@@ -34,6 +34,10 @@ export type Service = {
   page?: ServicePage;
 };
 
+// Shared by the /services FAQ and the MVP page.
+const codeOwnership =
+  'You do, once each milestone is paid. I work in my repository, give you read access from the start so you can see every commit, and transfer the code to yours at each paid milestone.';
+
 export const services: Service[] = [
   {
     id: 'mvp',
@@ -48,6 +52,77 @@ export const services: Service[] = [
       'Store release: signing, Data Safety, staged rollout',
     ],
     proof: { label: 'HelperBook case study', href: '/work/helperbook' },
+    page: {
+      query: 'mvp app development for startups',
+      title: 'MVP app development for startups',
+      description:
+        'MVP app development for startups: scope the first release, choose native, Kotlin Multiplatform or React Native, and ship to Google Play and the App Store. From an engineer who has owned four greenfield Android builds end to end.',
+      heading: 'Your startup’s MVP app, from the first plan to the store',
+      intro:
+        'I take startup apps from an idea to a release in the store: scoping the first version with you, choosing the stack for your product and team, building it, and handling the release. I’ve owned four greenfield Android builds end to end.',
+      problems: [
+        'You have a product idea and a deadline, but no mobile engineer yet.',
+        'You need to decide what the first release must do, and what can wait.',
+        'You’re not sure whether to go native, Kotlin Multiplatform or React Native.',
+        'You want an app your own team can take over later, not one only its builder understands.',
+      ],
+      approachTitle: 'How I take an MVP to the store',
+      approach: [
+        {
+          title: 'Scope the first release',
+          body: 'We agree what the first version must do and what can wait, in a paid discovery sprint that ends in a written plan and estimate you can use with anyone.',
+        },
+        {
+          title: 'Choose the stack for your product',
+          body: 'Native Android, Kotlin Multiplatform or React Native, chosen for your product, team and timeline rather than my preference. I’ve shipped all three to production.',
+        },
+        {
+          title: 'An architecture that outlives the MVP',
+          body: 'For a video-first hiring platform I built 100% of the Android client, 30+ screens across candidate and recruiter flows, on a modular Compose, MVVM, Hilt and Flow codebase the app still runs on.',
+        },
+        {
+          title: 'Working builds every week or two',
+          body: 'You get builds on a test track as the app grows, so you see progress on a real phone, not in slides.',
+        },
+        {
+          title: 'A release you can trust',
+          body: 'Signing, R8, Play Data Safety declarations, crash reporting with no personal data in it, and a staged rollout. HelperBook went from its first commit to a public release on Google Play this way.',
+        },
+      ],
+      outcomes: [
+        { value: '4', label: 'greenfield Android builds, owned end to end' },
+        { value: '30+', label: 'screens built from concept to production release' },
+        { value: '100+', label: 'B2B clients on an app I took from early prototype' },
+        { value: '13', label: 'years building Android and iOS apps' },
+      ],
+      faqs: [
+        {
+          question: 'What does an MVP cost?',
+          answer:
+            'Every MVP starts with a paid discovery sprint: a fixed ₹60,000 (US$900) for about a week. It ends in a written plan and an estimate for the build, which you can use with me or anyone else.',
+        },
+        {
+          question: 'Android, iOS or both?',
+          answer:
+            'Whatever your users need first. I’ve shipped native Android and iOS apps, a shared Kotlin Multiplatform data layer and a React Native app, so the choice follows your product rather than what I know.',
+        },
+        {
+          question: 'Do you build the backend too?',
+          answer:
+            'When the MVP needs a simple one, yes: I’ve shipped backends on Firebase and Django. For bigger systems I work with your backend team from an agreed API contract, as I did at Pulse.',
+        },
+        {
+          question: 'Who owns the code?',
+          answer: codeOwnership,
+        },
+      ],
+      related: [
+        { label: 'HelperBook: from first commit to Google Play', href: '/work/helperbook' },
+        { label: 'Video-first hiring app: 100% of the Android client', href: '/work/video-hiring' },
+        { label: 'Pulse: from early prototype to 100+ enterprise clients', href: '/work/pulse' },
+      ],
+      ctaHeading: 'Tell me about the app you want to launch',
+    },
   },
   {
     id: 'offline-first',
@@ -332,8 +407,7 @@ export const faqs = [
   },
   {
     question: 'Who owns the code?',
-    answer:
-      'You do, once each milestone is paid. I work in my repository, give you read access from the start so you can see every commit, and transfer the code to yours at each paid milestone.',
+    answer: codeOwnership,
   },
   {
     question: 'Is there anything you don’t take on?',
