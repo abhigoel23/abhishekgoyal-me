@@ -1,0 +1,78 @@
+---
+// A case study's looping screen recording (#176), in the same frame as its screenshots. It never autoplays
+// on load: it plays muted while at least half of it is on screen, and pauses when scrolled away. Visitors
+// who prefer reduced motion see the poster until they press Play. The button is the pause control that
+// WCAG 2.2.2 asks for on moving content that lasts longer than 5 seconds.
+import type { ImageMetadata } from 'astro';
+import { getImage } from 'astro:assets';
+
+type Props = { mp4: string; webm?: string; poster: ImageMetadata; alt: string };
+const { mp4, webm, poster, alt } = Astro.props;
+const posterImage = await getImage({ src: poster, width: 540, format: 'webp' });
+---
+
+<figure class="mx-auto w-full max-w-[16.25rem]" data-demo>
+  <video
+    class="h-auto w-full rounded-[1.25rem] border border-line bg-bg"
+    width={posterImage.attributes.width}
+    height={posterImage.attributes.height}
+    poster={posterImage.src}
+    muted
+    loop
+    playsinline
+    preload="none"
+    aria-describedby="demo-caption"
+  >
+    {webm && <source src={webm} type="video/webm" />}
+    <source src={mp4} type="video/mp4" />
+  </video>
+  <figcaption id="demo-caption" class="mt-4 text-sm text-muted">
+    {alt}
+  </figcaption>
+  <button
+    type="button"
+    class="mt-3 inline-flex min-h-11 items-center rounded-brand border border-line px-4 text-sm font-medium hover:border-accent"
+    data-demo-toggle
+  >
+    Play
+  </button>
+</figure>
+
+<script>
+  const figure = document.querySelector<HTMLElement>('[data-demo]');
+  const video = figure?.querySelector('video');
+  const button = figure?.querySelector<HTMLButtonElement>('[data-demo-toggle]');
+
+  if (figure && video && button) {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // Once the visitor presses Pause (or Play), scrolling no longer overrides their choice.
+    let chosen = false;
+
+    const label = () => {
+      button.textContent = video.paused ? 'Play' : 'Pause';
+    };
+    const play = () => video.play().catch(() => label());
+
+    video.addEventListener('play', label);
+    video.addEventListener('pause', label);
+    button.addEventListener('click', () => {
+      chosen = true;
+      if (video.paused) play();
+      else video.pause();
+    });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([entry]) => {
+          if (chosen || reducedMotion.matches || !entry) return;
+          if (entry.isIntersecting) play();
+          else video.pause();
+        },
+        { threshold: 0.5 },
+      ).observe(video);
+    }
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches && !chosen) video.pause();
+    });
+  }
+</script>

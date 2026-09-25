@@ -5,6 +5,7 @@ import Button from '../../components/Button.astro';
 import Container from '../../components/Container.astro';
 import Tag from '../../components/Tag.astro';
 import CaseStudyRead from '../../components/CaseStudyRead.astro';
+import DemoVideo from '../../components/DemoVideo.astro';
 import ProofStrip from '../../components/ProofStrip.astro';
 import { primaryCta } from '../../data/nav';
 import Base from '../../layouts/Base.astro';
@@ -97,12 +98,17 @@ const caseStudyJsonLd = {
     )}
   </Container>
 
-  {d.screens.length > 0 && (
+  {(d.screens.length > 0 || d.demo) && (
     <section aria-labelledby="screens-title" class="bg-surface py-14 sm:py-20">
       <Container>
         <h2 id="screens-title" class="text-h2">
           Screens
         </h2>
+        {d.demo && (
+          <div class="mt-8">
+            <DemoVideo {...d.demo} />
+          </div>
+        )}
         <ul class="mt-8 grid grid-cols-2 gap-5 md:grid-cols-4">
           {d.screens.map((screen) => (
             <li>

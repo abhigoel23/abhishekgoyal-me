@@ -184,8 +184,15 @@ BlogPosting JSON-LD stay pointed at this site (`src/pages/writing/[slug].astro`)
 - **Case studies**: `src/content/work/<slug>.mdx`. Fields from the schema: `title`, `summary`, `role`,
   `period`, `client`, `platform`, `stack`, `order` (controls display order), `featured` (defaults to
   `true`; set `false` to keep it off the home page), `links`, `screens` (array of `{ src, alt }`, images
-  under `src/assets/work/<slug>/`), and `screensNote` (text shown under the screenshots, e.g. why data is
-  blurred).
+  under `src/assets/work/<slug>/`), `screensNote` (text shown under the screenshots, e.g. why data is
+  blurred), and `demo` (optional looping screen recording, below).
+- **Demo video** (`demo: { mp4, webm?, poster, alt }`): 8–12 s, no audio, under ~1.5 MB, with the same
+  blurring or demo data as the screenshots. The files go in `public/media/work/<slug>/`, and `mp4` is
+  the path from there, e.g. `/media/work/<slug>/demo.mp4`; `poster` is an image under `src/assets/work/<slug>/`, usually the first
+  frame; `alt` describes what happens, step by step, and is shown as the caption. It downloads nothing
+  until it plays, plays muted only while on screen, has a Play/Pause button, and never starts by itself
+  for visitors who prefer reduced motion. To encode from a screen recording (`brew install ffmpeg`):
+  `ffmpeg -i in.mov -an -vf "scale=540:-2,fps=24" -c:v libx264 -crf 30 -preset slow -movflags +faststart demo.mp4`.
 - **Services**: copy lives in `src/data/services.ts` (`services`, `process`, `engagements`, `faqs`).
 - **Page titles/descriptions**: `src/data/pages.ts`, one entry per static route. Adding a new static page
   needs an entry here or the SEO e2e test fails.
