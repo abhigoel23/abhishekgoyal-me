@@ -22,15 +22,46 @@ env:
   CI: true
 
 jobs:
+  changes:
+    name: changes
+    # Which suites a PR can affect. Skipped jobs count as passing required checks. Pushes to main and
+    # manual runs always run everything.
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      code: ${{ steps.filter.outputs.code }}
+      lead: ${{ steps.filter.outputs.lead }}
+    steps:
+      - id: filter
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          if [ "${{ github.event_name }}" != pull_request ]; then
+            printf 'code=true\nlead=true\n' >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          files=$(gh pr diff "$PR" -R "${{ github.repository }}" --name-only)
+          # Docs-only: nothing to build or run. Content-only: can't reach the lead flow.
+          docs='^(docs/|\.claude/|\.github/ISSUE_TEMPLATE/|[^/]+\.md$)'
+          content='^(src/content/|src/data/|public/)'
+          code=false; lead=false
+          [ -z "$files" ] && { code=true; lead=true; }
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            [[ $f =~ $docs ]] || code=true
+            if [[ $f == src/data/lead.ts ]] || ! [[ $f =~ $docs || $f =~ $content ]]; then lead=true; fi
+          done <<< "$files"
+          echo "code=$code lead=$lead"
+          printf 'code=%s\nlead=%s\n' "$code" "$lead" >> "$GITHUB_OUTPUT"
+
   check:
     name: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
       - run: pnpm check
 
   test:
@@ -38,23 +69,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
       - run: pnpm test
 
   build:
     name: build
+    needs: changes
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
+        with: { playwright: 'true' }
       # The build prints /resume to resume.pdf with Chromium.
-      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm build
       - uses: actions/upload-artifact@v7
         with:
@@ -67,17 +94,15 @@ jobs:
 
   e2e:
     name: e2e
-    needs: build
+    needs: [changes, build]
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
+        with: { playwright: 'true' }
       - uses: actions/download-artifact@v8
         with: { name: dist }
-      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm test:e2e
       - if: failure()
         uses: actions/upload-artifact@v7
@@ -87,14 +112,13 @@ jobs:
     name: e2e-lead
     # The lead flow end to end (form → /api/lead → local D1 → queue) on a local staging build with a
     # throwaway D1 and no real secrets, so it never touches the real Sheet, inbox or Telegram.
+    needs: changes
+    if: needs.changes.outputs.lead == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+      - uses: ./.github/actions/setup
+        with: { playwright: 'true' }
       - run: pnpm test:lead
       - if: failure()
         uses: actions/upload-artifact@v7
@@ -103,24 +127,27 @@ jobs:
   lighthouse:
     name: lighthouse
     # Audits the built Worker locally: workers.dev previews send noindex on purpose, which would fail SEO.
-    needs: build
+    needs: [changes, build]
+    if: needs.changes.outputs.code == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
+        with: { playwright: 'true' }
       - uses: actions/download-artifact@v8
         with: { name: dist }
-      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm lighthouse
 
   deploy-preview:
     name: deploy-preview
     # Deploys stay off until the repo variable DEPLOY_ENABLED=true (set once Cloudflare secrets exist).
     # Same-repo PRs only: fork PRs never receive secrets.
-    if: vars.DEPLOY_ENABLED == 'true' && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+    # Runs when e2e-lead was skipped (content-only PR), never when any gate failed.
+    if: >-
+      !cancelled() && !contains(needs.*.result, 'failure') &&
+      needs.e2e.result == 'success' && needs.lighthouse.result == 'success' &&
+      vars.DEPLOY_ENABLED == 'true' && github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     needs: [check, test, e2e, e2e-lead, lighthouse]
     runs-on: ubuntu-latest
     environment:
@@ -131,13 +158,10 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
+        with: { playwright: 'true' }
       # Previews run on the staging Worker (own D1, queue and secrets; ADR 006). The adapter picks the
       # Cloudflare environment at build time, so this job builds for staging instead of reusing `dist`.
-      - run: pnpm exec playwright install --with-deps chromium
       - run: pnpm build
         env: { CLOUDFLARE_ENV: staging }
       - id: upload
@@ -194,10 +218,7 @@ jobs:
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
     steps:
       - uses: actions/checkout@v7
-      - uses: pnpm/action-setup@v6
-      - uses: actions/setup-node@v7
-        with: { node-version-file: .nvmrc, cache: pnpm }
-      - run: pnpm install --frozen-lockfile
+      - uses: ./.github/actions/setup
       - uses: actions/download-artifact@v8
         with: { name: dist }
       # Before the deploy, so new code never runs against an old schema. Migrations only add things
