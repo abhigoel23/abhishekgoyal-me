@@ -1,0 +1,65 @@
+---
+title: 'Two native apps into one React Native codebase in six months'
+description: 'How I led the rewrite of Pulse’s Android and iOS apps into one React Native codebase: why, what carried over, and why it rolled out gradually.'
+pubDate: 2026-10-08
+tags: [react-native, android, ios, offline-first]
+---
+
+I owned mobile for Pulse, an offline-first inspection app for auditors, on Android and iOS, from an early
+prototype to 100+ B2B enterprise clients. For most of that time it was two native apps: Kotlin on Android,
+Swift on iOS, kept in feature parity. In 2025 I led a full rewrite of both into a single React Native
+codebase. I architected it and built it alongside the team, and we completed it in six months, before I
+left in May 2025.
+
+This isn't a "native versus React Native" post. The native apps worked. The earlier posts on
+[Pulse's sync engine](/writing/offline-first-sync-lessons) and on
+[a local-only app](/writing/offline-first-without-a-server) cover why they were built the way they were.
+This one is about the rewrite: why we did it, what we kept, and how it reached users.
+
+## Why rewrite two apps that worked
+
+Keeping two native apps in feature parity has a simple cost: every feature is built twice, once in Kotlin
+and once in Swift, and every fix has to land in both. That was the reason for the rewrite, in two parts:
+
+- **One codebase to maintain** instead of two.
+- **Shipping faster**, because a feature or a fix reaches Android and iOS at the same time.
+
+Neither reason says the native apps were bad. They say that keeping two of them had a cost, and one
+codebase removes it.
+
+## Replicate the behaviour, don't redesign it
+
+The native apps' behaviour had years of field use behind it: records that get a temporary local ID and are
+remapped to a server ID when they sync, photos uploaded before the form that references them, upload
+progress the auditor can see, and inspection forms built dynamically. So the React Native app replicated
+that behaviour rather than redesigning it.
+
+The alternative is harder than it looks. A rewrite that also changes how sync works is two projects at once, and every
+difference between the old app and the new one is something to explain to an auditor in the field.
+Replicating proven behaviour keeps the rewrite to one question: does the new app do what the old one did?
+
+## I built the core, the team built on top
+
+I set the architecture and built the core myself: sync, offline storage and uploads. The team built the
+screens and features on top of it.
+
+In an offline-first app, that core is where the risk sits. Everything on screen depends on the core behaving the way the native
+apps did, and in an offline-first app the core is where data gets lost if something is wrong. Screens are
+easier to see, test and fix; a sync bug can hide until an auditor's work goes missing.
+
+## Rolling out gradually
+
+The new app didn't replace the native ones for everyone at once. It rolled out gradually, with the native
+app still available while users moved over.
+
+For an offline-first app that isn't caution for its own sake. Auditors work without signal, so at any
+moment someone may have work on the phone that hasn't reached the server yet. A gradual rollout means a
+problem in the new app reaches a few users rather than all of them, and there is still a working app to
+fall back on while it's fixed.
+
+## What I'd tell another team
+
+If you're rewriting an offline-first app, roll it out gradually. Keep the old app available and move users
+over in stages. A big-bang switch bets every auditor's unsynced work on the new app being right on day one.
+
+More on Pulse is in the [case study](/work/pulse).

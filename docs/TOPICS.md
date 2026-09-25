@@ -20,7 +20,6 @@ The [writing rules in CONTENT.md](./CONTENT.md#writing-rules) apply to every pos
 
 | #   | Topic (working title)                                                              | Angle, and who it's for                                                                                       | Source (file: quoted phrase)                                                                                                                                             | Needs from Abhishek                                                       | Status |
 | --- | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- | ------ |
-| 1   | Two native apps into one React Native codebase in six months                       | CTOs weighing a native-to-cross-platform rewrite: how Pulse's rewrite was led and shared with the team        | `career.ts`: "led a full rewrite of both native apps into one **React Native** codebase, architected and co-built with the team in six months"                           | What was carried over, what was split, and what you'd do differently      | idea   |
 | 2   | Releases that stopped being events                                                 | Teams still building releases by hand: moving Pulse to GitHub Actions + Fastlane                              | `career.ts`: "Introduced GitHub Actions + Fastlane releases: bi-weekly cadence and same-day hotfixes, replacing manual builds"                                           | What the pipeline did, step by step                                       | idea   |
 | 3   | Fast on the phones field teams actually carry                                      | Android devs whose users are on low-end devices: memory, cold start and chart-heavy screens (Retail Quotient) | `career.ts`: "tuned for low memory and fast cold start"; "kept responsive on the low-end devices field teams actually carried"                                           | The techniques used (no new numbers unless they go into the resume first) | idea   |
 | 4   | Shipping iOS alongside Android with feature parity                                 | Teams adding a second platform: keeping two native Pulse clients in parity for non-technical users            | `career.ts`: "Wrote and shipped the Swift/iOS client to the App Store alongside Android with feature parity"; "usable by non-technical staff with no training"           | How parity was kept (shared contract, reviews, tests)                     | idea   |
@@ -36,10 +35,11 @@ The [writing rules in CONTENT.md](./CONTENT.md#writing-rules) apply to every pos
 
 ## Published
 
-| Post                                                          | URL                                       | Covers                                            |
-| ------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------- |
-| Offline-first with no server: why HelperBook is local-only    | `/writing/offline-first-without-a-server` | HelperBook: local-only, data-model rules, release |
-| Offline-first with a server: lessons from Pulse's sync engine | `/writing/offline-first-sync-lessons`     | Pulse: the sync contract, ID remapping, conflicts |
+| Post                                                          | URL                                       | Covers                                                                     |
+| ------------------------------------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------- |
+| Offline-first with no server: why HelperBook is local-only    | `/writing/offline-first-without-a-server` | HelperBook: local-only, data-model rules, release                          |
+| Two native apps into one React Native codebase in six months  | `/writing/pulse-react-native-rewrite`     | Pulse: why rewrite, replicated behaviour, core vs screens, gradual rollout |
+| Offline-first with a server: lessons from Pulse's sync engine | `/writing/offline-first-sync-lessons`     | Pulse: the sync contract, ID remapping, conflicts                          |
 
 ## How to use
 
