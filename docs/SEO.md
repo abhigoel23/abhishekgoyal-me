@@ -17,6 +17,13 @@ work; this map is for everything else. Measured in the monthly review ([GROWTH.m
   `src/data/career.ts` and the case studies. Queries that would need experience he doesn't have are listed
   under [Not targeting](#not-targeting).
 
+- **Every post names its target query.** The Post issue template asks for it, and the post links to one
+  service page and sets `offer`. A post with no query in this map gets a row here first.
+- **Measured monthly.** The monthly review issue lists each service page with its query, and asks for its
+  Search Console clicks and impressions, plus impressions and position for each post's primary query.
+  The numbers go in the Monthly tab's Notes (the repo is public). Service pages are listed from
+  `src/data/services.ts`, so a new page appears in the next review without an edit.
+
 Checked with Google autocomplete (English, India and global) on 2026-09-25. Re-check a query before
 writing its page, and replace the evidence column with Search Console data once there is some.
 
