@@ -60,6 +60,14 @@ Hire and decide pages come first: they are fewer searches but much closer to a l
 `/services/fractional` stays as it is: nobody searches for the term, so it sells through referrals and
 the other pages, not search.
 
+### Hub pages
+
+`/`, `/work` and `/services` don't target one query each: the service pages own those. Their `<title>`
+and meta description (`src/data/pages.ts`) name the broad terms instead (Android, iOS, Kotlin
+Multiplatform, offline-first, mobile app development), so a search for the work finds the site, not
+only a search for the name. They leave out the job title until #178 settles it, and the share images
+keep their own headlines.
+
 ### Posts (decide and learn)
 
 | Post (TOPICS.md #)                      | Primary query                              | Variants from autocomplete                                                             | Intent | Links to                  |
