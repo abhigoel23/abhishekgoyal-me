@@ -89,6 +89,8 @@ synced, last write wins by default. The user is warned and can keep their own ve
 Failures on the upload pipeline were logged and monitored, so a stuck upload showed up instead of
 disappearing. Over **4.5 years of field use, no data-loss incidents were reported.**
 
+If your app has to work like this, here's [how I build offline-first apps](/services/offline-first).
+
 ## When the upload queue got stuck
 
 The first version of the queue had a flaw: when one photo failed to upload, the whole queue stopped behind
@@ -125,6 +127,9 @@ reliable background uploads, which the offline engine depended on.
 
 Releases used to be manual builds. I introduced **GitHub Actions and Fastlane**. That gave us a predictable
 bi-weekly release cadence, and same-day hotfixes when a client needed one.
+
+Getting an app back to a steady release rhythm is where [app rescue and modernisation](/services/rescue)
+starts.
 
 ## Results
 
