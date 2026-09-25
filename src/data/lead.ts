@@ -1,7 +1,7 @@
 // Lead form options. Values are stored in D1 and the Sheet, so change a value only with a migration plan;
 // labels can change freely. Budget bands were set by Abhishek (2026-09-22).
 import { profile } from './profile';
-import { services } from './services';
+import { listedServices } from './services';
 
 export const leadPaths = [
   { value: 'project', label: 'A project for my product or team' },
@@ -14,7 +14,7 @@ export const followingPath = { value: 'following', label: 'Just following along'
 export const contactPaths = [...leadPaths, followingPath] as const;
 
 export const serviceOptions = [
-  ...services.map((s) => ({ value: s.id, label: s.title })),
+  ...listedServices.map((s) => ({ value: s.id, label: s.title })),
   { value: 'unsure', label: 'Not sure yet' },
 ];
 

@@ -5,18 +5,32 @@ import Section from '../components/Section.astro';
 import Tag from '../components/Tag.astro';
 import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
-import { engagements, faqs, overlap, process, services, workingLocation } from '../data/services';
+import {
+  engagements,
+  faqs,
+  indiaLink,
+  listedServices,
+  overlap,
+  process,
+  workingLocation,
+} from '../data/services';
 import Base from '../layouts/Base.astro';
 import { faqJsonLd, professionalServiceJsonLd } from '../lib/seo';
 ---
 
-<Base {...pages['/services']} jsonLd={[professionalServiceJsonLd(services), faqJsonLd(faqs)]}>
+<Base {...pages['/services']} jsonLd={[professionalServiceJsonLd(listedServices), faqJsonLd(faqs)]}>
   <Container class="py-16 sm:py-24">
     <p class="eyebrow mb-3">Services</p>
     <h1 class="text-h1 max-w-3xl">Mobile engineering, from the first plan to the store release</h1>
     <p class="mt-5 max-w-2xl text-lead text-muted">
       For founders and product teams who need a mobile app built, rescued or moved to shared code.{' '}
       {workingLocation} {overlap}
+    </p>
+    <p class="mt-3 text-muted">
+      {indiaLink.text}{' '}
+      <a class="link font-medium" href={indiaLink.href}>
+        {indiaLink.label} →
+      </a>
     </p>
     <div class="mt-8">
       <Button href={primaryCta.href} size="lg">
@@ -27,7 +41,7 @@ import { faqJsonLd, professionalServiceJsonLd } from '../lib/seo';
 
   <Container>
     <ul class="grid gap-6 md:grid-cols-2">
-      {services.map((service) => (
+      {listedServices.map((service) => (
         <li id={service.id} class="flex flex-col rounded-brand border border-line p-6 sm:p-8">
           <h2 class="text-h3">
             {service.page ? (

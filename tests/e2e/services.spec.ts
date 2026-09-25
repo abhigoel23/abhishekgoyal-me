@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { services } from '../../src/data/services';
+import { listedServices, services } from '../../src/data/services';
 
 test('services page lists every service and matching FAQ structured data', async ({ page }) => {
   await page.goto('/services');
-  await expect(page.locator('main > div ul > li[id]')).toHaveCount(services.length);
+  await expect(page.locator('main > div ul > li[id]')).toHaveCount(listedServices.length);
 
   const visibleQuestions = await page.locator('#faq details summary').allInnerTexts();
   const jsonLd = JSON.parse(
@@ -51,7 +51,12 @@ for (const service of services.filter((s) => s.page)) {
       faq.mainEntity.map((q) => q.name),
     );
 
+    // Listed services link from their card; unlisted ones (e.g. India) from the hub's intro.
     await page.goto('/services');
-    await expect(page.locator(`#${service.id} a[href="${path}"]`).first()).toBeVisible();
+    const hubLink =
+      service.listed === false
+        ? page.locator(`main a[href="${path}"]`)
+        : page.locator(`#${service.id} a[href="${path}"]`);
+    await expect(hubLink.first()).toBeVisible();
   });
 }
