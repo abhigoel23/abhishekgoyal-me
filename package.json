@@ -14,6 +14,7 @@
     "format": "prettier --write .",
     "typecheck": "pnpm --silent cf:types && astro check --minimalOutput",
     "test": "vitest run",
+    "verify": "pnpm --silent check && pnpm --silent test",
     "test:e2e": "playwright test",
     "test:lead": "CLOUDFLARE_ENV=staging pnpm build && playwright test -c playwright.lead.config.ts",
     "lighthouse": "node scripts/lighthouse.mjs",
@@ -24,6 +25,8 @@
     "icons": "node scripts/build-icons.mjs",
     "share": "node scripts/share.mjs",
     "digest": "node scripts/digest.mjs",
+    "ship": "node scripts/ship.mjs",
+    "ship:merge": "node scripts/ship.mjs merge",
     "prepare": "husky"
   },
   "dependencies": {
