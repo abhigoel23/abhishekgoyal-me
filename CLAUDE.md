@@ -3,7 +3,7 @@
 Personal-brand site for Abhishek Goyal (mobile engineer), with lead capture. Astro 7 + React islands,
 deployed as one Cloudflare Worker (static assets + `/api/*`). Roadmap: GitHub Milestones M0–M6.
 
-## Commands (pnpm 12, Node 26; Homebrew is on PATH via `~/.claude/settings.json` `env`, so no shellenv prefix)
+## Commands (pnpm 12, Node 26; Homebrew is on PATH via `~/.zprofile`; no shellenv prefix needed)
 
 | Task                  | Command                                                                                                |
 | --------------------- | ------------------------------------------------------------------------------------------------------ |
