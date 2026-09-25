@@ -18,6 +18,12 @@ updates:
         versions: ['>=10']
       - dependency-name: '@eslint/js'
         versions: ['>=10']
+      # 2.x and 3.x need ESLint 10.
+      - dependency-name: eslint-plugin-astro
+        versions: ['>=2']
   - package-ecosystem: github-actions
     directory: /
     schedule: { interval: monthly }
+    # One PR for every action bump, across all workflows.
+    groups:
+      actions: { patterns: ['*'] }
