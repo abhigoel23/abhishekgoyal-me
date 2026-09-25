@@ -66,17 +66,19 @@ as easily as it was given — Accept and Decline are equal-weight buttons, no da
 
 The CTA ids currently in the markup, all sent as `cta_click` except where noted:
 
-| `data-cta`                                             | Where                           |
-| ------------------------------------------------------ | ------------------------------- |
-| `header_start_project`                                 | `src/components/Header.astro`   |
-| `hero_start_project`                                   | `src/components/Hero.astro`     |
-| `hero_hire`                                            | `src/components/Hero.astro`     |
-| `hire_request_interview`                               | `src/pages/hire.astro`          |
-| `hire_request_interview_footer`                        | `src/pages/hire.astro`          |
-| `footer_checklist`                                     | `src/components/Footer.astro`   |
-| `service_start_project`                                | `src/pages/services/[id].astro` |
-| `service_start_project_footer`                         | `src/pages/services/[id].astro` |
-| `book_call` (fires `book_call_click`, not `cta_click`) | `src/components/BookCall.astro` |
+| `data-cta`                                             | Where                            |
+| ------------------------------------------------------ | -------------------------------- |
+| `header_start_project`                                 | `src/components/Header.astro`    |
+| `hero_start_project`                                   | `src/components/Hero.astro`      |
+| `hero_hire`                                            | `src/components/Hero.astro`      |
+| `hire_request_interview`                               | `src/pages/hire.astro`           |
+| `hire_request_interview_footer`                        | `src/pages/hire.astro`           |
+| `footer_checklist`                                     | `src/components/Footer.astro`    |
+| `service_start_project`                                | `src/pages/services/[id].astro`  |
+| `service_start_project_footer`                         | `src/pages/services/[id].astro`  |
+| `post_offer_checklist`                                 | `src/components/PostOffer.astro` |
+| `post_offer_service`                                   | `src/components/PostOffer.astro` |
+| `book_call` (fires `book_call_click`, not `cta_click`) | `src/components/BookCall.astro`  |
 
 `track()` (`src/lib/track.ts`) is a no-op until `gtag` exists on `window`, which only happens after
 Accept — so all the browser-side events above are consent-gated automatically, with no separate check

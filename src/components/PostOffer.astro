@@ -1,0 +1,52 @@
+---
+// The offer box at the end of a post: the checklist (the site's lead magnet) or one service page.
+// Chosen per post with `offer` in front matter; copy comes from the checklist and services data.
+import { checklistPage } from '../data/checklist';
+import { services } from '../data/services';
+import { writingCopy } from '../data/writing';
+
+type Props = { offer: string };
+const { offer } = Astro.props;
+
+const service = offer.startsWith('service:')
+  ? services.find((s) => s.id === offer.slice('service:'.length))
+  : undefined;
+const box =
+  offer === 'checklist'
+    ? {
+        eyebrow: checklistPage.eyebrow,
+        title: checklistPage.title,
+        body: checklistPage.lead,
+        link: writingCopy.offer.checklistLink,
+        href: '/checklist',
+        cta: 'post_offer_checklist',
+      }
+    : service?.page
+      ? {
+          eyebrow: writingCopy.offer.serviceEyebrow,
+          title: service.page.title,
+          body: service.summary,
+          link: writingCopy.offer.serviceLink,
+          href: `/services/${service.id}`,
+          cta: 'post_offer_service',
+        }
+      : undefined;
+---
+
+{box && (
+  <aside
+    aria-labelledby="post-offer-title"
+    class="max-w-2xl rounded-brand border border-accent bg-surface p-6 sm:p-8"
+  >
+    <p class="eyebrow mb-2">{box.eyebrow}</p>
+    <h2 id="post-offer-title" class="text-h3">
+      {box.title}
+    </h2>
+    <p class="mt-2 text-muted">{box.body}</p>
+    <p class="mt-4">
+      <a class="link font-medium" href={box.href} data-cta={box.cta}>
+        {box.link} <span aria-hidden="true">→</span>
+      </a>
+    </p>
+  </aside>
+)}
