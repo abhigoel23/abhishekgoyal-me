@@ -236,6 +236,81 @@ export const services: Service[] = [
       'CI/CD with GitHub Actions and Fastlane',
     ],
     proof: { label: 'Pulse case study', href: '/work/pulse' },
+    page: {
+      query: 'migrate xml to jetpack compose',
+      title: 'Android app rescue, modernisation and Compose migration',
+      description:
+        'Android app rescue and modernisation: make releases routine with CI/CD, fix what hurts users first, and move from XML layouts to Jetpack Compose one screen at a time, without stopping releases.',
+      heading: 'Rescue and modernise your Android app, without stopping releases',
+      intro:
+        'For apps that have become hard to change or release. I stabilise first, then modernise in steps you can ship: the release pipeline, the architecture, and the move from XML layouts to Jetpack Compose, one screen at a time.',
+      problems: [
+        'Every release is a manual, stressful event, and a hotfix takes days.',
+        'Small changes break unrelated screens, so nobody wants to touch the old code.',
+        'The UI is still in XML layouts, and new screens are slow to build.',
+        'The app freezes, loses data or starts slowly on the phones your users actually carry.',
+      ],
+      approachTitle: 'Stabilise first, then modernise in steps',
+      approach: [
+        {
+          title: 'Audit the code and the release process',
+          body: 'A paid discovery sprint looks at the codebase, the build and the way releases happen, and ends in a written plan with an incremental migration path.',
+        },
+        {
+          title: 'Make releases routine',
+          body: 'At Pulse I replaced manual builds with GitHub Actions and Fastlane: a predictable bi-weekly cadence and same-day hotfixes. That comes first, so every later change ships safely.',
+        },
+        {
+          title: 'Fix what hurts users first',
+          body: 'At Pulse, one failed photo could stall the whole upload queue. The fix gave each photo its own failed state and a retry, so the rest kept moving. Rescue work starts with problems like that.',
+        },
+        {
+          title: 'Move to Compose one screen at a time',
+          body: 'New screens are built in Jetpack Compose and existing XML screens move over as they’re worked on, so the app keeps shipping throughout. I build production apps in Compose, including 30+ screens on a modular Compose, MVVM, Hilt and Flow codebase.',
+        },
+        {
+          title: 'Know when a rewrite is the right call',
+          body: 'Sometimes steps aren’t enough. In 2025 I led the rewrite of two native apps into one React Native codebase in six months, and it replaced both in production.',
+        },
+      ],
+      outcomes: [
+        { value: 'Bi-weekly', label: 'releases after replacing manual builds with CI/CD' },
+        { value: 'Same-day', label: 'hotfixes once the release pipeline was in place' },
+        { value: '30+', label: 'Compose screens built from concept to production' },
+        { value: '6 months', label: 'to move two native apps onto one codebase' },
+      ],
+      faqs: [
+        {
+          question: 'Do we have to stop feature work?',
+          answer:
+            'No. The plan is incremental: releases keep going while the code improves, and each step ships on its own.',
+        },
+        {
+          question: 'Should we migrate to Jetpack Compose?',
+          answer:
+            'Usually yes for new screens. Compose and XML views can live in the same app, so there’s no big-bang switch. Whether to move older screens depends on how often they change.',
+        },
+        {
+          question: 'Refactor or rewrite?',
+          answer:
+            'Refactor by default, because it keeps releases going. A rewrite makes sense when the platform choice itself is the problem, as with Pulse’s two native apps, which I led into one React Native codebase.',
+        },
+        {
+          question: 'Can you work with our existing team?',
+          answer:
+            'Yes. At Pulse I led a team of 4–6 mobile engineers and set the code-review, sprint and release process.',
+        },
+      ],
+      related: [
+        {
+          label: 'Pulse: releases, the upload queue and the React Native rewrite',
+          href: '/work/pulse',
+        },
+        { label: 'Video-first hiring app: 30+ Compose screens', href: '/work/video-hiring' },
+        { label: 'HelperBook: release engineering for a Compose app', href: '/work/helperbook' },
+      ],
+      ctaHeading: 'Tell me what’s hard to change in your app',
+    },
   },
   {
     id: 'kmp',
