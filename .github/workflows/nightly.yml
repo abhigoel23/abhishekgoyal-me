@@ -22,9 +22,9 @@ jobs:
     if: vars.PRODUCTION_URL != ''
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
         with: { node-version-file: .nvmrc, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
@@ -39,7 +39,7 @@ jobs:
     if: vars.PRODUCTION_URL != ''
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
       # lychee has no crawler: it extracts links from each input it is given. Feeding it every page in
       # the sitemap covers the whole site, and keeps the check honest if a page ever drops out.
       - id: pages
@@ -57,7 +57,7 @@ jobs:
           fail: true
           output: lychee-report.md
       - if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with: { name: lychee-report, path: lychee-report.md, retention-days: 7 }
 
   report:
@@ -66,7 +66,7 @@ jobs:
     if: always() && vars.PRODUCTION_URL != ''
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v8
+      - uses: actions/github-script@v9
         env:
           LIGHTHOUSE: ${{ needs.lighthouse.result }}
           LINKS: ${{ needs.links.result }}

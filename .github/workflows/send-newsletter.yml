@@ -38,7 +38,7 @@ jobs:
           exit 1
       - name: Production needs a test send first, and only goes once
         if: inputs.target == 'production'
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         env:
           NOTE: ${{ inputs.note }}
         with:
@@ -59,8 +59,8 @@ jobs:
             if (!tested) {
               core.setFailed(`Send note ${note} as a test first, from this commit (${context.sha.slice(0, 7)}).`);
             }
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with: { node-version-file: .nvmrc }
       - run: node scripts/newsletter-send.mjs
         env:
