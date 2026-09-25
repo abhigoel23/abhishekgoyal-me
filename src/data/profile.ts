@@ -4,9 +4,9 @@ export const profile = {
   name: 'Abhishek Goyal',
   url: 'https://abhishekgoyal.me',
   email: 'contact@abhishekgoyal.me',
-  jobTitle: 'Founding Mobile Engineer',
+  jobTitle: 'Hands-on Mobile Architect',
   headline:
-    'Founding Mobile Engineer — Android / Kotlin / Compose / KMP · Native iOS · React Native · 0-to-1 Specialist',
+    'Hands-on Mobile Architect — Android / Kotlin / Compose / KMP · Native iOS · React Native · 0-to-1 Specialist',
   positioning: 'I build mobile products from zero to shipped, and own every step in between.',
   intro:
     'Mobile engineer with 13 years on Android and iOS, owning products end to end. Most recently I designed and built HelperBook, a fully offline household-payroll app, and shipped it on Google Play.',

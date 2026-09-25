@@ -20,8 +20,8 @@ describe('pageTitle', () => {
   });
 
   it('leaves titles that already carry the name alone', () => {
-    expect(pageTitle('Abhishek Goyal — Founding Mobile Engineer')).toBe(
-      'Abhishek Goyal — Founding Mobile Engineer',
+    expect(pageTitle('Abhishek Goyal — Hands-on Mobile Architect')).toBe(
+      'Abhishek Goyal — Hands-on Mobile Architect',
     );
   });
 });

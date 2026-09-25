@@ -65,7 +65,8 @@ the other pages, not search.
 `/`, `/work` and `/services` don't target one query each: the service pages own those. Their `<title>`
 and meta description (`src/data/pages.ts`) name the broad terms instead (Android, iOS, Kotlin
 Multiplatform, offline-first, mobile app development), so a search for the work finds the site, not
-only a search for the name. They leave out the job title until #178 settles it, and the share images
+only a search for the name. They leave out the job title (Hands-on Mobile Architect, #178): it isn't a
+search term and would push the service terms past the ~60 characters a result shows. The share images
 keep their own headlines.
 
 ### Posts (decide and learn)
