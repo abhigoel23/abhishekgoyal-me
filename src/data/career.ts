@@ -56,9 +56,9 @@ export const career: Job[] = [
     subtitle:
       'Owned mobile for the Pulse enterprise inspection platform: Android and iOS end to end.',
     highlights: [
-      'Architected the mobile engine from early prototype to **100+ B2B clients** and **20,000+ field users in 10+ countries** (Accor, Tim Hortons, Rebel Foods, Leica); designed the sync contract with the backend and web teams, then built both native clients against it.',
-      'Engineered the offline-first data layer (dynamic form builder, background media upload queue, local SQLite cache) for auditors without connectivity, handling inspections of 500+ questions and 1,000+ photos; no data-loss incidents reported in 4.5 years of field use.',
-      'Shipped the Swift/UIKit iOS client to the App Store alongside Android with feature parity; the Android app is rated **4.7★ from 3,300+ reviews**.',
+      'Architected the mobile engine from early prototype to **100+ B2B clients** and **20,000+ field users in 10+ countries** including Accor and Tim Hortons; designed the sync contract with the backend and web teams.',
+      'Engineered the offline-first data layer (dynamic form builder, background media upload queue, local SQLite cache) for offline auditors, handling inspections of 500+ questions and 1,000+ photos; no data-loss incidents in 4.5 years.',
+      'Shipped the Swift/UIKit iOS client alongside Android with feature parity; the Android app is rated **4.7★ from 3,300+ reviews**.',
       'Led **4–6 mobile engineers**: interviewed candidates, set the review and sprint process, and introduced GitHub Actions + Fastlane releases (bi-weekly cadence, same-day hotfixes).',
       '2025: led a full rewrite of both native apps into one **React Native** codebase, architected and co-built with the team in six months; now in production.',
     ],
@@ -72,7 +72,7 @@ export const career: Job[] = [
     about:
       'Enterprise Android retail and FMCG audit apps for field reps, serving 10,000+ daily active users, tuned for low memory and fast cold start, across 8 major product cycles with founders, PMs and designers.',
     highlights: [
-      'Enterprise Android retail/FMCG audit apps for field reps, serving **10,000+ daily active users**, tuned for low memory and fast cold start; shipped 8 major product cycles with founders, PMs, and designers, and guided junior developers.',
+      'Enterprise Android retail/FMCG audit apps serving **10,000+ daily active users**, tuned for low memory and fast cold start; shipped 8 major product cycles with founders, PMs, and designers, and guided junior developers.',
       'Owned chart-heavy reporting dashboards rendering large result sets, kept responsive on the low-end devices field teams actually carried.',
     ],
   },
