@@ -14,3 +14,21 @@ export const sharePlatforms = {
   // The newsletter digest (`pnpm digest`, scripts/digest.mjs), sent from Resend Broadcasts.
   newsletter: { name: 'Newsletter', utmSource: 'newsletter', utmMedium: 'email' },
 } as const satisfies Record<string, SharePlatform>;
+
+// LinkedIn hashtags for each post tag (`pnpm share`). Post tags are narrow and few people follow them, so
+// each maps to the broader hashtags engineers actually follow. Unmapped tags become CamelCase hashtags.
+export const linkedinHashtags: Record<string, string[]> = {
+  android: ['AndroidDev', 'Kotlin'],
+  ios: ['iOSDev', 'Swift'],
+  'offline-first': ['OfflineFirst'],
+  sync: ['SystemDesign'],
+  'kotlin-multiplatform': ['KotlinMultiplatform', 'KMP'],
+  'react-native': ['ReactNative'],
+  privacy: ['Privacy'],
+};
+
+// Added after the mapped hashtags on every post, while there's room.
+export const baseHashtags = ['MobileDevelopment', 'SoftwareEngineering'];
+
+// More than this reads as spam on LinkedIn.
+export const maxHashtags = 8;
