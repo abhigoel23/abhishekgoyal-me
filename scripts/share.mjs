@@ -2,7 +2,7 @@
 // (docs/CONTENT.md → Cross-posting). Prints only; it posts nothing anywhere.
 import { readdirSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { sharePlatforms } from '../src/data/share.ts';
+import { baseHashtags, linkedinHashtags, maxHashtags, sharePlatforms } from '../src/data/share.ts';
 import { campaignUrl, devtoTags, hashtags, parseFrontMatter } from '../src/lib/share.ts';
 import { profile } from '../src/data/profile.ts';
 
@@ -43,7 +43,7 @@ ${post.description}
 
 ${link(linkedin)}
 
-${hashtags(post.tags).join(' ')}
+${hashtags(post.tags, { map: linkedinHashtags, base: baseHashtags, max: maxHashtags }).join(' ')}
 
 ── ${devto.name} ───────────────────────────────────────────
 The RSS import creates a draft with the canonical URL and tags already set, and dev.to adds its own
