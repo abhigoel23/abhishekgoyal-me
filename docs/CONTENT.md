@@ -280,6 +280,29 @@ The dev.to profile ([@abhishek_goyal_c97dbf2eea](https://dev.to/abhishek_goyal_c
 - Keep the UTM tag on the website link, so visits from the profile show as dev.to in GA4.
 - The email shown on the profile is `contact@abhishekgoyal.me`, the site's public address.
 
+## GitHub profile
+
+GitHub has two parts, both public, and both follow the site:
+
+- **Profile README:** the [abhigoel23/abhigoel23](https://github.com/abhigoel23/abhigoel23) repo. Its
+  intro follows `aboutIntro` in `src/data/about.ts`, "What I build" follows `src/data/services.ts`,
+  "Selected work" follows the case-study summaries, "Stack" follows `knowsAbout` in
+  `src/data/profile.ts` (same order), and "Get in touch" carries the relocation line from
+  `src/data/hire.ts`. Commit straight to its `main`; it isn't covered by this repo's PR rules.
+- **Profile fields** at [github.com/settings/profile](https://github.com/settings/profile):
+
+| GitHub             | Site source                                                         |
+| ------------------ | ------------------------------------------------------------------- |
+| Name               | `name` in `src/data/profile.ts`                                     |
+| Bio (160 max)      | `jobTitle` and the stack from `headline`, then `positioning`        |
+| Website            | `url` in `src/data/profile.ts`                                      |
+| Social accounts    | `links.linkedin` in `src/data/profile.ts`, plus the dev.to profile  |
+| Company, Location  | the latest role in `src/data/career.ts`; `location` in `profile.ts` |
+| Available for hire | on while `/hire` is open                                            |
+
+- The `gh` token has no `user` scope, so `gh api -X PATCH user` fails; edit the fields in the browser,
+  or run `gh auth refresh -h github.com -s user` first. Keep the email hidden.
+
 ## Resume file on other platforms
 
 After the resume changes, regenerate the private PDF (`RESUME_PHONE="+91 …" pnpm resume` after
