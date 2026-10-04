@@ -235,6 +235,22 @@ merge, then copy the wording to LinkedIn. What maps to what:
 - Numbers follow the site exactly: "50,000+ users" (the source is 50K+ Google Play downloads), never a
   rounder or newer figure that isn't in `career.ts` yet.
 
+### LinkedIn Services page
+
+The Services section (Open to → Providing services) is set up separately from the rest of the profile:
+
+- **Services:** chosen from LinkedIn's fixed list, up to 10. It has no entries for MVP builds,
+  offline-first, Kotlin Multiplatform or fractional lead, so the closest matches stand in for the five
+  services in `src/data/services.ts`: Mobile Application Development, Android Development, iOS
+  Development, Application Development, Custom Software Development and IT Consulting.
+- **About (500 characters):** the five services' titles in one sentence, the stacks, the years and the
+  HelperBook and Pulse proof, ending with `abhishekgoyal.me/services`. Update it when a service is added
+  or renamed.
+- **Work location:** Gurugram plus available to work remotely, matching `location` in `profile.ts`.
+- **Pricing:** Contact for pricing. Rates are never published, here or on the site.
+- **Messages:** Open Profile is on, so clients who aren't connections can message for free. Enquiries
+  land in the service requests inbox, not the main messages.
+
 ## Upwork profile
 
 The Upwork profile follows the same rule: the site is the source of truth, and Upwork gets the wording
