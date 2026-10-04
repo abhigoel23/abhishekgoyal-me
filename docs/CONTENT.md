@@ -138,7 +138,7 @@ The fact-check checklist used on the two seed posts:
 - **Ownership stated exactly as the resume does.** For Pulse: founding engineer who architected the initial
   mobile app, web frontend and backend, then Head of Mobility. On mobile: "I owned mobile for Pulse, Android
   and iOS, from an early prototype to 100+ B2B enterprise clients," matching `career.ts`'s "grew the mobile
-  engine from early prototype to **100+ B2B clients**."
+  engine to **100+ B2B clients**."
 - **"Reported" stays "reported."** The claim is "no data-loss incidents were reported in 4.5 years of
   field use" — not "no data was ever lost." That distinction is in both the post and the case study.
 - **Team work is credited.** "I designed the sync contract with the backend and web teams" — not "I
