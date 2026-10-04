@@ -208,7 +208,7 @@ BlogPosting JSON-LD stay pointed at this site (`src/pages/writing/[slug].astro`)
   career entry with `only: 'about'` shows on `/about` alone and one with `only: 'resume'` on `/resume`
   alone; that's how early career is three roles on `/about` and one combined line on the resume.
 - **About page**: `aboutIntro` in `src/data/about.ts` is the LinkedIn About text plus the HelperBook origin
-  story. Change both together (see [LinkedIn profile](#linkedin-profile)).
+  story. Change both together (see [LinkedIn profile](#linkedin-profile) and [Upwork profile](#upwork-profile)).
 
 ## LinkedIn profile
 
@@ -234,6 +234,30 @@ merge, then copy the wording to LinkedIn. What maps to what:
   [Post Inspector](https://www.linkedin.com/post-inspector/).
 - Numbers follow the site exactly: "50,000+ users" (the source is 50K+ Google Play downloads), never a
   rounder or newer figure that isn't in `career.ts` yet.
+
+## Upwork profile
+
+The Upwork profile follows the same rule: the site is the source of truth, and Upwork gets the wording
+after the change is merged. Upwork is pitched at freelance clients, not employers, so the overview is a
+client-facing rewrite of the LinkedIn About ("What I've shipped", then "How I can help") and leaves out
+the open-to-full-time-roles line.
+
+| Upwork             | Site source                                                                                     |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| Title              | a 70-character cut of `headline` in `src/data/profile.ts`                                       |
+| Overview           | `aboutIntro` in `src/data/about.ts` and the case-study summaries, rewritten for clients         |
+| Skills             | `knowsAbout` mapped to Upwork's skill list (it has no Kotlin Multiplatform or Jetpack Compose)  |
+| Employment history | `src/data/career.ts`, the `only: 'about'` entries, one per role (seven in all)                  |
+| Portfolio          | the case studies: HelperBook and Pulse (the video-hiring app has no shareable image, under NDA) |
+| Certifications     | `certifications` in `src/data/career.ts`                                                        |
+
+- Limits: title 70 characters, employment description 1,000, portfolio title 70 and description 600,
+  five skills per portfolio item. Trim wording to fit; keep the team credit ("co-built with the team").
+- No links to abhishekgoyal.me (Upwork restricts off-platform links). A portfolio item can link to the
+  app's store listing instead, as HelperBook links to Google Play.
+- A portfolio item can't be published without an uploaded thumbnail image, which has to be done by
+  hand; the screenshots are in `src/assets/work/<slug>/`.
+- Hourly rate and availability are Abhishek's call; don't change them when syncing copy.
 
 ## Troubleshooting
 
