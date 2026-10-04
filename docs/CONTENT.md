@@ -258,6 +258,23 @@ the open-to-full-time-roles line.
 - A portfolio item can't be published without an uploaded thumbnail image, which has to be done by
   hand; the screenshots are in `src/assets/work/<slug>/`.
 - Hourly rate and availability are Abhishek's call; don't change them when syncing copy.
+- The overview's opening lines follow the resume summary in `src/data/resume.ts` (13 years, end-to-end
+  ownership, founding engineer, 50,000+ users); when the summary changes, update the overview too.
+
+## Resume file on other platforms
+
+After the resume changes, regenerate the private PDF (`RESUME_PHONE="+91 …" pnpm resume` after
+`pnpm build`) and replace the copy saved on LinkedIn:
+
+- **LinkedIn:** Jobs → Settings → Job application settings
+  (`https://www.linkedin.com/jobs/application-settings/`). Upload
+  `resume/out/Abhishek-Goyal-Resume.pdf`, then delete the older copies so Easy Apply can't send an
+  outdated one. Keep exactly one saved resume. This copy has the phone number, so it goes here only,
+  never in Featured; anything public uses the phone-free `/resume.pdf`.
+- **Upwork:** no resume upload. Upwork's resume import only pre-fills the profile and would overwrite
+  the synced fields; the profile itself carries the resume content.
+- Uploads go through the file picker, which Claude's in-app browser can't drive: Abhishek uploads, Claude
+  checks the list afterwards.
 
 ## Troubleshooting
 
