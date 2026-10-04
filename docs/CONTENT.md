@@ -261,6 +261,25 @@ the open-to-full-time-roles line.
 - The overview's opening lines follow the resume summary in `src/data/resume.ts` (13 years, end-to-end
   ownership, founding engineer, 50,000+ users); when the summary changes, update the overview too.
 
+## dev.to profile
+
+The dev.to profile ([@abhishek_goyal_c97dbf2eea](https://dev.to/abhishek_goyal_c97dbf2eea), set up in
+#133 for the RSS import above) follows the same rule: change the site first, then copy the wording at
+[dev.to/settings/profile](https://dev.to/settings/profile).
+
+| dev.to               | Site source                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------- |
+| Website URL          | `https://abhishekgoyal.me/?utm_source=devto&utm_medium=social&utm_campaign=profile`     |
+| Location             | `location` in `src/data/profile.ts`                                                     |
+| Bio (200 characters) | `positioning` in `src/data/profile.ts`, then years, stack and HelperBook                |
+| Available for        | the services in `src/data/services.ts`, then the full-time setups in `src/data/hire.ts` |
+| Skills/Languages     | `knowsAbout` in `src/data/profile.ts`, in the same order                                |
+| Currently hacking on | the HelperBook entry in `src/data/career.ts`                                            |
+| Work, Education      | the latest role and `education` in `src/data/career.ts`                                 |
+
+- Keep the UTM tag on the website link, so visits from the profile show as dev.to in GA4.
+- The email shown on the profile is `contact@abhishekgoyal.me`, the site's public address.
+
 ## Resume file on other platforms
 
 After the resume changes, regenerate the private PDF (`RESUME_PHONE="+91 …" pnpm resume` after
