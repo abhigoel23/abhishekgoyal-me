@@ -5,7 +5,7 @@ import Button from '../components/Button.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import { aboutIntro, values } from '../data/about';
-import { aboutCareer, education } from '../data/career';
+import { aboutCareer, certifications, education } from '../data/career';
 import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
@@ -98,6 +98,15 @@ const aboutPage = { '@type': 'AboutPage', mainEntity: { '@id': `${profile.url}/#
     <p class="mt-10 max-w-3xl text-sm text-muted">
       Education: {education.degree}, {education.school}
     </p>
+    {certifications.map((cert) => (
+      <p class="mt-2 max-w-3xl text-sm text-muted">
+        Certification:{' '}
+        <a class="link" href={cert.href}>
+          {cert.name}
+        </a>
+        , {cert.issuer}, {cert.year}
+      </p>
+    ))}
   </Section>
 
   <Container class="pb-8">

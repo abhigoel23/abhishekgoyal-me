@@ -128,3 +128,12 @@ export const education = {
   degree: 'Bachelor of Computer Applications (BCA)',
   school: 'Amity University',
 };
+
+export const certifications = [
+  {
+    name: 'Generative AI for Mobile App Developers',
+    issuer: 'IBM',
+    year: '2026',
+    href: 'https://www.coursera.org/account/accomplishments/specialization/AZOLN0AT3FYX',
+  },
+];
