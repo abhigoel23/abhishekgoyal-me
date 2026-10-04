@@ -1,6 +1,6 @@
 // Resume-only content (summary and core stack). Experience comes from career.ts, identity from profile.ts.
 export const resumeSummary =
-  'Mobile engineer with 13 years of experience taking products from zero to shipped. Owned four greenfield Android builds end to end, most recently HelperBook, a fully offline household-payroll app I designed, built, and shipped on Google Play. Previously founding engineer and owner of Android *and* App Store iOS for an enterprise inspection platform that grew to 100+ B2B clients and 50,000+ users on an offline-first sync engine I architected, leading a team of 4–6.';
+  'Mobile engineer with 13 years taking products from zero to shipped. Owned four greenfield Android builds end to end, most recently HelperBook, a fully offline household-payroll app I designed, built, and shipped on Google Play. Previously founding engineer and owner of Android *and* App Store iOS for an enterprise inspection platform that grew to 100+ B2B clients and 50,000+ users on an offline-first sync engine I architected, leading a team of 4–6. Open to relocation with visa sponsorship.';
 
 export const coreStack = [
   {
