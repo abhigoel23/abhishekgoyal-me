@@ -54,7 +54,7 @@ Hire and decide pages come first: they are fewer searches but much closer to a l
    (Pulse, HelperBook, EzHealth) and until now sat inside the MVP service.
 2. The XML-to-Compose migration Abhishek has done was in a private project, so the page doesn't claim
    one. It claims production Compose (video-hiring, HelperBook) and describes the screen-by-screen
-   migration as the offer, with release and rescue proof from Pulse and Retail Quotient.
+   migration as the offer, with release and rescue proof from Pulse and Redquanta.
 3. Indian clients are billed in INR (confirmed 2026-09-25). Still to confirm: meeting in person in Delhi NCR.
 
 `/services/fractional` stays as it is: nobody searches for the term, so it sells through referrals and

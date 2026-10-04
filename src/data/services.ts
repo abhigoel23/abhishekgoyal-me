@@ -463,7 +463,7 @@ export const services: Service[] = [
         },
         {
           title: 'Built for the phones your users carry',
-          body: 'At Retail Quotient I tuned enterprise Android apps for low memory and fast cold start, and kept chart-heavy dashboards responsive on the low-end devices field teams actually carried.',
+          body: 'At Redquanta I tuned enterprise Android apps for low memory and fast cold start, and kept chart-heavy dashboards responsive on the low-end devices field teams actually carried.',
         },
         {
           title: 'DPDP-aware by design',
