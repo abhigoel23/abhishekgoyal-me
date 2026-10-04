@@ -5,7 +5,7 @@ import Button from '../components/Button.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import { aboutIntro, values } from '../data/about';
-import { career, education } from '../data/career';
+import { aboutCareer, education } from '../data/career';
 import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
@@ -71,7 +71,7 @@ const aboutPage = { '@type': 'AboutPage', mainEntity: { '@id': `${profile.url}/#
 
   <Section id="path" eyebrow="The path so far" title="13 years, newest first">
     <ol class="max-w-3xl border-l border-line">
-      {career.map((job) => (
+      {aboutCareer.map((job) => (
         <li class="relative pb-10 pl-8 last:pb-0">
           <span
             aria-hidden="true"

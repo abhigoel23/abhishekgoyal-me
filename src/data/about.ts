@@ -14,7 +14,7 @@ export const values = [
   },
   {
     title: 'Offline-first',
-    body: 'From a tablet app for doctors with bidirectional sync in my first job to Pulse’s auditors working without connectivity, apps that keep working offline run through my career.',
+    body: 'From a tablet app for doctors with bidirectional sync early in my career to Pulse’s auditors working without connectivity, apps that keep working offline run through my career.',
   },
   {
     title: 'Privacy by design',

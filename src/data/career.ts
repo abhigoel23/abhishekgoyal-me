@@ -13,6 +13,8 @@ export type Job = {
   subtitle?: string;
   highlights: string[];
   href?: string;
+  /** Show the job only on /about or only on the resume (which combines early career to stay one page). */
+  only?: 'about' | 'resume';
 };
 
 export const career: Job[] = [
@@ -77,17 +79,50 @@ export const career: Job[] = [
     ],
   },
   {
-    role: 'Software Engineer',
+    role: 'Senior Software Engineer',
+    company: 'LSA Software',
+    period: 'Apr 2017 – Apr 2018',
+    location: 'Noida',
+    about:
+      'Backend integrations for OUTFY’s marketing automation platform with BigCommerce, eBay and Weebly, plus analytics dashboards and campaign tracking.',
+    highlights: [],
+    only: 'about',
+  },
+  {
+    role: 'Senior Software Engineer',
+    company: 'Startup Techies',
+    period: 'Sep 2013 – Mar 2017',
+    location: 'Noida',
+    about:
+      'Android apps in food, healthcare and safety: EzHealth Track, an offline-first tablet app for doctors with bidirectional sync; SafeON, voice-activated safety tracking; and Eatlo, a social food-sharing app with a custom multi-touch canvas and Google Maps.',
+    highlights: [],
+    only: 'about',
+  },
+  {
+    role: 'Android Developer',
+    company: 'INID Digimedia',
+    period: 'Apr 2013 – Sep 2013',
+    location: 'Noida',
+    about:
+      'Where it started: iCouch, a real-time TV chat app with socket-based group chat, Facebook and Twitter SDKs and push notifications.',
+    highlights: [],
+    only: 'about',
+  },
+  {
+    role: 'Android Developer → Sr. Software Engineer',
     company: 'Startup Techies / LSA Software / INID Digimedia',
     period: 'Apr 2013 – Apr 2018',
     location: 'Noida',
-    about:
-      'Where it started: an offline-first tablet app for doctors with bidirectional sync, voice-activated safety tracking with socket-based group chat, and a social food-sharing app with a custom multi-touch canvas.',
+    about: 'Early career, combined on the resume.',
     highlights: [
-      '**EzHealth Track:** offline-first tablet app for doctors with bidirectional sync. **SafeON / iCouch:** voice-activated safety tracking and socket-based group chat. **Eatlo:** social food-sharing app with custom multi-touch canvas and Google Maps.',
+      '**EzHealth Track:** offline-first tablet app for doctors with bidirectional sync. **SafeON:** voice-activated safety tracking. **iCouch:** real-time TV chat over sockets. **Eatlo:** social food-sharing app with custom multi-touch canvas and Google Maps.',
     ],
+    only: 'resume',
   },
 ];
+
+export const aboutCareer = career.filter((job) => job.only !== 'resume');
+export const resumeCareer = career.filter((job) => job.only !== 'about');
 
 export const education = {
   degree: 'Bachelor of Computer Applications (BCA)',
