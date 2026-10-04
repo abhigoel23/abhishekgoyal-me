@@ -19,14 +19,15 @@ export const profile = {
   ],
   knowsAbout: [
     'Android',
+    'Kotlin Multiplatform',
+    'iOS',
+    'React Native',
+    'Offline-first architecture',
     'Kotlin',
     'Jetpack Compose',
-    'Kotlin Multiplatform',
     'SQLDelight',
     'Swift',
-    'React Native',
     'SwiftUI',
-    'Offline-first sync',
     'DPDP-aware design',
   ],
   links: {
