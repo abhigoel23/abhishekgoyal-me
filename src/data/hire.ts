@@ -1,7 +1,11 @@
 // /hire copy for employers. Facts must match the resume; availability and setups were confirmed by Abhishek.
 export const availability = 'Open to full-time roles where I can own mobile end to end.';
 
-export const setups = ['Remote', 'Hybrid or on-site in Delhi NCR'];
+export const setups = [
+  'Remote',
+  'Hybrid or on-site in Delhi NCR',
+  'Relocation abroad with visa sponsorship',
+];
 
 export const atAGlance = [
   { label: 'Experience', value: '13 years in mobile, Android and iOS' },
