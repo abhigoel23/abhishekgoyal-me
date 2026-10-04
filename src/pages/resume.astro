@@ -3,7 +3,7 @@
 // phone number via `pnpm resume`), so the web page and PDF always match. It stays one A4 page: the build fails otherwise.
 import { Font } from 'astro:assets';
 import SEO from '../components/SEO.astro';
-import { resumeCareer, education } from '../data/career';
+import { certifications, education, resumeCareer } from '../data/career';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
 import { coreStack, resumeSummary } from '../data/resume';
@@ -97,9 +97,15 @@ const contactLines: ContactItem[][] = [
         </section>
       ))}
 
-      <h2>Education</h2>
+      <h2>Education &amp; certifications</h2>
       <p>
         <strong>{education.degree}</strong> — {education.school}
+        {certifications.map((cert) => (
+          <>
+            {' · '}
+            <a href={cert.href}>{cert.name}</a> — {cert.issuer}, {cert.year}
+          </>
+        ))}
       </p>
     </main>
   </body>
