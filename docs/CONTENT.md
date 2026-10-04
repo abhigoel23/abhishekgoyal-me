@@ -224,6 +224,7 @@ merge, then copy the wording to LinkedIn. What maps to what:
 | Top skills                    | the first five of `knowsAbout` in `src/data/profile.ts`                                  |
 | Skills section                | `knowsAbout` plus the stacks in `src/content/work/`                                      |
 | Featured                      | the home page and the three case studies                                                 |
+| Experience media              | each role's case study (`href`); LSA: outfy.com and the OUTFY Google Play listing        |
 | Projects                      | the three case studies: summary, then `Case study: https://abhishekgoyal.me/work/<slug>` |
 | Licenses & certifications     | `certifications` in `src/data/career.ts`                                                 |
 | Open to work                  | `setups` in `src/data/hire.ts` and the relocation work mode in `src/data/lead.ts`        |
