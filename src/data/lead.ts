@@ -50,6 +50,7 @@ export const timelines = [
 export const workModes = [
   { value: 'remote', label: 'Remote' },
   { value: 'hybrid-ncr', label: 'Hybrid or on-site in Delhi NCR' },
+  { value: 'relocation', label: 'Relocation abroad with visa sponsorship' },
 ] as const;
 
 // Copy for the /contact form (src/components/react/LeadForm.tsx). Kept in data, not the component.
