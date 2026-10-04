@@ -70,9 +70,9 @@ export const career: Job[] = [
     period: 'May 2018 – Jan 2021',
     location: 'Mumbai',
     about:
-      'Enterprise Android retail and FMCG audit apps for field reps, serving 10,000+ daily active users, tuned for low memory and fast cold start, across 8 major product cycles with founders, PMs and designers.',
+      'Redquanta, enterprise Android retail and FMCG audit apps for field reps, serving 10,000+ daily active users, tuned for low memory and fast cold start, across 8 major product cycles with founders, PMs and designers.',
     highlights: [
-      'Enterprise Android retail/FMCG audit apps serving **10,000+ daily active users**, tuned for low memory and fast cold start; shipped 8 major product cycles with founders, PMs, and designers, and guided junior developers.',
+      'Enterprise Android retail/FMCG audit apps (**Redquanta**) serving **10,000+ daily active users**, tuned for low memory and fast cold start; shipped 8 major product cycles with founders, PMs, and designers, and guided junior developers.',
       'Owned chart-heavy reporting dashboards rendering large result sets, kept responsive on the low-end devices field teams actually carried.',
     ],
   },
