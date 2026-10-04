@@ -114,7 +114,7 @@ export const services: Service[] = [
         {
           question: 'Do you build the backend too?',
           answer:
-            'When the MVP needs a simple one, yes: I’ve shipped backends on Firebase and Django. For bigger systems I work with your backend team from an agreed API contract, as I did at Pulse.',
+            'When the MVP needs one, yes: I’ve shipped backends on Firebase and Django, and as Pulse’s founding engineer I architected its initial backend and web frontend alongside the mobile app. For bigger systems I work with your backend team from an agreed API contract, as I did at Pulse once it grew.',
         },
         {
           question: 'Who owns the code?',
@@ -145,7 +145,7 @@ export const services: Service[] = [
       query: 'offline first mobile app',
       title: 'Offline-first mobile app development',
       description:
-        'Offline-first Android and iOS app development: local-first data, sync designed with your backend, reliable background uploads and conflict handling. Proven on an app with 20,000+ field users and no data-loss incidents in 4.5 years.',
+        'Offline-first Android and iOS app development: local-first data, sync designed with your backend, reliable background uploads and conflict handling. Proven on an app with 50,000+ users and no data-loss incidents in 4.5 years.',
       heading: 'Offline-first mobile apps that don’t lose your users’ work',
       intro:
         'Your users work where the signal doesn’t reach: on site, in the field, on the move. I build apps where the phone’s database is the source of truth and sync is designed up front, so work is never blocked by a missing connection and never lost when it comes back.',
@@ -179,7 +179,7 @@ export const services: Service[] = [
         },
       ],
       outcomes: [
-        { value: '20,000+', label: 'field users in 10+ countries on an offline-first app I led' },
+        { value: '50,000+', label: 'users in 10+ countries on an offline-first app I led' },
         { value: '0', label: 'data-loss incidents reported in 4.5 years of field use' },
         { value: '500+', label: 'questions in a single inspection, filled in offline' },
         { value: '1,000+', label: 'photos per inspection, uploaded in the background' },

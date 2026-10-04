@@ -17,7 +17,7 @@ export const atAGlance = [
   {
     label: 'Leadership',
     value:
-      'Head of Mobility at Aim North: led 4–6 mobile engineers and the 2025 React Native rewrite',
+      'Founding engineer, then Head of Mobility at Aim North: led 4–6 mobile engineers and the 2025 React Native rewrite',
   },
   {
     label: 'Strengths',
@@ -27,7 +27,7 @@ export const atAGlance = [
 
 export const highlights = [
   {
-    text: 'Architected an offline-first mobile engine that grew from early prototype to 100+ B2B enterprise clients and 20,000+ field users in 10+ countries, with no data-loss incidents reported in 4.5 years of field use.',
+    text: 'Architected an offline-first mobile engine that grew from early prototype to 100+ B2B enterprise clients and 50,000+ users in 10+ countries, with no data-loss incidents reported in 4.5 years of field use.',
     href: '/work/pulse',
   },
   {

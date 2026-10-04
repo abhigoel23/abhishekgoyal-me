@@ -17,13 +17,13 @@ export const pages = {
   '/': {
     title: `${profile.name} — Android, iOS and offline-first mobile app developer`,
     description:
-      'Mobile app developer for startups and product teams: Android, iOS, Kotlin Multiplatform and React Native. 13 years, from MVPs to an app with 20,000+ users.',
+      'Mobile app developer for startups and product teams: Android, iOS, Kotlin Multiplatform and React Native. 13 years, from MVPs to an app with 50,000+ users.',
     ogTitle: profile.positioning,
   },
   '/work': {
     title: 'Mobile app case studies',
     description:
-      'Mobile app case studies: an offline-first inspection app with 20,000+ field users, a household salary app on a shared KMP data layer, and a video hiring app.',
+      'Mobile app case studies: an offline-first inspection app with 50,000+ users, a household salary app on a shared KMP data layer, and a video hiring app.',
     ogTitle: 'Case studies: mobile products taken from zero to shipped',
   },
   '/services': {

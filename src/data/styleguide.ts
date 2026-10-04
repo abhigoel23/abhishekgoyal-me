@@ -10,7 +10,7 @@ export const sampleWork = [
     href: '/work/helperbook',
   },
   {
-    eyebrow: 'Head of Mobility · 2021–2025',
+    eyebrow: 'Founding Engineer · 2021–2025',
     title: 'Pulse offline-sync engine',
     summary:
       'The offline-first engine behind an enterprise inspection platform that grew to 100+ B2B clients. No data-loss incidents reported in 4.5 years of field use.',

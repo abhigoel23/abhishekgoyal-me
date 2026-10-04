@@ -15,7 +15,7 @@ export const profile = {
   stats: [
     { value: '13', label: 'years building mobile apps' },
     { value: '100+', label: 'B2B clients on an offline-first engine I architected' },
-    { value: '20,000+', label: 'field users in 10+ countries on an app I led' },
+    { value: '50,000+', label: 'users in 10+ countries on an app I led' },
   ],
   knowsAbout: [
     'Android',
