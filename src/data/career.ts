@@ -60,7 +60,7 @@ export const career: Job[] = [
       'Engineered the offline-first data layer (dynamic form builder, background media upload queue, local SQLite cache) for offline auditors, handling inspections of 500+ questions and 1,000+ photos; no data-loss incidents in 4.5 years.',
       'Shipped the Swift/UIKit iOS client alongside Android with feature parity; the Android app is rated **4.7★ from 3,300+ reviews**.',
       'Led **4–6 mobile engineers**: interviewed candidates, set the review and sprint process, and introduced GitHub Actions + Fastlane releases (bi-weekly cadence, same-day hotfixes).',
-      '2025: architected and led the rewrite of both native apps into one **React Native** codebase in six months; in production.',
+      '2025: architected and led the rewrite of both native apps into one **React Native** codebase, co-built with the team in six months.',
     ],
     href: '/work/pulse',
   },
