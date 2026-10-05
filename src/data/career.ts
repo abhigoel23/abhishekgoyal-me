@@ -84,7 +84,7 @@ export const career: Job[] = [
     period: 'Apr 2017 – Apr 2018',
     location: 'Noida',
     about:
-      'Led Android development for OUTFY, a social media automation platform for online stores; most of my work was its backend integrations with BigCommerce, eBay and Weebly and the web frontend for analytics dashboards and campaign tracking.',
+      'OUTFY, a social media automation platform for online stores: Ruby on Rails integrations with Shopify, WooCommerce, BigCommerce, Etsy, eBay and Weebly (store auth, product fetching for posts, webhooks), the Image Collage feature on web and Android, and the Android app, built with a junior developer I led.',
     highlights: [],
     only: 'about',
   },
@@ -115,7 +115,7 @@ export const career: Job[] = [
     location: 'Noida',
     about: 'Early career, combined on the resume.',
     highlights: [
-      '**OUTFY:** led Android development; backend store integrations and web dashboards. **EzHealth Track:** offline-first tablet app for doctors with bidirectional sync. **SafeON:** voice-activated safety tracking. **iCouch:** real-time TV chat over sockets. **Eatlo:** social food-sharing app with custom multi-touch canvas and Google Maps.',
+      '**OUTFY:** Rails integrations with Shopify, WooCommerce, BigCommerce, Etsy, eBay and Weebly (auth, products, webhooks); led Android. **EzHealth Track:** offline-first tablet app for doctors with bidirectional sync. **SafeON:** voice-activated safety tracking. **iCouch:** real-time TV chat over sockets. **Eatlo:** social food-sharing app with custom multi-touch canvas and Google Maps.',
     ],
     only: 'resume',
   },
