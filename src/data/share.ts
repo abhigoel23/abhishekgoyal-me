@@ -25,6 +25,10 @@ export const linkedinHashtags: Record<string, string[]> = {
   'kotlin-multiplatform': ['KotlinMultiplatform', 'KMP'],
   'react-native': ['ReactNative'],
   privacy: ['Privacy'],
+  // Client-facing posts: founders follow these, and #Hiring reaches job seekers instead.
+  hiring: ['AppDevelopment'],
+  startups: ['Startups', 'Founders'],
+  mvp: ['MVP', 'ProductDevelopment'],
 };
 
 // Added after the mapped hashtags on every post, while there's room.
