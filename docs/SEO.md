@@ -78,6 +78,7 @@ keep their own headlines.
 | #1 Two native apps into one RN codebase | react native vs native app                 | react native vs native app development                                                 | Decide | `/services/rescue`        |
 | #18 What an Android app costs in India  | mobile app development cost india 2026     | mobile app development charges in india · cost estimate in india                       | Decide | `/services/india`         |
 | #10 Offline-first in three products     | offline first mobile app architecture      | offline first architecture android                                                     | Learn  | `/services/offline-first` |
+| #19 How to hire an app developer        | how to hire an app developer               | how to hire app developers in india · questions to ask app developers                  | Decide | `/services/mvp`           |
 | #15 Offline-first by default            | offline first android app                  | offline first approach android                                                         | Decide | `/services/offline-first` |
 | #12 HelperBook's shared KMP module      | kmp sqldelight vs room                     | sqldelight kmp migration · sqldelight kmp ios                                          | Learn  | `/services/kmp`           |
 | #7 CameraX to Media3                    | camerax record video                       | none                                                                                   | Learn  | `/services/mvp`           |
