@@ -75,6 +75,13 @@ try {
         if (ref.weight > 0 && audit.score !== null && audit.score < 1)
           console.error(`  - ${audit.title}`);
       }
+      // CLS names no element on its own: print each shift's node and cause (e.g. "Web font loaded").
+      if (id === 'performance' && lhr.audits['cumulative-layout-shift']?.score < 1) {
+        for (const shift of lhr.audits['layout-shifts']?.details?.items ?? []) {
+          const causes = shift.subItems?.items?.map((s) => s.cause).join(', ') || 'unknown cause';
+          console.error(`    ${shift.score.toFixed(3)} ${shift.node?.selector ?? '?'} (${causes})`);
+        }
+      }
     }
   }
   console.table(rows);
