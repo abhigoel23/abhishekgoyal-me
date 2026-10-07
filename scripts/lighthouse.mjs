@@ -30,6 +30,14 @@ if (!base) {
   await waitFor(base);
 }
 
+// A short-lived iframe (Turnstile on the form pages) can detach before Lighthouse's target manager
+// attaches to it. That rejects in an event handler, outside the audit's promise, and would end the
+// process; the audit itself still completes, so ignore just that error.
+process.on('unhandledRejection', (error) => {
+  if (String(error?.message).includes('Session with given id not found')) return;
+  throw error;
+});
+
 let failed = false;
 const browser = await chromium.launch({ args: [`--remote-debugging-port=${DEBUG_PORT}`] });
 try {
@@ -74,6 +82,13 @@ try {
         const audit = lhr.audits[ref.id];
         if (ref.weight > 0 && audit.score !== null && audit.score < 1)
           console.error(`  - ${audit.title}`);
+      }
+      // CLS names no element on its own: print each shift's node and cause (e.g. "Web font loaded").
+      if (id === 'performance' && lhr.audits['cumulative-layout-shift']?.score < 1) {
+        for (const shift of lhr.audits['layout-shifts']?.details?.items ?? []) {
+          const causes = shift.subItems?.items?.map((s) => s.cause).join(', ') || 'unknown cause';
+          console.error(`    ${shift.score.toFixed(3)} ${shift.node?.selector ?? '?'} (${causes})`);
+        }
       }
     }
   }
