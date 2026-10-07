@@ -35,10 +35,17 @@ const browser = await chromium.launch({ args: [`--remote-debugging-port=${DEBUG_
 try {
   const rows = [];
   for (const url of await sitemapUrls(base)) {
-    const audit = (categories) =>
+    const run = (categories) =>
       lighthouse(url, { port: DEBUG_PORT, logLevel: 'error', onlyCategories: categories }).then(
         (r) => r.lhr,
       );
+    // Lighthouse sometimes loses its DevTools session on the runner ("Session with given id not
+    // found"). Retry once so one crash doesn't end the whole gate; a second one is a real failure.
+    const audit = (categories) =>
+      run(categories).catch((error) => {
+        console.log(`${new URL(url).pathname}: Lighthouse crashed (${error.message}), retrying`);
+        return run(categories);
+      });
     const first = await audit(CATEGORIES);
     // lhr per category: the first run, except performance, which comes from the median run.
     const byCategory = Object.fromEntries(CATEGORIES.map((id) => [id, first]));

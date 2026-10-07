@@ -28,7 +28,6 @@ jobs:
         with: { node-version-file: .nvmrc, cache: pnpm }
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
-      - run: fc-match Arial; fc-match sans-serif; fc-list | grep -ciE 'liberation|arial' || true # TEMP #242
       # All four categories must be >= 95 here (LIGHTHOUSE_GATE_ALL), unlike on a PR.
       - run: pnpm lighthouse
         env:
