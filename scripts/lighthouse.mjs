@@ -30,22 +30,23 @@ if (!base) {
   await waitFor(base);
 }
 
+// A short-lived iframe (Turnstile on the form pages) can detach before Lighthouse's target manager
+// attaches to it. That rejects in an event handler, outside the audit's promise, and would end the
+// process; the audit itself still completes, so ignore just that error.
+process.on('unhandledRejection', (error) => {
+  if (String(error?.message).includes('Session with given id not found')) return;
+  throw error;
+});
+
 let failed = false;
 const browser = await chromium.launch({ args: [`--remote-debugging-port=${DEBUG_PORT}`] });
 try {
   const rows = [];
   for (const url of await sitemapUrls(base)) {
-    const run = (categories) =>
+    const audit = (categories) =>
       lighthouse(url, { port: DEBUG_PORT, logLevel: 'error', onlyCategories: categories }).then(
         (r) => r.lhr,
       );
-    // Lighthouse sometimes loses its DevTools session on the runner ("Session with given id not
-    // found"). Retry once so one crash doesn't end the whole gate; a second one is a real failure.
-    const audit = (categories) =>
-      run(categories).catch((error) => {
-        console.log(`${new URL(url).pathname}: Lighthouse crashed (${error.message}), retrying`);
-        return run(categories);
-      });
     const first = await audit(CATEGORIES);
     // lhr per category: the first run, except performance, which comes from the median run.
     const byCategory = Object.fromEntries(CATEGORIES.map((id) => [id, first]));
