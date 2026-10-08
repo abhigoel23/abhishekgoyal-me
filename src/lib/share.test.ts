@@ -1,5 +1,6 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { linkedinHashtags } from '../data/share';
 import { campaignUrl, devtoTags, hashtags, parseFrontMatter } from './share';
 
 describe('campaignUrl', () => {
@@ -73,8 +74,37 @@ describe('parseFrontMatter', () => {
 });
 
 describe('tags', () => {
-  it('makes LinkedIn hashtags', () => {
-    expect(hashtags(['offline-first', 'Android', '--'])).toEqual(['#offlinefirst', '#android']);
+  it('makes CamelCase LinkedIn hashtags from unmapped tags', () => {
+    expect(hashtags(['offline-first', 'android', '--'])).toEqual(['#OfflineFirst', '#Android']);
+  });
+
+  it('maps tags, adds the base hashtags, dedupes ignoring case and caps the count', () => {
+    const options = {
+      map: { android: ['AndroidDev', 'Kotlin'], kmp: ['Kotlin', 'KMP'] },
+      base: ['MobileDevelopment', 'kotlin', 'SoftwareEngineering'],
+    };
+    expect(hashtags(['Android', 'kmp', 'sync'], options)).toEqual([
+      '#AndroidDev',
+      '#Kotlin',
+      '#KMP',
+      '#Sync',
+      '#MobileDevelopment',
+      '#SoftwareEngineering',
+    ]);
+    expect(hashtags(['Android', 'kmp', 'sync'], { ...options, max: 3 })).toEqual([
+      '#AndroidDev',
+      '#Kotlin',
+      '#KMP',
+    ]);
+  });
+
+  it('maps every real post tag in src/data/share.ts', () => {
+    const dir = new URL('../content/writing/', import.meta.url);
+    for (const file of readdirSync(dir).filter((f) => f.endsWith('.mdx'))) {
+      for (const tag of parseFrontMatter(readFileSync(new URL(file, dir), 'utf8')).tags) {
+        expect(linkedinHashtags, `${file}: ${tag}`).toHaveProperty([tag]);
+      }
+    }
   });
 
   it('keeps at most 4 dev.to tags, letters and digits only', () => {

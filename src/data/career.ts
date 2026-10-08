@@ -13,6 +13,8 @@ export type Job = {
   subtitle?: string;
   highlights: string[];
   href?: string;
+  /** Show the job only on /about or only on the resume (which combines early career to stay one page). */
+  only?: 'about' | 'resume';
 };
 
 export const career: Job[] = [
@@ -28,7 +30,7 @@ export const career: Job[] = [
     highlights: [
       '**No signup, no server:** records live on-device via SQLDelight in a shared KMP module, with user-owned export/restore. Keeping wage data off any server keeps the app outside data-fiduciary scope under DPDP, and gives households a reason to enter real numbers.',
       '**Product rules in the data model:** unmarked days default to present so a worker is never underpaid; half-days deduct exactly half; settlement statements are generated bilingually (English/Hindi) so employer and helper can both read every line.',
-      '**Release engineering:** signed AAB with R8 rules for SQLDelight and kotlinx-serialization, Crashlytics with no names or amounts in logs, Data Safety declarations, staged-rollout plan. Closed beta with 12–20 households; Compose, min SDK 24, target API 35.',
+      '**Release engineering:** signed AAB with R8 rules for SQLDelight and kotlinx-serialization, Crashlytics with no names or amounts in logs, Data Safety declarations, staged-rollout plan. Live on Google Play; Compose, min SDK 24, target API 35.',
     ],
     href: '/work/helperbook',
   },
@@ -47,49 +49,91 @@ export const career: Job[] = [
     href: '/work/video-hiring',
   },
   {
-    role: 'Head of Mobility / Lead Mobile Engineer',
+    role: 'Founding Engineer → Head of Mobility / Lead Mobile Engineer',
     company: 'Aim North Technologies (Pulse Business Solutions)',
     period: 'Jan 2021 – May 2025',
     location: 'Noida',
     about:
-      'Owned the Pulse inspection platform’s Android and iOS apps, from early prototype to 100+ B2B clients on an offline-first sync engine, then led the 2025 React Native rewrite.',
+      'Founding engineer on the Pulse inspection platform: architected the initial mobile app, web frontend and backend, then owned Android and iOS from early prototype to 100+ B2B clients and 50,000+ users in 10+ countries, led a team of 4–6 mobile engineers, and led the 2025 React Native rewrite.',
     subtitle:
       'Owned mobile for the Pulse enterprise inspection platform: Android and iOS end to end.',
     highlights: [
-      'Architected the mobile engine from early prototype to **100+ B2B enterprise clients**; designed the sync contract (payloads, upload semantics, failure behaviour) with the backend and web teams, then implemented both native clients against it.',
-      'Engineered the offline-first data layer (dynamic form builder, background media upload queue, local SQLite cache) for auditors working without connectivity; no data-loss incidents reported in 4.5 years of field use.',
-      'Wrote and shipped the Swift/iOS client to the App Store alongside Android with feature parity; field UIs usable by non-technical staff with no training.',
-      '2025: led a full rewrite of both native apps into one **React Native** codebase, architected and co-built with the team in six months.',
-      'Introduced GitHub Actions + Fastlane releases: bi-weekly cadence and same-day hotfixes, replacing manual builds.',
+      'Founding engineer: architected the initial mobile app, web frontend and backend, then grew the mobile engine to **100+ B2B clients** and **50,000+ users in 10+ countries** including Accor and Tim Hortons.',
+      'Engineered the offline-first data layer (dynamic form builder, background media upload queue, local SQLite cache) for offline auditors, handling inspections of 500+ questions and 1,000+ photos; no data-loss incidents in 4.5 years.',
+      'Shipped the Swift/UIKit iOS client alongside Android with feature parity; the Android app is rated **4.7★ from 3,300+ reviews**.',
+      'Led **4–6 mobile engineers**: interviewed candidates, set the review and sprint process, and introduced GitHub Actions + Fastlane releases (bi-weekly cadence, same-day hotfixes).',
+      '2025: architected and led the rewrite of both native apps into one **React Native** codebase, co-built with the team in six months.',
     ],
     href: '/work/pulse',
   },
   {
     role: 'Senior Software Engineer',
-    company: 'Retail Quotient Research',
+    company: 'Redquanta',
     period: 'May 2018 – Jan 2021',
     location: 'Mumbai',
     about:
-      'Enterprise Android apps serving 10,000+ daily active users, tuned for low memory and fast cold start, across 8 major product cycles with founders, PMs and designers.',
+      'Enterprise Android and iOS (Swift) retail and FMCG audit apps for field reps at Retail Quotient Research Private Limited, serving 10,000+ daily active users, tuned for low memory and fast cold start, across 8 major product cycles with founders, PMs and designers.',
     highlights: [
-      'Enterprise Android apps serving **10,000+ daily active users**, tuned for low memory and fast cold start; shipped 8 major product cycles with founders, PMs, and designers.',
+      'Enterprise Android and iOS (Swift) retail/FMCG audit apps at Retail Quotient Research Private Limited for **10,000+ daily active users**, tuned for low memory and fast cold start; 8 product cycles with founders, PMs and designers; guided junior devs.',
       'Owned chart-heavy reporting dashboards rendering large result sets, kept responsive on the low-end devices field teams actually carried.',
     ],
   },
   {
-    role: 'Software Engineer',
+    role: 'Senior Software Engineer',
+    company: 'LSA Software',
+    period: 'Apr 2017 – Apr 2018',
+    location: 'Noida',
+    about:
+      'OUTFY, a social media automation platform for online stores: Ruby on Rails integrations with Shopify, WooCommerce, BigCommerce, Etsy, eBay and Weebly (store auth, product fetching for posts, webhooks), the Image Collage feature on web and Android, and the Android app, built with a junior developer I led.',
+    highlights: [],
+    only: 'about',
+  },
+  {
+    role: 'Senior Software Engineer',
+    company: 'Startup Techies',
+    period: 'Sep 2013 – Mar 2017',
+    location: 'Noida',
+    about:
+      'Android apps in food, healthcare and safety: EzHealth Track, an offline-first tablet app for doctors with bidirectional sync; SafeON, voice-activated safety tracking; and Eatlo, a social food-sharing app with a custom multi-touch canvas and Google Maps.',
+    highlights: [],
+    only: 'about',
+  },
+  {
+    role: 'Android Developer',
+    company: 'INID Digimedia',
+    period: 'Apr 2013 – Sep 2013',
+    location: 'Noida',
+    about:
+      'Where it started: iCouch, a real-time TV chat app with socket-based group chat, Facebook and Twitter SDKs and push notifications.',
+    highlights: [],
+    only: 'about',
+  },
+  {
+    role: 'Android Developer → Sr. Software Engineer',
     company: 'Startup Techies / LSA Software / INID Digimedia',
     period: 'Apr 2013 – Apr 2018',
     location: 'Noida',
-    about:
-      'Where it started: an offline-first tablet app for doctors with bidirectional sync, voice-activated safety tracking with socket-based group chat, and a social food-sharing app with a custom multi-touch canvas.',
+    about: 'Early career, combined on the resume.',
     highlights: [
-      '**EzHealth Track:** offline-first tablet app for doctors with bidirectional sync. **SafeON / iCouch:** voice-activated safety tracking and socket-based group chat. **Eatlo:** social food-sharing app with custom multi-touch canvas and Google Maps.',
+      '**OUTFY:** Rails integrations with Shopify, WooCommerce, BigCommerce, Etsy, eBay and Weebly (auth, products, webhooks); led Android. **EzHealth Track:** offline-first tablet app for doctors with bidirectional sync. **SafeON:** voice-activated safety tracking. **iCouch:** real-time TV chat over sockets. **Eatlo:** social food-sharing app with custom multi-touch canvas and Google Maps.',
     ],
+    only: 'resume',
   },
 ];
+
+export const aboutCareer = career.filter((job) => job.only !== 'resume');
+export const resumeCareer = career.filter((job) => job.only !== 'about');
 
 export const education = {
   degree: 'Bachelor of Computer Applications (BCA)',
   school: 'Amity University',
 };
+
+export const certifications = [
+  {
+    name: 'Generative AI for Mobile App Developers',
+    issuer: 'IBM',
+    year: '2026',
+    href: 'https://www.coursera.org/account/accomplishments/specialization/AZOLN0AT3FYX',
+  },
+];

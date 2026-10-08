@@ -1,6 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
+import { services } from './data/services';
 
 // Case studies. Every fact must be traceable to resume/resume.html (see CLAUDE.md).
 const work = defineCollection({
@@ -18,12 +19,39 @@ const work = defineCollection({
       stack: z.array(z.string()),
       order: z.number(),
       featured: z.boolean().default(true),
+      /** Headline results shown under the title. Each must be traceable to the resume. */
+      outcomes: z
+        .array(z.object({ value: z.string(), label: z.string() }))
+        .max(4)
+        .default([]),
       links: z.array(z.object({ label: z.string(), href: z.url() })).default([]),
       screens: z.array(z.object({ src: image(), alt: z.string() })).default([]),
       /** Shown under the screenshots, e.g. why data is blurred. */
       screensNote: z.string().optional(),
+      /**
+       * A short, muted, looping screen recording shown above the screenshots (#176). The video files live in
+       * public/media/work/<slug>/ (Astro doesn't process video); the poster is shown until it plays.
+       */
+      demo: z
+        .object({
+          mp4: z.string().regex(/^\/media\/work\/.+\.mp4$/),
+          webm: z
+            .string()
+            .regex(/^\/media\/work\/.+\.webm$/)
+            .optional(),
+          poster: image(),
+          /** What the recording shows, step by step: it's the text alternative for the video. */
+          alt: z.string(),
+        })
+        .optional(),
     }),
 });
+
+// Offers a post can end with (src/components/PostOffer.astro). Unknown service ids fail the build.
+const postOffers = [
+  'checklist',
+  ...services.flatMap((service) => (service.page ? [`service:${service.id}`] : [])),
+] as [string, ...string[]];
 
 // Blog posts. Drafts are excluded from production builds (see src/lib/posts.ts).
 const writing = defineCollection({
@@ -42,6 +70,8 @@ const writing = defineCollection({
         heroAlt: z.string().optional(),
         /** Only set when the post first ran elsewhere. */
         canonicalUrl: z.url().optional(),
+        /** The offer box at the end: the checklist, or a service page (`service:<id>`, a service with a page). */
+        offer: z.enum(postOffers).optional(),
       })
       .refine((data) => !data.heroImage || !!data.heroAlt, {
         message: 'heroAlt is required when heroImage is set',

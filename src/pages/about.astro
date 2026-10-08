@@ -5,7 +5,7 @@ import Button from '../components/Button.astro';
 import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import { aboutIntro, values } from '../data/about';
-import { career, education } from '../data/career';
+import { aboutCareer, certifications, education } from '../data/career';
 import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
@@ -71,7 +71,7 @@ const aboutPage = { '@type': 'AboutPage', mainEntity: { '@id': `${profile.url}/#
 
   <Section id="path" eyebrow="The path so far" title="13 years, newest first">
     <ol class="max-w-3xl border-l border-line">
-      {career.map((job) => (
+      {aboutCareer.map((job) => (
         <li class="relative pb-10 pl-8 last:pb-0">
           <span
             aria-hidden="true"
@@ -98,6 +98,15 @@ const aboutPage = { '@type': 'AboutPage', mainEntity: { '@id': `${profile.url}/#
     <p class="mt-10 max-w-3xl text-sm text-muted">
       Education: {education.degree}, {education.school}
     </p>
+    {certifications.map((cert) => (
+      <p class="mt-2 max-w-3xl text-sm text-muted">
+        Certification:{' '}
+        <a class="link" href={cert.href}>
+          {cert.name}
+        </a>
+        , {cert.issuer}, {cert.year}
+      </p>
+    ))}
   </Section>
 
   <Container class="pb-8">

@@ -61,9 +61,39 @@ export function parseFrontMatter(source: string): PostMeta {
   };
 }
 
-/** LinkedIn hashtags: `offline-first` → `#offlinefirst`. */
-export function hashtags(tags: string[]): string[] {
-  return tags.map((t) => `#${t.replace(/[^a-z0-9]/gi, '').toLowerCase()}`).filter((t) => t !== '#');
+/**
+ * LinkedIn hashtags: each tag's mapped hashtags (`android` → `#AndroidDev #Kotlin`), else the tag in
+ * CamelCase (`offline-first` → `#OfflineFirst`), then `base`. Deduplicated ignoring case, at most `max`.
+ */
+export function hashtags(
+  tags: string[],
+  {
+    map = {},
+    base = [],
+    max = Infinity,
+  }: { map?: Record<string, string[]>; base?: string[]; max?: number } = {},
+): string[] {
+  const words = [
+    ...tags.flatMap(
+      (t) =>
+        map[t.toLowerCase()] ?? [
+          t
+            .split(/[^a-z0-9]+/i)
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(''),
+        ],
+    ),
+    ...base,
+  ];
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const word of words) {
+    const key = word.toLowerCase();
+    if (word === '' || seen.has(key)) continue;
+    seen.add(key);
+    out.push(`#${word}`);
+  }
+  return out.slice(0, max);
 }
 
 /** dev.to allows up to 4 tags, lowercase letters and digits only. */

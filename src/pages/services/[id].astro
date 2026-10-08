@@ -1,0 +1,145 @@
+---
+// A service's own landing page, written for one search query (docs/SEO.md). Only services with a `page`
+// in src/data/services.ts get one; the rest stay as cards on /services.
+import type { GetStaticPaths } from 'astro';
+import BookCall from '../../components/BookCall.astro';
+import Button from '../../components/Button.astro';
+import Container from '../../components/Container.astro';
+import ProofStrip from '../../components/ProofStrip.astro';
+import Section from '../../components/Section.astro';
+import { primaryCta } from '../../data/nav';
+import { engagements, services, type Service, type ServicePage } from '../../data/services';
+import Base from '../../layouts/Base.astro';
+import { faqJsonLd, serviceJsonLd } from '../../lib/seo';
+
+export const getStaticPaths = (() =>
+  services.flatMap((service) =>
+    service.page ? [{ params: { id: service.id }, props: { service, page: service.page } }] : [],
+  )) satisfies GetStaticPaths;
+
+type Props = { service: Service; page: ServicePage };
+const { service, page } = Astro.props;
+const discovery = engagements.find((e) => e.recommended);
+---
+
+<Base
+  title={page.title}
+  description={page.description}
+  jsonLd={[serviceJsonLd(service), faqJsonLd(page.faqs)]}
+>
+  <Container class="py-16 sm:py-24">
+    <p class="text-sm">
+      <a class="link" href="/services">
+        ← All services
+      </a>
+    </p>
+    <p class="eyebrow mt-10 mb-3">{service.title}</p>
+    <h1 class="text-h1 max-w-3xl">{page.heading}</h1>
+    <p class="mt-5 max-w-2xl text-lead text-muted">{page.intro}</p>
+    <div class="mt-8 flex flex-wrap items-start gap-x-6 gap-y-4">
+      <Button href={primaryCta.href} size="lg" cta="service_start_project">
+        {primaryCta.label}
+      </Button>
+      <BookCall />
+    </div>
+    <div class="mt-14">
+      <ProofStrip stats={page.outcomes} />
+    </div>
+  </Container>
+
+  <Section id="problems" eyebrow="Who it’s for" title="Sounds familiar?" tone="surface">
+    <ul class="grid gap-4 sm:grid-cols-2">
+      {page.problems.map((problem) => (
+        <li class="flex gap-3 rounded-brand border border-line bg-bg p-5">
+          <span aria-hidden="true" class="text-accent">
+            →
+          </span>
+          {problem}
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section id="approach" eyebrow="How I build it" title={page.approachTitle}>
+    <ol class="grid max-w-3xl gap-10">
+      {page.approach.map((step, i) => (
+        <li class="grid gap-2 sm:grid-cols-[4rem_1fr]">
+          <p class="font-display text-h2 text-accent">{String(i + 1).padStart(2, '0')}</p>
+          <div>
+            <h3 class="text-h3">{step.title}</h3>
+            <p class="mt-2 text-muted">{step.body}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </Section>
+
+  <Section id="included" eyebrow="What you get" title="What’s included" tone="surface">
+    <div class="grid gap-10 md:grid-cols-2">
+      <ul class="space-y-3">
+        {service.includes.map((item) => (
+          <li class="flex gap-3">
+            <span aria-hidden="true" class="text-accent">
+              —
+            </span>
+            {item}
+          </li>
+        ))}
+      </ul>
+      {discovery && (
+        <div class="rounded-brand border border-accent bg-bg p-6">
+          <p class="eyebrow mb-2">How we start</p>
+          <h3 class="text-h3">{discovery.title}</h3>
+          <p class="mt-2 text-muted">{discovery.body}</p>
+          <p class="mt-4 text-sm">
+            <a class="link" href="/services#engagements">
+              Other ways to work together →
+            </a>
+          </p>
+        </div>
+      )}
+    </div>
+  </Section>
+
+  <Section id="faq" eyebrow="FAQ" title="Questions clients ask">
+    <div class="max-w-3xl divide-y divide-line border-y border-line">
+      {page.faqs.map((faq) => (
+        <details class="group py-5">
+          <summary class="flex cursor-pointer list-none items-start justify-between gap-6 text-lg font-medium [&::-webkit-details-marker]:hidden">
+            <h3 class="font-sans text-lg font-medium tracking-normal">{faq.question}</h3>
+            <span aria-hidden="true" class="text-accent transition-transform group-open:rotate-45">
+              +
+            </span>
+          </summary>
+          <p class="mt-3 max-w-2xl text-muted">{faq.answer}</p>
+        </details>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="proof" eyebrow="Proof" title="Read how it was built">
+    <ul class="grid max-w-3xl gap-3">
+      {page.related.map((item) => (
+        <li>
+          <a class="link font-medium" href={item.href}>
+            {item.label} →
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Container class="pb-8">
+    <div class="rounded-brand bg-surface px-6 py-12 text-center sm:px-12">
+      <h2 class="text-h2">{page.ctaHeading}</h2>
+      <p class="mx-auto mt-3 max-w-xl text-muted">
+        Tell me what exists today and what you need by when.
+      </p>
+      <div class="mt-8">
+        <Button href={primaryCta.href} size="lg" cta="service_start_project_footer">
+          {primaryCta.label}
+        </Button>
+      </div>
+    </div>
+  </Container>
+</Base>

@@ -50,16 +50,52 @@ It writes the header row itself the first time.
 | O–P Indexed pages (GSC), Sitemap URLs | You        | Search Console; the sitemap count is in the review issue                               |
 | Q–R Search clicks, Search impressions | You        | Search Console → Performance, last month                                               |
 | S Posts published                     | You        | From the review issue                                                                  |
-| T Notes                               | You        | What changed, top queries and pages, what to try next                                  |
+| T Notes                               | You        | What changed, top queries and pages, service-page search numbers, what to try next     |
 
 The staging test Sheet has a Monthly tab too, because the staging Worker runs the same cron.
 Only counts are recorded, never names or addresses, so the tab adds no personal data to the Sheet.
+
+## The newsletter
+
+Subscribers were promised "occasional notes on what I'm building", so a note goes out only when there's
+something new, and at most once a month: new posts since the last note, a few lines on what you're
+building, and the checklist link. Drafted with `pnpm digest` into `newsletter/<date>.html`, reviewed in a
+PR, and sent by the Send newsletter workflow: a test to staging first, then production
+([RUNBOOK → Sending a note](./RUNBOOK.md#newsletter-subscribers)). Its links carry
+`utm_source=newsletter&utm_medium=email&utm_campaign=digest-<date>`, so GA4 and the Sheets attribute
+visits and leads to the note that brought them.
+
+## Experiments
+
+CTA experiments run **one change at a time**, compared with the weeks before it. With a few hundred visits
+a month, a real A/B split would take months to mean anything and would add a cookie; a sequential test
+with its rule written in advance is honest about what it can show.
+
+1. **Start from the monthly review.** The hypothesis comes from something the numbers showed. The first
+   experiment can start once October gives a full month of baseline, so in November at the earliest.
+2. **Open an issue from the Experiment template** (`.github/ISSUE_TEMPLATE/experiment.yml`) and fill in
+   everything above Result **before** the change is merged: hypothesis, the one change, the metric, both
+   windows and the decision rule, including the minimum number of clicks below which the result is
+   inconclusive.
+3. **Measure clicks, not leads.** Leads are too few to show a difference in weeks. The metric is usually a
+   CTA's clicks per 100 views of its page, from GA4 → Explore → Source / medium → **CTA clicks** (the
+   `cta` dimension exists from 2026-09-24). Both numbers come from consented visitors only, so the ratio is
+   consistent; record leads from the Monthly tab alongside anyway.
+4. **Keep the `data-cta` id** when only the wording or look changes (the copy lives in `src/data/`), so
+   the before and after windows count the same thing. A new element gets a new id, added to the CTA table
+   in [ANALYTICS.md](./ANALYTICS.md#event-table).
+5. **Ship the change in its own PR** that refers to the issue, and note the day it went live. Change
+   nothing else about that CTA or page during the window, and write down what else happened: a post, a
+   newsletter note, a traffic spike. Those can explain a difference as well as the change can.
+6. **Record the result**, including "inconclusive" and "no clear difference", apply the decision (keep, or
+   revert in a PR), and close the issue. Then the next experiment can start.
 
 ## The monthly review
 
 At 10:00 IST on the 1st, `.github/workflows/monthly-review.yml` opens **Monthly review YYYY-MM**
 (label `routine`, no milestone). It holds the checklist, posts published that month, a link to skipped
-Post issues, and the live sitemap's URL count, but no lead or subscriber numbers. Work through it, fill in
+Post issues, the live sitemap's URL count, and each service page with the search query it's written for
+([SEO.md](./SEO.md)), but no lead or subscriber numbers. Work through it, fill in
 the Monthly row, then close the issue.
 
 To open one by hand (for example, for a missed month): Actions → Monthly review → Run workflow, with

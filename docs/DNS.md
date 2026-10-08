@@ -5,22 +5,24 @@ file in sync with every record change.
 
 ## abhishekgoyal.me
 
-Email: **Google Workspace** (`contact@abhishekgoyal.me`). The site moved from S3 + CloudFront to the
+Email: **Google Workspace** (`contact@abhishekgoyal.me`); the site's own emails (auto-replies,
+notifications) go out through **Resend**. The site moved from S3 + CloudFront to the
 Cloudflare Worker at launch (M4, #81): the **apex is now canonical** and `www` redirects to it.
 
 ### Target zone in Cloudflare
 
-| Type  | Name                                    | Content                                                                | Proxy    | Purpose                                                                                                                                                                                                                 |
-| ----- | --------------------------------------- | ---------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| A     | `@`                                     | (managed by the Worker custom domain)                                  | Proxied  | The site: Worker `abhishekgoyal-me`, added as a custom domain on the apex. Cloudflare creates and owns this record                                                                                                      |
-| A     | `www`                                   | `192.0.2.1`                                                            | Proxied  | Placeholder so the "www to apex" redirect rule runs                                                                                                                                                                     |
-| CNAME | `_4b827a17faf94ed1dcfba0fa68783cb4`     | `_6e4a5348328ebc77989610c310b93dea.jkddzztszm.acm-validations.aws`     | DNS only | AWS ACM validation (apex) for the CloudFront cert                                                                                                                                                                       |
-| CNAME | `_ca938b3ece78951a9031a9c357744d51.www` | `_ff7540e9bb931d33029a3f5cfd2e5187.jkddzztszm.acm-validations.aws`     | DNS only | AWS ACM validation (www) for the CloudFront cert                                                                                                                                                                        |
-| MX    | `@`                                     | `smtp.google.com` (priority 1)                                         | —        | Google Workspace inbound mail                                                                                                                                                                                           |
-| TXT   | `@`                                     | `google-site-verification=SiKHHj1WvOrjQ6cfOi4n8g4hgFAnyxLLgTG3M3Axpl4` | —        | Google domain verification                                                                                                                                                                                              |
-| TXT   | `google._domainkey`                     | `v=DKIM1;k=rsa;p=MIIB…` (unchanged; copy from the import)              | —        | Google Workspace DKIM signing                                                                                                                                                                                           |
-| TXT   | `@`                                     | `v=spf1 include:_spf.google.com ~all`                                  | —        | **New.** SPF: was missing, which hurts deliverability                                                                                                                                                                   |
-| TXT   | `_dmarc`                                | `v=DMARC1; p=none; rua=mailto:contact@abhishekgoyal.me`                | —        | **New.** DMARC in monitor mode; tighten to `quarantine` after 2–4 weeks of clean reports (**M4 launch checklist**: confirm both the Google `google` and Resend `resend` DKIM selectors pass in the daily reports first) |
+| Type  | Name                | Content                                                                | Proxy    | Purpose                                                                                                                                                                                                     |
+| ----- | ------------------- | ---------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A     | `@`                 | (managed by the Worker custom domain)                                  | Proxied  | The site: Worker `abhishekgoyal-me`, added as a custom domain on the apex. Cloudflare creates and owns this record                                                                                          |
+| A     | `www`               | `192.0.2.1`                                                            | Proxied  | Placeholder so the "www to apex" redirect rule runs                                                                                                                                                         |
+| MX    | `@`                 | `smtp.google.com` (priority 1)                                         | —        | Google Workspace inbound mail                                                                                                                                                                               |
+| TXT   | `@`                 | `google-site-verification=SiKHHj1WvOrjQ6cfOi4n8g4hgFAnyxLLgTG3M3Axpl4` | —        | Google domain verification                                                                                                                                                                                  |
+| TXT   | `google._domainkey` | `v=DKIM1;k=rsa;p=MIIB…` (unchanged; copy from the import)              | —        | Google Workspace DKIM signing                                                                                                                                                                               |
+| TXT   | `@`                 | `v=spf1 include:_spf.google.com ~all`                                  | —        | **New.** SPF: was missing, which hurts deliverability                                                                                                                                                       |
+| TXT   | `resend._domainkey` | `p=MIGfMA0…` (from Resend → Domains)                                   | —        | Resend DKIM signing for the site's emails (`d=abhishekgoyal.me`)                                                                                                                                            |
+| CNAME | `rsend`             | `rsend.forge.rmta.net`                                                 | DNS only | Resend return path (bounces); its SPF passes and aligns with the apex under relaxed alignment                                                                                                               |
+| CNAME | `send`              | `send.forge.rmta.net`                                                  | DNS only | Resend's other managed sending subdomain; keep it while Resend lists it under Domains                                                                                                                       |
+| TXT   | `_dmarc`            | `v=DMARC1; p=quarantine; rua=mailto:contact@abhishekgoyal.me`          | —        | DMARC. Monitor mode (`p=none`) from launch; moved to `quarantine` on 2026-10-07 (#87) after two weeks of Google reports with all 45 messages passing, both the `google` and `resend` DKIM selectors aligned |
 
 **Redirect Rule "www to apex":** when the hostname equals `www.abhishekgoyal.me`, do a dynamic redirect to
 `concat("https://abhishekgoyal.me", http.request.uri.path)` with status **301**, preserving the query string.
@@ -56,9 +58,21 @@ It replaced the M0.5 rule "apex to www", which pointed at the old CloudFront sit
        `tests/e2e/headers.spec.ts` asserts all of this whenever `BASE_URL` is the custom domain.
 6. [ ] Cal.com → the production webhook URL becomes `https://abhishekgoyal.me/api/booking`.
 
-**Rollback** (within the 2 weeks that CloudFront stays up): delete the Worker custom domain, point `www`
-back to `dpxp3d37iqwxe.cloudfront.net` (DNS only), and restore the "apex to www" rule. DNS is proxied, so
-it takes effect in about a minute. The ACM validation CNAMEs stay until CloudFront is retired (#87).
+**Rollback** (closed): CloudFront was disabled on 2026-10-07 and the ACM validation CNAMEs deleted, so there
+is no longer an old site to fall back to. Until the distribution is deleted it can still be re-enabled in
+AWS, but its cert can't renew without those CNAMEs.
+
+## Post-launch clean-up (M4, #87)
+
+1. [x] DMARC reports (2026-09-22 to 10-06, Google): 45 of 45 messages pass, both `google` and `resend`
+       DKIM selectors aligned, no unknown senders.
+2. [x] `_dmarc` → `p=quarantine` (2026-10-07). Afterwards both a Workspace email and a Resend auto-reply
+       reached a Gmail inbox with `dmarc=pass`. Turnstile rejects the form from an automated browser, so
+       this check needs a real browser.
+3. [x] CloudFront distribution `dpxp3d37iqwxe.cloudfront.net` disabled; both ACM validation CNAMEs deleted
+       (2026-10-07).
+4. [ ] **2026-10-14:** AWS → delete the CloudFront distribution, then the ACM certificate (us-east-1), then
+       empty and delete the old S3 site bucket.
 
 ## Migration checklist
 

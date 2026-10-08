@@ -3,7 +3,7 @@
 import { createHash, createHmac, randomBytes } from 'node:crypto';
 import { expect, test, type APIRequestContext, type Page } from '@playwright/test';
 import { PORT } from '../../playwright.lead.config';
-import { count, query } from './d1';
+import { count, exec, query } from './d1';
 
 const ORIGIN = `http://localhost:${PORT}`;
 const TEST_TOKEN = 'XXXX.DUMMY.TOKEN.XXXX'; // accepted by Cloudflare's always-pass test secret
@@ -35,7 +35,7 @@ function signup(
 
 /** Gives the subscriber a token we know, as if we had the confirmation email. */
 function plantToken(email: string, token: string, expiresAt = '2099-01-01T00:00:00.000Z') {
-  query(
+  exec(
     `UPDATE subscribers SET confirm_token_hash = '${sha256(token)}', token_expires_at = '${expiresAt}'
      WHERE email = '${email}'`,
   );
@@ -230,14 +230,14 @@ test('the daily cron deletes addresses unsubscribed over 30 days ago, and nothin
   for (const email of [old, recent, back]) await signup(request, email);
   const day = 24 * 60 * 60 * 1000;
   const ago = (days: number) => new Date(Date.now() - days * day).toISOString();
-  query(
+  exec(
     `UPDATE subscribers SET status = 'unsubscribed', unsubscribed_at = '${ago(31)}' WHERE email = '${old}'`,
   );
-  query(
+  exec(
     `UPDATE subscribers SET status = 'unsubscribed', unsubscribed_at = '${ago(29)}' WHERE email = '${recent}'`,
   );
   // Unsubscribed long ago but signed up again: pending now, so kept.
-  query(`UPDATE subscribers SET unsubscribed_at = '${ago(40)}' WHERE email = '${back}'`);
+  exec(`UPDATE subscribers SET unsubscribed_at = '${ago(40)}' WHERE email = '${back}'`);
   const oldId = query<{ subscriber_id: string }>(
     `SELECT subscriber_id FROM subscribers WHERE email = '${old}'`,
   )[0]!.subscriber_id;

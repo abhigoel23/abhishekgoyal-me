@@ -93,6 +93,23 @@ export function professionalServiceJsonLd(services: readonly { title: string; su
   };
 }
 
+/** One service's own page (/services/<id>), provided by the person and listed in the /services catalog. */
+export function serviceJsonLd(service: {
+  id: string;
+  title: string;
+  summary: string;
+  areaServed?: string | undefined;
+}) {
+  return {
+    '@type': 'Service',
+    name: service.title,
+    description: service.summary,
+    url: `${SITE_URL}/services/${service.id}`,
+    provider: { '@id': PERSON_ID },
+    areaServed: service.areaServed ?? 'Worldwide',
+  };
+}
+
 export function blogPostingJsonLd(post: {
   title: string;
   description: string;

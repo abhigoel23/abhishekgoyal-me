@@ -39,17 +39,18 @@ the same checks. Useful for wording fixes after opening a PR, or for the very fi
 
 From the `writing` collection schema (`src/content.config.ts`):
 
-| Field          | Required?                           | What it does                                                                     | Example                                                        |
-| -------------- | ----------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| `title`        | Yes                                 | Page `<h1>`, card heading, meta title, OG image headline                         | `'Offline-first with no server: why HelperBook is local-only'` |
-| `description`  | Yes                                 | Meta description, card summary, JSON-LD description                              | `'HelperBook has no signup and no backend...'`                 |
-| `pubDate`      | Yes                                 | Sort order (newest first) and the date shown on the page/RSS                     | `2026-09-24`                                                   |
-| `updatedDate`  | No                                  | Shows "Updated <date>" next to the pubDate; used as `dateModified`               | `2026-10-01`                                                   |
-| `tags`         | No — defaults to `[]`               | Shown as tags under the title and in RSS `categories`                            | `[offline-first, kotlin-multiplatform, privacy, android]`      |
-| `draft`        | No — defaults to `false`            | `true` hides the post from production builds (still visible in `pnpm dev`)       | `true`                                                         |
-| `heroImage`    | No                                  | Hero image shown under the title; optimised by Astro                             | `../../assets/writing/<slug>/hero.png`                         |
-| `heroAlt`      | Required only if `heroImage` is set | Alt text for the hero image (the build fails without it when `heroImage` is set) | `'Two phones showing the sync status screen'`                  |
-| `canonicalUrl` | No                                  | Set only when the post first ran elsewhere; see Cross-posting below              | `https://dev.to/...`                                           |
+| Field          | Required?                           | What it does                                                                                                                                                                                      | Example                                                        |
+| -------------- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| `title`        | Yes                                 | Page `<h1>`, card heading, meta title, OG image headline                                                                                                                                          | `'Offline-first with no server: why HelperBook is local-only'` |
+| `description`  | Yes                                 | Meta description, card summary, JSON-LD description                                                                                                                                               | `'HelperBook has no signup and no backend...'`                 |
+| `pubDate`      | Yes                                 | Sort order (newest first) and the date shown on the page/RSS                                                                                                                                      | `2026-09-24`                                                   |
+| `updatedDate`  | No                                  | Shows "Updated <date>" next to the pubDate; used as `dateModified`                                                                                                                                | `2026-10-01`                                                   |
+| `tags`         | No — defaults to `[]`               | Shown as tags under the title and in RSS `categories`                                                                                                                                             | `[offline-first, kotlin-multiplatform, privacy, android]`      |
+| `draft`        | No — defaults to `false`            | `true` hides the post from production builds (still visible in `pnpm dev`)                                                                                                                        | `true`                                                         |
+| `heroImage`    | No                                  | Hero image shown under the title; optimised by Astro                                                                                                                                              | `../../assets/writing/<slug>/hero.png`                         |
+| `heroAlt`      | Required only if `heroImage` is set | Alt text for the hero image (the build fails without it when `heroImage` is set)                                                                                                                  | `'Two phones showing the sync status screen'`                  |
+| `canonicalUrl` | No                                  | Set only when the post first ran elsewhere; see Cross-posting below                                                                                                                               | `https://dev.to/...`                                           |
+| `offer`        | No                                  | The box after the post: `checklist` (the offline-first checklist) or `service:<id>` (a service page, e.g. `service:kmp`). An unknown id fails the build. Pick the one closest to the post's topic | `service:kmp`                                                  |
 
 Copy-pasteable example:
 
@@ -134,9 +135,10 @@ files, don't add it in a post.
 
 The fact-check checklist used on the two seed posts:
 
-- **Ownership stated exactly as the resume does.** For Pulse: "I owned mobile for Pulse, Android and iOS,
-  from an early prototype to 100+ B2B enterprise clients," matching `career.ts`'s "Architected the mobile
-  engine from early prototype to **100+ B2B enterprise clients**."
+- **Ownership stated exactly as the resume does.** For Pulse: founding engineer who architected the initial
+  mobile app, web frontend and backend, then Head of Mobility. On mobile: "I owned mobile for Pulse, Android
+  and iOS, from an early prototype to 100+ B2B enterprise clients," matching `career.ts`'s "grew the mobile
+  engine to **100+ B2B clients**."
 - **"Reported" stays "reported."** The claim is "no data-loss incidents were reported in 4.5 years of
   field use" — not "no data was ever lost." That distinction is in both the post and the case study.
 - **Team work is credited.** "I designed the sync contract with the backend and web teams" — not "I
@@ -183,8 +185,15 @@ BlogPosting JSON-LD stay pointed at this site (`src/pages/writing/[slug].astro`)
 - **Case studies**: `src/content/work/<slug>.mdx`. Fields from the schema: `title`, `summary`, `role`,
   `period`, `client`, `platform`, `stack`, `order` (controls display order), `featured` (defaults to
   `true`; set `false` to keep it off the home page), `links`, `screens` (array of `{ src, alt }`, images
-  under `src/assets/work/<slug>/`), and `screensNote` (text shown under the screenshots, e.g. why data is
-  blurred).
+  under `src/assets/work/<slug>/`), `screensNote` (text shown under the screenshots, e.g. why data is
+  blurred), and `demo` (optional looping screen recording, below).
+- **Demo video** (`demo: { mp4, webm?, poster, alt }`): 8–12 s, no audio, under ~1.5 MB, with the same
+  blurring or demo data as the screenshots. The files go in `public/media/work/<slug>/`, and `mp4` is
+  the path from there, e.g. `/media/work/<slug>/demo.mp4`; `poster` is an image under `src/assets/work/<slug>/`, usually the first
+  frame; `alt` describes what happens, step by step, and is shown as the caption. It downloads nothing
+  until it plays, plays muted only while on screen, has a Play/Pause button, and never starts by itself
+  for visitors who prefer reduced motion. To encode from a screen recording (`brew install ffmpeg`):
+  `ffmpeg -i in.mov -an -vf "scale=540:-2,fps=24" -c:v libx264 -crf 30 -preset slow -movflags +faststart demo.mp4`.
 - **Services**: copy lives in `src/data/services.ts` (`services`, `process`, `engagements`, `faqs`).
 - **Page titles/descriptions**: `src/data/pages.ts`, one entry per static route. Adding a new static page
   needs an entry here or the SEO e2e test fails.
@@ -192,14 +201,146 @@ BlogPosting JSON-LD stay pointed at this site (`src/pages/writing/[slug].astro`)
   checks this.
 - **Profile/positioning**: `src/data/profile.ts` — name, headline, positioning, stats, pillars. Every fact
   here must match the resume.
-- **Resume**: `src/data/career.ts` (job history) and `src/data/resume.ts`. The resume PDF is generated by
-  `pnpm build` from `/resume` and must stay one page, or the build fails.
+- **Resume**: `src/data/career.ts` (job history and `certifications`) and `src/data/resume.ts` (summary).
+  The resume PDF is generated by `pnpm build` from `/resume` and must stay one page, or the build fails.
+  CI renders slightly wider than a Mac, so keep the PDF at about 57 lines of `pdftotext -layout` output
+  (the length on `main` today); if it grows, trim wording rather than dropping credit to the team. A
+  career entry with `only: 'about'` shows on `/about` alone and one with `only: 'resume'` on `/resume`
+  alone; that's how early career is three roles on `/about` and one combined line on the resume.
+- **About page**: `aboutIntro` in `src/data/about.ts` is the LinkedIn About text plus the HelperBook origin
+  story. Change both together (see [LinkedIn profile](#linkedin-profile) and [Upwork profile](#upwork-profile)).
+
+## LinkedIn profile
+
+The LinkedIn profile mirrors the site, and the site is the source of truth: change the data files first,
+merge, then copy the wording to LinkedIn. What maps to what:
+
+| LinkedIn                      | Site source                                                                              |
+| ----------------------------- | ---------------------------------------------------------------------------------------- |
+| Headline                      | `headline` in `src/data/profile.ts`                                                      |
+| About                         | `aboutIntro` in `src/data/about.ts`, without the last (HelperBook) paragraph             |
+| Experience titles and bullets | `src/data/career.ts` (the `only: 'about'` entries for the three early-career roles)      |
+| Experience skills             | the matching case study's `stack`, five per role                                         |
+| Top skills                    | the first five of `knowsAbout` in `src/data/profile.ts`                                  |
+| Skills section                | `knowsAbout` plus the stacks in `src/content/work/`                                      |
+| Featured                      | the home page and the three case studies                                                 |
+| Experience media              | each role's case study (`href`); LSA: outfy.com and the OUTFY Google Play listing        |
+| Projects                      | the three case studies: summary, then `Case study: https://abhishekgoyal.me/work/<slug>` |
+| Licenses & certifications     | `certifications` in `src/data/career.ts`                                                 |
+| Open to work                  | `setups` in `src/data/hire.ts` and the relocation work mode in `src/data/lead.ts`        |
+
+- Company names: Retail Quotient's operations ran under the **Redquanta** brand, so Redquanta is the company and "Retail Quotient Research Private
+  Limited" is named in the first bullet.
+- After changing a Featured link's page, refresh LinkedIn's cached preview with the
+  [Post Inspector](https://www.linkedin.com/post-inspector/).
+- Numbers follow the site exactly: "50,000+ users" (the source is 50K+ Google Play downloads), never a
+  rounder or newer figure that isn't in `career.ts` yet.
+
+### LinkedIn Services page
+
+The Services section (Open to → Providing services) is set up separately from the rest of the profile:
+
+- **Services:** chosen from LinkedIn's fixed list, up to 10. It has no entries for MVP builds,
+  offline-first, Kotlin Multiplatform or fractional lead, so the closest matches stand in for the five
+  services in `src/data/services.ts`: Mobile Application Development, Android Development, iOS
+  Development, Application Development, Custom Software Development and IT Consulting.
+- **About (500 characters):** the five services' titles in one sentence, the stacks, the years and the
+  HelperBook and Pulse proof, ending with `abhishekgoyal.me/services`. Update it when a service is added
+  or renamed.
+- **Work location:** Gurugram plus available to work remotely, matching `location` in `profile.ts`.
+- **Pricing:** Contact for pricing. Rates are never published, here or on the site.
+- **Messages:** Open Profile is on, so clients who aren't connections can message for free. Enquiries
+  land in the service requests inbox, not the main messages.
+
+## Upwork profile
+
+The Upwork profile follows the same rule: the site is the source of truth, and Upwork gets the wording
+after the change is merged. Upwork is pitched at freelance clients, not employers, so the overview is a
+client-facing rewrite of the LinkedIn About ("What I've shipped", then "How I can help") and leaves out
+the open-to-full-time-roles line.
+
+| Upwork             | Site source                                                                                     |
+| ------------------ | ----------------------------------------------------------------------------------------------- |
+| Title              | a 70-character cut of `headline` in `src/data/profile.ts`                                       |
+| Overview           | `aboutIntro` in `src/data/about.ts` and the case-study summaries, rewritten for clients         |
+| Skills             | `knowsAbout` mapped to Upwork's skill list (it has no Kotlin Multiplatform or Jetpack Compose)  |
+| Employment history | `src/data/career.ts`, the `only: 'about'` entries, one per role (seven in all)                  |
+| Portfolio          | the case studies: HelperBook and Pulse (the video-hiring app has no shareable image, under NDA) |
+| Certifications     | `certifications` in `src/data/career.ts`                                                        |
+
+- Limits: title 70 characters, employment description 1,000, portfolio title 70 and description 600,
+  five skills per portfolio item. Trim wording to fit; keep the team credit ("co-built with the team").
+- No links to abhishekgoyal.me (Upwork restricts off-platform links). A portfolio item can link to the
+  app's store listing instead, as HelperBook links to Google Play.
+- A portfolio item can't be published without an uploaded thumbnail image, which has to be done by
+  hand; the screenshots are in `src/assets/work/<slug>/`.
+- Hourly rate and availability are Abhishek's call; don't change them when syncing copy.
+- The overview's opening lines follow the resume summary in `src/data/resume.ts` (13 years, end-to-end
+  ownership, founding engineer, 50,000+ users); when the summary changes, update the overview too.
+
+## dev.to profile
+
+The dev.to profile ([@abhishek_goyal_c97dbf2eea](https://dev.to/abhishek_goyal_c97dbf2eea), set up in
+#133 for the RSS import above) follows the same rule: change the site first, then copy the wording at
+[dev.to/settings/profile](https://dev.to/settings/profile).
+
+| dev.to               | Site source                                                                             |
+| -------------------- | --------------------------------------------------------------------------------------- |
+| Website URL          | `https://abhishekgoyal.me/?utm_source=devto&utm_medium=social&utm_campaign=profile`     |
+| Location             | `location` in `src/data/profile.ts`                                                     |
+| Bio (200 characters) | `positioning` in `src/data/profile.ts`, then years, stack and HelperBook                |
+| Available for        | the services in `src/data/services.ts`, then the full-time setups in `src/data/hire.ts` |
+| Skills/Languages     | `knowsAbout` in `src/data/profile.ts`, in the same order                                |
+| Currently hacking on | the HelperBook entry in `src/data/career.ts`                                            |
+| Work, Education      | the latest role and `education` in `src/data/career.ts`                                 |
+
+- Keep the UTM tag on the website link, so visits from the profile show as dev.to in GA4.
+- The email shown on the profile is `contact@abhishekgoyal.me`, the site's public address.
+
+## GitHub profile
+
+GitHub has two parts, both public, and both follow the site:
+
+- **Profile README:** the [abhigoel23/abhigoel23](https://github.com/abhigoel23/abhigoel23) repo. Its
+  intro follows `aboutIntro` in `src/data/about.ts`, "What I build" follows `src/data/services.ts`,
+  "Selected work" follows the case-study summaries, "Stack" follows `knowsAbout` in
+  `src/data/profile.ts` (same order), and "Get in touch" carries the relocation line from
+  `src/data/hire.ts`. Commit straight to its `main`; it isn't covered by this repo's PR rules.
+- **Profile fields** at [github.com/settings/profile](https://github.com/settings/profile):
+
+| GitHub             | Site source                                                         |
+| ------------------ | ------------------------------------------------------------------- |
+| Name               | `name` in `src/data/profile.ts`                                     |
+| Bio (160 max)      | `jobTitle` and the stack from `headline`, then `positioning`        |
+| Website            | `url` in `src/data/profile.ts`                                      |
+| Social accounts    | `links.linkedin` in `src/data/profile.ts`, plus the dev.to profile  |
+| Company, Location  | the latest role in `src/data/career.ts`; `location` in `profile.ts` |
+| Available for hire | on while `/hire` is open                                            |
+
+- The `gh` token has no `user` scope, so `gh api -X PATCH user` fails; edit the fields in the browser,
+  or run `gh auth refresh -h github.com -s user` first. Keep the email hidden.
+
+## Resume file on other platforms
+
+After the resume changes, regenerate the private PDF (`RESUME_PHONE="+91 …" pnpm resume` after
+`pnpm build`) and replace the copy saved on LinkedIn:
+
+- **LinkedIn:** Jobs → Settings → Job application settings
+  (`https://www.linkedin.com/jobs/application-settings/`). Upload
+  `resume/out/Abhishek-Goyal-Resume.pdf`, then delete the older copies so Easy Apply can't send an
+  outdated one. Keep exactly one saved resume. This copy has the phone number, so it goes here only,
+  never in Featured; anything public uses the phone-free `/resume.pdf`.
+- **Upwork:** no resume upload. Upwork's resume import only pre-fills the profile and would overwrite
+  the synced fields; the profile itself carries the resume content.
+- Uploads go through the file picker, which Claude's in-app browser can't drive: Abhishek uploads, Claude
+  checks the list afterwards.
 
 ## Troubleshooting
 
-| Problem                                               | Cause / fix                                                                                                                                                      |
-| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Build fails with "bad indentation of a mapping entry" | A YAML value (usually `title` or `description`) has an unquoted colon. Wrap it in quotes.                                                                        |
-| A draft doesn't show on the live site                 | By design — `draft: true` posts are excluded once the site is built for production (`src/lib/posts.ts`). They still show in `pnpm dev`.                          |
-| A published post is missing from the home page        | The home page only shows the 3 newest posts by `pubDate` (`src/pages/index.astro`). It's still on `/writing` and in the RSS feed.                                |
-| Lighthouse or the axe e2e test fails on a post        | Usually a colour-contrast issue (check any inline styling you added) or a missing/empty `alt` on an image — `heroAlt` and every inline image need real alt text. |
+| Problem                                               | Cause / fix                                                                                                                                                                                                                                                                                                                        |
+| ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Build fails with "bad indentation of a mapping entry" | A YAML value (usually `title` or `description`) has an unquoted colon. Wrap it in quotes.                                                                                                                                                                                                                                          |
+| A draft doesn't show on the live site                 | By design — `draft: true` posts are excluded once the site is built for production (`src/lib/posts.ts`). They still show in `pnpm dev`.                                                                                                                                                                                            |
+| A published post is missing from the home page        | The home page only shows the 3 newest posts by `pubDate` (`src/pages/index.astro`). It's still on `/writing` and in the RSS feed.                                                                                                                                                                                                  |
+| Lighthouse or the axe e2e test fails on a post        | Usually a colour-contrast issue (check any inline styling you added) or a missing/empty `alt` on an image — `heroAlt` and every inline image need real alt text.                                                                                                                                                                   |
+| A new front-matter field doesn't show in `pnpm dev`   | The dev server keeps its own content store and only clears it when it sees `src/content.config.ts` change while running. With `pnpm dev` running, make any small edit to `src/content.config.ts`, save, then undo it and save again; the log shows "Content config changed → Clearing content store". `pnpm build` isn't affected. |

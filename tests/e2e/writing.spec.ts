@@ -25,3 +25,17 @@ test('the writing index lists posts, and each post has valid BlogPosting data', 
     expect(image.headers()['content-type'], `${href} og image`).toBe('image/png');
   }
 });
+
+// The offer box after a post (`offer` in front matter): the checklist, or a service page.
+for (const [slug, href] of [
+  ['offline-first-sync-lessons', '/checklist'],
+  ['offline-first-without-a-server', '/checklist'],
+  ['native-kmp-or-react-native', '/services/kmp'],
+] as const) {
+  test(`/writing/${slug} ends with an offer linking to ${href}`, async ({ page }) => {
+    await page.goto(`/writing/${slug}`);
+    const offer = page.locator('aside[aria-labelledby="post-offer-title"]');
+    await expect(offer).toBeVisible();
+    await expect(offer.locator(`a[href="${href}"]`)).toBeVisible();
+  });
+}

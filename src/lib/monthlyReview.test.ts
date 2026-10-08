@@ -50,6 +50,17 @@ describe('reviewBody', () => {
     );
   });
 
+  it('lists each service page with its target query', () => {
+    const body = reviewBody('2026-10', [], REPO, undefined, [
+      { url: 'https://abhishekgoyal.me/services/kmp', query: 'is kotlin multiplatform worth it' },
+    ]);
+    expect(body).toContain('URLs containing `/services/`');
+    expect(body).toContain(
+      '  - https://abhishekgoyal.me/services/kmp (written for “is kotlin multiplatform worth it”)',
+    );
+    expect(body).toContain("each post's primary query in docs/SEO.md");
+  });
+
   it('points the conversion formula at the right Monthly columns', () => {
     const column = (header: string) => String.fromCharCode(65 + MONTHLY_HEADERS.indexOf(header));
     expect(column('Leads')).toBe('B');

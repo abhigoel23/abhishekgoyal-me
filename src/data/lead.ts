@@ -1,7 +1,7 @@
 // Lead form options. Values are stored in D1 and the Sheet, so change a value only with a migration plan;
 // labels can change freely. Budget bands were set by Abhishek (2026-09-22).
 import { profile } from './profile';
-import { services } from './services';
+import { listedServices } from './services';
 
 export const leadPaths = [
   { value: 'project', label: 'A project for my product or team' },
@@ -14,7 +14,7 @@ export const followingPath = { value: 'following', label: 'Just following along'
 export const contactPaths = [...leadPaths, followingPath] as const;
 
 export const serviceOptions = [
-  ...services.map((s) => ({ value: s.id, label: s.title })),
+  ...listedServices.map((s) => ({ value: s.id, label: s.title })),
   { value: 'unsure', label: 'Not sure yet' },
 ];
 
@@ -50,7 +50,7 @@ export const timelines = [
 export const workModes = [
   { value: 'remote', label: 'Remote' },
   { value: 'hybrid-ncr', label: 'Hybrid or on-site in Delhi NCR' },
-  { value: 'relocation', label: 'Relocation abroad' },
+  { value: 'relocation', label: 'Relocation abroad with visa sponsorship' },
 ] as const;
 
 // Copy for the /contact form (src/components/react/LeadForm.tsx). Kept in data, not the component.

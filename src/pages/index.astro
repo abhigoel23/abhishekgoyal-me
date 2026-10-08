@@ -8,7 +8,7 @@ import ProofStrip from '../components/ProofStrip.astro';
 import Section from '../components/Section.astro';
 import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
-import { services } from '../data/services';
+import { listedServices } from '../data/services';
 import { writingCopy } from '../data/writing';
 import Base from '../layouts/Base.astro';
 import { formatPostDate, getPosts } from '../lib/posts';
@@ -56,7 +56,7 @@ const latestPosts = (await getPosts()).slice(0, 3);
     tone="surface"
   >
     <ul class="grid gap-x-10 gap-y-8 sm:grid-cols-2">
-      {services.map((service) => (
+      {listedServices.map((service) => (
         <li>
           <h3 class="text-h3">
             <a class="hover:text-accent" href={`/services#${service.id}`}>

@@ -3,7 +3,7 @@
 // phone number via `pnpm resume`), so the web page and PDF always match. It stays one A4 page: the build fails otherwise.
 import { Font } from 'astro:assets';
 import SEO from '../components/SEO.astro';
-import { career, education } from '../data/career';
+import { certifications, education, resumeCareer } from '../data/career';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
 import { coreStack, resumeSummary } from '../data/resume';
@@ -78,7 +78,7 @@ const contactLines: ContactItem[][] = [
       </dl>
 
       <h2>Experience</h2>
-      {career.map((job) => (
+      {resumeCareer.map((job) => (
         <section class="job">
           <div class="job-head">
             <h3>
@@ -97,9 +97,15 @@ const contactLines: ContactItem[][] = [
         </section>
       ))}
 
-      <h2>Education</h2>
+      <h2>Education &amp; certifications</h2>
       <p>
         <strong>{education.degree}</strong> — {education.school}
+        {certifications.map((cert) => (
+          <>
+            {' · '}
+            <a href={cert.href}>{cert.name}</a> — {cert.issuer}, {cert.year}
+          </>
+        ))}
       </p>
     </main>
   </body>
@@ -247,6 +253,10 @@ const contactLines: ContactItem[][] = [
     .sheet {
       padding: 16px;
       font-size: 10pt;
+    }
+    /* Dates, place and note stay on one line in the PDF, but must wrap on a small phone. */
+    .job-meta {
+      white-space: normal;
     }
     .job-head {
       flex-direction: column;
