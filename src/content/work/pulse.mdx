@@ -118,11 +118,15 @@ app is rated **4.7★ from 3,300+ reviews**.
 
 Keeping two native apps at parity meant building every feature twice. In 2025 I led a full rewrite of both
 apps into a single **React Native** codebase. I architected it and built it alongside the team, and we
-completed it in six months. It replaced both native apps in production.
+completed it in six months, before I left in May 2025. It replaced both native apps in production.
 
 React Native fitted the situation: one codebase suited the timeline and budget, the web app was already
 built in React, and the screens were the same on both platforms. The hardest part of the port was
 reliable background uploads, which the offline engine depended on.
+
+The native apps' behaviour was replicated in React Native rather than redesigned. I built the core myself
+(sync, offline storage and uploads), and the team built the screens and features on top. The new app rolled
+out gradually, with the native app still available while users moved over.
 
 ## Releases that stopped being events
 
