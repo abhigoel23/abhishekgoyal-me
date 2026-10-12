@@ -34,9 +34,23 @@ function parseArgs(argv) {
   return { positional, trailers, footer };
 }
 
+// Path of the worktree that has main checked out, if any.
+function mainWorktree() {
+  const entries = run('git', ['worktree', 'list', '--porcelain']).split('\n\n');
+  const main = entries.find((e) => e.split('\n').includes('branch refs/heads/main'));
+  return main?.match(/^worktree (.+)$/m)?.[1];
+}
+
 function merge(pr) {
   if (!/^\d+$/.test(pr ?? '')) die('Usage: pnpm ship:merge <pr#>');
   execFileSync('gh', ['pr', 'merge', pr, '--squash', '--delete-branch'], { stdio: 'inherit' });
+  // From a linked worktree (.claude/worktrees/<name>) main is usually checked out elsewhere, so
+  // `git switch main` would fail; leave the pull to that checkout.
+  const mainAt = mainWorktree();
+  if (mainAt && mainAt !== run('git', ['rev-parse', '--show-toplevel'])) {
+    console.log(`MERGED #${pr}; main is checked out in ${mainAt}; run \`git pull\` there.`);
+    return;
+  }
   run('git', ['switch', '-q', 'main']);
   run('git', ['pull', '-q', '--ff-only']);
   // The main run deploys and rolls itself back on a failed smoke test; GitHub emails on failure.

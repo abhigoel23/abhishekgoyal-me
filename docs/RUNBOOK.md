@@ -233,6 +233,9 @@ pnpm ship 123 "feat: what changed"   # commit (staged files, or everything if no
 pnpm ship:merge 124                  # squash-merge PR #124, delete the branch, pull main
 ```
 
+From a linked worktree (e.g. `.claude/worktrees/<name>`) where `main` is checked out in another worktree,
+`ship:merge` stops after the merge and prints that worktree's path; run `git pull` there.
+
 `ship` ends with `READY <url>` or `FAILED <url>` plus the last 60 lines of the failed job's log. Fix, then run
 the same `pnpm ship` again: it commits, pushes and waits on the existing PR. Lighthouse and the preview deploy
 still run but aren't required, so `ship` doesn't wait for them. After a merge, the main run deploys and rolls
