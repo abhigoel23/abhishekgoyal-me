@@ -20,6 +20,14 @@ site's HTML is served by the Worker (`src/worker.ts`), which it never touches. S
 installed by hand in `src/components/WebAnalytics.astro`, with the token from `src/data/analytics.ts`
 (`CF_BEACON_TOKEN`, public — it ships in the page source).
 
+The beacon loads only on the live hosts (`ANALYTICS_HOSTS`), and never for automated browsers
+(`shouldLoadBeacon` in `src/lib/webAnalytics.ts`): `navigator.webdriver` is true (Playwright, headless
+Chrome) or the user agent contains `Chrome-Lighthouse`. CI runs the Playwright smoke suite against
+production after every deploy and Lighthouse every night, and before this check (#246) those runs were
+most of the visits Cloudflare counted ([GROWTH.md](./GROWTH.md#the-three-numbers)). GA4 needs no such
+check: gtag loads only after Accept, Playwright starts with consent declined (its consent spec stubs
+Google's hosts), and Lighthouse never accepts.
+
 ## Consent model
 
 The consent bar (`src/components/ConsentBar.astro`) implements Basic Consent Mode v2. Before the visitor
@@ -178,7 +186,8 @@ they don't expire on their own the way the consent choice does.
   `_ga*` cookies should be set. This is the expected, correct behaviour, not a bug.
 - **Cloudflare's counts**: Cloudflare dashboard → the zone → Analytics & Logs → Web Analytics. These
   numbers are independent of consent and should be the highest of the three (GA4 users, GA4 sessions,
-  Cloudflare visits) since it's the only one that counts everyone.
+  Cloudflare visits) since it's the only one that counts everyone. A browser driven by Playwright or
+  Lighthouse never sends the beacon, so to check it by hand use a normal browser on the live site.
 
 ## UTM convention
 

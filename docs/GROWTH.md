@@ -18,6 +18,11 @@ Why these sources:
   is consent-gated too. D1 has every lead.
 - **Cloudflare Web Analytics, not GA4, counts visits.** It needs no consent, so it sees everyone. Leads
   and visits then cover the same people.
+- **Visits before #246 are inflated by CI.** Until then the beacon also counted the Playwright smoke run
+  after every deploy and the nightly Lighthouse run, both against production (about 12.5k of
+  September's 13.4k visits, all US / direct / Chrome). September 2026 and October up to that deploy are
+  affected: the 2026-09 Visits value is an estimate from non-US visits only (~870), and October's is
+  high. Compare trends from November 2026 on.
 - **GA4 is for the shape, not the totals:** which sources and landing pages lead to leads, and where the
   funnel drops (the saved explorations listed in [ANALYTICS.md](./ANALYTICS.md#ga4-admin-settings)).
 - With a handful of leads a month, a percentage swings wildly. Read the counts and the trend over

@@ -72,7 +72,6 @@ export function reviewBody(
     '',
     '**3. GA4** (only visitors who accept the consent bar)',
     '- [ ] Explore, with the date range set to this month: **Lead funnel** (both tabs), **Landing pages by conversion**, **Source / medium** (and its CTA clicks tab)',
-    "- [ ] If `sign_up` appears in Admin → Events and isn't a key event yet, mark it as one (then delete this line from `src/lib/monthlyReview.ts`)",
     '',
     '**4. Leads and Subscribers Sheets**',
     '- [ ] Every lead this month was answered; first-touch source noted; spam deleted',
