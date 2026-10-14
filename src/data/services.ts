@@ -120,6 +120,16 @@ export const services: Service[] = [
           question: 'Who owns the code?',
           answer: codeOwnership,
         },
+        {
+          question: 'Who owns the store accounts and signing keys?',
+          answer:
+            'You do. The Google Play and App Store accounts and the app’s signing keys stay in your name from the start, so you never need my permission to release your own app.',
+        },
+        {
+          question: 'What if we stop working together?',
+          answer:
+            'You keep everything: the code, the store accounts and signing keys, and the written decisions behind the app, so your own team or another developer can pick it up.',
+        },
       ],
       related: [
         { label: 'HelperBook: from first commit to Google Play', href: '/work/helperbook' },
