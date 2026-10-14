@@ -71,8 +71,8 @@ AWS, but its cert can't renew without those CNAMEs.
        this check needs a real browser.
 3. [x] CloudFront distribution `dpxp3d37iqwxe.cloudfront.net` disabled; both ACM validation CNAMEs deleted
        (2026-10-07).
-4. [ ] **2026-10-14:** AWS → delete the CloudFront distribution, then the ACM certificate (us-east-1), then
-       empty and delete the old S3 site bucket.
+4. [x] AWS: CloudFront distribution deleted, then the ACM certificate (us-east-1), then the old S3 site
+       bucket emptied and deleted (2026-10-14).
 
 ## Migration checklist
 
