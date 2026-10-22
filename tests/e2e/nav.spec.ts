@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { nav, hireCta, primaryCta } from '../../src/data/nav';
+import { nav, hireCta, primaryCta, resumeLink } from '../../src/data/nav';
 
 // A nav entry pointing at a route that doesn't exist ships a 404 into the header of every page, which
 // is how /writing reached production (caught by the nightly link check, not by these tests).
-const links = [...nav, primaryCta, hireCta];
+const links = [...nav, primaryCta, hireCta, resumeLink];
 
 for (const { href, label } of links) {
   test(`the ${label} link (${href}) resolves`, async ({ request }) => {

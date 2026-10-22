@@ -1,5 +1,6 @@
 ---
-// Home-page hero: positioning, intro, primary CTA, the employer link and the photo.
+// Home-page hero: positioning, intro, primary CTA, the employer link and the photo. The photo sits on a
+// surface-coloured box so it isn't an empty frame while it decodes.
 import { Image } from 'astro:assets';
 import photo from '../assets/profile/abhishek-goyal.jpg';
 import { hireCta, primaryCta } from '../data/nav';
@@ -23,13 +24,13 @@ const Heading = headingLevel;
     </p>
     <Heading class="text-display text-ink">{profile.positioning}</Heading>
     <p class="mt-6 max-w-xl text-lead text-muted">{profile.intro}</p>
-    <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+    <div class="mt-8 flex flex-wrap items-center gap-4">
       <Button href={primaryCta.href} size="lg" cta="hero_start_project">
         {primaryCta.label}
       </Button>
-      <a href={hireCta.href} class="link text-sm font-medium" data-cta="hero_hire">
+      <Button href={hireCta.href} variant="secondary" size="lg" cta="hero_hire">
         {hireCta.label} →
-      </a>
+      </Button>
     </div>
   </div>
   <figure class="mx-auto w-full max-w-xs">
@@ -40,7 +41,7 @@ const Heading = headingLevel;
       sizes="(min-width: 768px) 320px, 80vw"
       loading="eager"
       fetchpriority="high"
-      class="aspect-[4/5] w-full rounded-brand border border-line object-cover object-top"
+      class="aspect-[4/5] w-full rounded-brand border border-line bg-surface object-cover object-top"
     />
     <figcaption class="mt-3 text-sm text-muted">
       {profile.name} · {profile.location.city}, {profile.location.country}

@@ -13,7 +13,7 @@ test('home page renders the hero, photo and case studies', async ({ page }) => {
     .poll(() => photo.evaluate((img: HTMLImageElement) => img.naturalWidth))
     .toBeGreaterThan(0);
 
-  await expect(page.locator('#work a[href^="/work/"]')).toHaveCount(3);
+  await expect(page.locator('#work a[href^="/work/"]')).toHaveCount(4);
 });
 
 test('the primary CTA opens the contact form', async ({ page }) => {

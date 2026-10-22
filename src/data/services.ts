@@ -280,7 +280,7 @@ export const services: Service[] = [
         },
         {
           title: 'Know when a rewrite is the right call',
-          body: 'Sometimes steps aren’t enough. In 2025 I led the rewrite of two native apps into one React Native codebase in six months, and it replaced both in production.',
+          body: 'Sometimes steps aren’t enough. I led the rewrite of two native apps into one React Native codebase in six months, and it replaced both in production.',
         },
       ],
       outcomes: [

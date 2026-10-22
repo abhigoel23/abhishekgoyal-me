@@ -23,7 +23,7 @@ export const pages = {
   '/work': {
     title: 'Mobile app case studies',
     description:
-      'Mobile app case studies: an offline-first inspection app with 50,000+ users, a household salary app on a shared KMP data layer, and a video hiring app.',
+      'Mobile app case studies: an offline-first inspection app with 50,000+ users, a KMP household salary app, a video hiring app and a streaming app prototype.',
     ogTitle: 'Case studies: mobile products taken from zero to shipped',
   },
   '/services': {

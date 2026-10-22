@@ -24,9 +24,9 @@ export const career: Job[] = [
     period: 'Feb 2026 – Present',
     location: 'Gurugram',
     about:
-      'A local-only Android app for Indian households to track staff attendance, advances and salary. Product, architecture, UI, Hindi localisation and store submission.',
+      'A local-only Android app for Indian households to track staff attendance, advances and salary, plus the daily milk delivery and bill. Product, architecture, UI, Hindi localisation and store submission.',
     subtitle:
-      'Local-only Android app for Indian households to track staff attendance, advances, and salary settlements. Owned product, architecture, UI, Hindi localisation, and store submission.',
+      'Local-only Android app for Indian households to track staff attendance, advances, and salary settlements, plus daily milk deliveries and bills. Owned product, architecture, UI, Hindi localisation, and store submission.',
     highlights: [
       '**No signup, no server:** records live on-device via SQLDelight in a shared KMP module, with user-owned export/restore. Keeping wage data off any server keeps the app outside data-fiduciary scope under DPDP, and gives households a reason to enter real numbers.',
       '**Product rules in the data model:** unmarked days default to present so a worker is never underpaid; half-days deduct exactly half; settlement statements are generated bilingually (English/Hindi) so employer and helper can both read every line.',
@@ -54,7 +54,7 @@ export const career: Job[] = [
     period: 'Jan 2021 – May 2025',
     location: 'Noida',
     about:
-      'Founding engineer on the Pulse inspection platform: architected the initial mobile app, web frontend and backend, then owned Android and iOS from early prototype to 100+ B2B clients and 50,000+ users in 10+ countries, led a team of 4–6 mobile engineers, and led the 2025 React Native rewrite.',
+      'Founding engineer on the Pulse inspection platform: architected the initial mobile app, web frontend and backend, then owned Android and iOS from early prototype to 100+ B2B clients and 50,000+ users in 10+ countries, led a team of 4–6 mobile engineers, and led the React Native rewrite.',
     subtitle:
       'Owned mobile for the Pulse enterprise inspection platform: Android and iOS end to end.',
     highlights: [
@@ -62,7 +62,7 @@ export const career: Job[] = [
       'Engineered the offline-first data layer (dynamic form builder, background media upload queue, local SQLite cache) for offline auditors, handling inspections of 500+ questions and 1,000+ photos; no data-loss incidents in 4.5 years.',
       'Shipped the Swift/UIKit iOS client alongside Android with feature parity; the Android app is rated **4.7★ from 3,300+ reviews**.',
       'Led **4–6 mobile engineers**: interviewed candidates, set the review and sprint process, and introduced GitHub Actions + Fastlane releases (bi-weekly cadence, same-day hotfixes).',
-      '2025: architected and led the rewrite of both native apps into one **React Native** codebase, co-built with the team in six months.',
+      'Architected and led the rewrite of both native apps into one **React Native** codebase, co-built with the team and completed in six months, before I left in May 2025.',
     ],
     href: '/work/pulse',
   },
