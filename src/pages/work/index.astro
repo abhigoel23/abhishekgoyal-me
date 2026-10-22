@@ -13,10 +13,10 @@ const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.
     <p class="eyebrow mb-3">Case studies</p>
     <h1 class="text-h1 max-w-3xl">Mobile products, taken from zero to shipped</h1>
     <p class="mt-5 max-w-2xl text-lead text-muted">
-      Three projects where I owned the mobile side end to end: architecture, the app itself and the
-      release.
+      Three shipped products where I owned the mobile side end to end: architecture, the app itself
+      and the release. Plus a coded prototype of a micro-drama streaming app.
     </p>
-    <ul class="mt-14 grid gap-6 md:grid-cols-3">
+    <ul class="mt-14 grid gap-6 md:grid-cols-2">
       {work.map((entry) => (
         <li>
           <Card

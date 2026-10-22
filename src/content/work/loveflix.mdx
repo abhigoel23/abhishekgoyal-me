@@ -1,0 +1,53 @@
+---
+title: 'LoveFlix: a micro-drama streaming app prototype'
+summary: A coded prototype of a micro-drama streaming app, built solo in React Native and Expo. Real vertical video playback, episodes that lock on a cliffhanger, and a paywall with four working unlock paths. Runs on iOS, Android and web.
+role: Solo developer
+period: Oct 2026
+client: A take-home brief, built from a provided design system
+platform: iOS, Android and web (React Native with Expo)
+stack: [React Native, Expo SDK 58, TypeScript, expo-router, expo-video]
+order: 4
+outcomes:
+  - value: '8'
+    label: screens built pixel-close from a provided design system
+  - value: '4'
+    label: working unlock paths, sharing one in-app wallet
+  - value: '3'
+    label: 'platforms from one codebase: iOS, Android and web'
+links:
+  - label: Try the live web demo
+    href: https://abhigoel23.github.io/loveflix-demo/
+---
+
+## The brief
+
+A clickable mock-up of a micro-drama streaming app, built solo as a coded prototype. I built eight screens
+pixel-close from a provided design system: the Home feed, Series Detail, a coin store, My Library, the
+Series Player, Login, the Paywall and a vertical Discover feed.
+
+It's written in **TypeScript** on **React Native with Expo SDK 58**, with **expo-router** for navigation,
+and it runs on iOS, Android and the web.
+
+## Real video, in a vertical player
+
+Playback is real, not a placeholder. Each episode is a slice of a streamed Creative Commons film, played
+with **expo-video** in a full-screen vertical player.
+
+## The cliffhanger and the paywall
+
+The next episode locks right after the cliffhanger ("To be continued…"), and a paywall follows. Four ways
+to unlock it work in the prototype:
+
+- **Coins**, with a top-up from the coin store
+- **A season bundle**
+- **A VIP subscription**
+- **A 5-second rewarded ad**
+
+All four share one in-app wallet state, so an unlock shows everywhere in the app at once.
+
+## Try it
+
+The web demo runs in the browser. The source repository is private.
+
+Video: the Sintel trailer, © Blender Foundation, licensed under
+[CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).

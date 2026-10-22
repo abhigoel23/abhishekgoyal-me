@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('work index links to every case study', async ({ page }) => {
   await page.goto('/work');
-  for (const slug of ['helperbook', 'pulse', 'video-hiring']) {
+  for (const slug of ['helperbook', 'pulse', 'video-hiring', 'loveflix']) {
     await expect(page.locator(`main a[href="/work/${slug}"]`)).toBeVisible();
   }
 });

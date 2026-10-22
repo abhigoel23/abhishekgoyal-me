@@ -191,9 +191,11 @@ const contactLines: ContactItem[][] = [
     font-size: inherit;
     font-weight: 700;
   }
+  /* The right padding keeps dates and places off the right edge of the text block. */
   .job-meta {
     color: var(--muted);
     white-space: nowrap;
+    padding-right: 1.5mm;
   }
   .job-sub {
     color: var(--muted);
@@ -257,6 +259,7 @@ const contactLines: ContactItem[][] = [
     /* Dates, place and note stay on one line in the PDF, but must wrap on a small phone. */
     .job-meta {
       white-space: normal;
+      padding-right: 0;
     }
     .job-head {
       flex-direction: column;

@@ -1,6 +1,7 @@
 ---
 import { consentCopy } from '../data/analytics';
 import { checklistBand } from '../data/checklist';
+import { hireLink, resumeLink } from '../data/nav';
 import { profile } from '../data/profile';
 import Container from './Container.astro';
 
@@ -34,7 +35,17 @@ const year = new Date().getFullYear();
           </a>
         </p>
       </div>
-      <ul class="flex gap-5">
+      <ul class="flex flex-wrap gap-x-5 gap-y-2">
+        <li>
+          <a class="hover:text-ink" href={hireLink.href} data-cta="footer_hire">
+            {hireLink.label}
+          </a>
+        </li>
+        <li>
+          <a class="hover:text-ink" href={resumeLink.href}>
+            {resumeLink.label}
+          </a>
+        </li>
         <li>
           <a class="hover:text-ink" href={profile.links.github}>
             GitHub

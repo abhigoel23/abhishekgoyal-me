@@ -21,7 +21,7 @@ export const atAGlance = [
   {
     label: 'Leadership',
     value:
-      'Founding engineer, then Head of Mobility at Aim North: led 4–6 mobile engineers and the 2025 React Native rewrite',
+      'Founding engineer, then Head of Mobility at Aim North: led 4–6 mobile engineers and the React Native rewrite',
   },
   {
     label: 'Strengths',
