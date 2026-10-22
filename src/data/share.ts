@@ -29,6 +29,7 @@ export const linkedinHashtags: Record<string, string[]> = {
   hiring: ['AppDevelopment'],
   startups: ['Startups', 'Founders'],
   mvp: ['MVP', 'ProductDevelopment'],
+  india: ['StartupIndia'],
 };
 
 // Added after the mapped hashtags on every post, while there's room.
