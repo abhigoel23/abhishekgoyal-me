@@ -71,23 +71,23 @@ keep their own headlines.
 
 ### Posts (decide and learn)
 
-| Post (TOPICS.md #)                      | Primary query                              | Variants from autocomplete                                                             | Intent | Links to                  |
-| --------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------- | ------ | ------------------------- |
-| #5 Native, KMP or React Native          | kotlin multiplatform vs react native       | … performance · … vs flutter · react native vs native app · react native vs native ios | Decide | `/services/kmp`           |
-| #16 Share the logic, keep the UI native | kotlin multiplatform shared business logic | kotlin multiplatform shared module · shared viewmodel                                  | Decide | `/services/kmp`           |
-| #1 Two native apps into one RN codebase | react native vs native app                 | react native vs native app development                                                 | Decide | `/services/rescue`        |
-| #18 What an Android app costs in India  | mobile app development cost india 2026     | mobile app development charges in india · cost estimate in india                       | Decide | `/services/india`         |
-| #10 Offline-first in three products     | offline first mobile app architecture      | offline first architecture android                                                     | Learn  | `/services/offline-first` |
-| #19 How to hire an app developer        | how to hire an app developer               | how to hire app developers in india · questions to ask app developers                  | Decide | `/services/mvp`           |
-| #15 Offline-first by default            | offline first android app                  | offline first approach android                                                         | Decide | `/services/offline-first` |
-| #12 HelperBook's shared KMP module      | kmp sqldelight vs room                     | sqldelight kmp migration · sqldelight kmp ios                                          | Learn  | `/services/kmp`           |
-| #7 CameraX to Media3                    | camerax record video                       | none                                                                                   | Learn  | `/services/mvp`           |
+| Post (TOPICS.md #)                       | Primary query                              | Variants from autocomplete                                                             | Intent | Links to                  |
+| ---------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------- | ------ | ------------------------- |
+| #5 Native, KMP or React Native           | kotlin multiplatform vs react native       | … performance · … vs flutter · react native vs native app · react native vs native ios | Decide | `/services/kmp`           |
+| #16 Share the logic, keep the UI native  | kotlin multiplatform shared business logic | kotlin multiplatform shared module · shared viewmodel                                  | Decide | `/services/kmp`           |
+| #1 Two native apps into one RN codebase  | react native vs native app                 | react native vs native app development                                                 | Decide | `/services/rescue`        |
+| #18 Mobile app development cost in India | mobile app development cost india 2026     | mobile app development charges in india · cost estimate in india                       | Decide | `/services/india`         |
+| #10 Offline-first in three products      | offline first mobile app architecture      | offline first architecture android                                                     | Learn  | `/services/offline-first` |
+| #19 How to hire an app developer         | how to hire an app developer               | how to hire app developers in india · questions to ask app developers                  | Decide | `/services/mvp`           |
+| #15 Offline-first by default             | offline first android app                  | offline first approach android                                                         | Decide | `/services/offline-first` |
+| #12 HelperBook's shared KMP module       | kmp sqldelight vs room                     | sqldelight kmp migration · sqldelight kmp ios                                          | Learn  | `/services/kmp`           |
+| #7 CameraX to Media3                     | camerax record video                       | none                                                                                   | Learn  | `/services/mvp`           |
 
 The two published offline-first posts should mention "offline-first architecture" and "Android" in
 their meta descriptions, to match the autocomplete wording.
 
-Post #18 needs real numbers from Abhishek: the discovery price is public (₹60,000 / US$900), but a
-post about build costs also needs typical project ranges he actually quotes. No invented prices.
+Post #18 publishes no project ranges (Abhishek, 2026-10-22: rates stay unpublished). It answers the query
+with the cost drivers and the public discovery price (₹60,000 / US$900) instead. No invented prices.
 
 ## Not targeting
 
