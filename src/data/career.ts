@@ -24,9 +24,9 @@ export const career: Job[] = [
     period: 'Feb 2026 – Present',
     location: 'Gurugram',
     about:
-      'A local-only Android app for Indian households to track staff attendance, advances and salary. Product, architecture, UI, Hindi localisation and store submission.',
+      'A local-only Android app for Indian households to track staff attendance, advances and salary, plus the daily milk delivery and bill. Product, architecture, UI, Hindi localisation and store submission.',
     subtitle:
-      'Local-only Android app for Indian households to track staff attendance, advances, and salary settlements. Owned product, architecture, UI, Hindi localisation, and store submission.',
+      'Local-only Android app for Indian households to track staff attendance, advances, and salary settlements, plus daily milk deliveries and bills. Owned product, architecture, UI, Hindi localisation, and store submission.',
     highlights: [
       '**No signup, no server:** records live on-device via SQLDelight in a shared KMP module, with user-owned export/restore. Keeping wage data off any server keeps the app outside data-fiduciary scope under DPDP, and gives households a reason to enter real numbers.',
       '**Product rules in the data model:** unmarked days default to present so a worker is never underpaid; half-days deduct exactly half; settlement statements are generated bilingually (English/Hindi) so employer and helper can both read every line.',
