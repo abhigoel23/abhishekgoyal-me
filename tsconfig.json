@@ -1,7 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", ".wrangler", "eslint.config.js"],
+  "exclude": ["dist", ".wrangler", ".claude/worktrees", "eslint.config.js"],
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "react"
