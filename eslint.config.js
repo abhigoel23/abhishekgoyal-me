@@ -17,6 +17,8 @@ export default defineConfig(
       'playwright-report/',
       'test-results/',
       'worker-configuration.d.ts',
+      // Other Claude sessions' git worktrees (git-ignored checkouts with their own build output)
+      '.claude/worktrees/',
     ],
   },
   js.configs.recommended,

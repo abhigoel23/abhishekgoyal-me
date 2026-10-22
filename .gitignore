@@ -33,6 +33,9 @@ playwright-report/
 test-results/
 coverage/
 
+# Claude Code session worktrees
+.claude/worktrees/
+
 # personal Claude Code permissions
 .claude/settings.local.json
 
