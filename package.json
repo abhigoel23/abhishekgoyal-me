@@ -46,7 +46,7 @@
     "react-hook-form": "^7.89.0",
     "tailwindcss": "^4.3.3",
     "wrangler": "^4.147.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "allowScripts": {
     "esbuild": true
