@@ -77,6 +77,7 @@ keep their own headlines.
 | #16 Share the logic, keep the UI native  | kotlin multiplatform shared business logic | kotlin multiplatform shared module · shared viewmodel                                  | Decide | `/services/kmp`           |
 | #1 Two native apps into one RN codebase  | react native vs native app                 | react native vs native app development                                                 | Decide | `/services/rescue`        |
 | #18 Mobile app development cost in India | mobile app development cost india 2026     | mobile app development charges in india · cost estimate in india                       | Decide | `/services/india`         |
+| #25 App maintenance cost in India        | app maintenance cost per month in india    | app maintenance cost per month · …per year · app maintenance cost in india             | Decide | `/services/india`         |
 | #10 Offline-first in three products      | offline first mobile app architecture      | offline first architecture android                                                     | Learn  | `/services/offline-first` |
 | #19 How to hire an app developer         | how to hire an app developer               | how to hire app developers in india · questions to ask app developers                  | Decide | `/services/mvp`           |
 | #15 Offline-first by default             | offline first android app                  | offline first approach android                                                         | Decide | `/services/offline-first` |
