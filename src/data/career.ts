@@ -115,7 +115,7 @@ export const career: Job[] = [
     location: 'Noida',
     about: 'Early career, combined on the resume.',
     highlights: [
-      '**OUTFY:** Rails integrations with Shopify, WooCommerce, BigCommerce, Etsy, eBay and Weebly (auth, products, webhooks); led Android. **EzHealth Track:** offline-first tablet app for doctors with bidirectional sync. **SafeON:** voice-activated safety tracking. **iCouch:** real-time TV chat over sockets. **Eatlo:** social food-sharing app with custom multi-touch canvas and Google Maps.',
+      '**OUTFY:** Rails integrations with Shopify, WooCommerce, BigCommerce, Etsy, eBay and Weebly, plus web Image Collage; led Android. **EzHealth Track:** offline-first tablet app for doctors with bidirectional sync. **SafeON:** voice-activated safety tracking. **iCouch:** real-time TV chat over sockets. **Eatlo:** social food-sharing app with custom multi-touch canvas and Google Maps.',
     ],
     only: 'resume',
   },
