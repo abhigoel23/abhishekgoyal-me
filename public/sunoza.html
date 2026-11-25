@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SUNOZA App Preview</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="A clickable concept of a SUNOZA app for parents and therapists, by Abhishek Goyal.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://abhishekgoyal.me/sunoza">
+<meta property="og:title" content="SUNOZA App Preview">
+<meta property="og:description" content="A clickable concept of a SUNOZA app for parents and therapists, by Abhishek Goyal.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..650&family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600&display=swap">
+<style>
+/* Base reset (the page was first written for a host that supplied it). */
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); color-scheme: light; }
+body { margin: 0; }
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+
+/* Layout: an intro band, then a phone you can tap through beside a panel that explains each screen; a contact band closes it. */
+:root {
+  --bg: #EEEADF;
+  --surface: #FBF9F4;
+  --ink: #262A21;
+  --muted: #5A5E51;
+  --brand: #3F4A30;
+  --brand-ink: #F6F3EC;
+  --sage: #6F7957;
+  --sage-soft: #DDE1CC;
+  --peach: #EED7C3;
+  --accent: #9E4B26;
+  --line: #DAD4C4;
+  --app-bg: #F6F3EC;
+  --frame: #1F2219;
+  --call-bg: #1C2116;
+  --call-ink: #EEF0E4;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'DM Sans', 'Noto Sans Devanagari', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #161912; --surface: #21251B; --ink: #ECEBE2; --muted: #B3B7A5; --brand: #C3CEA2; --brand-ink: #1B2014;
+    --sage: #A4AF86; --sage-soft: #2F3627; --peach: #4A3A2B; --accent: #EBA27C; --line: #353B2D;
+    --app-bg: #1A1E15; --frame: #080906; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #161912; --surface: #21251B; --ink: #ECEBE2; --muted: #B3B7A5; --brand: #C3CEA2; --brand-ink: #1B2014;
+  --sage: #A4AF86; --sage-soft: #2F3627; --peach: #4A3A2B; --accent: #EBA27C; --line: #353B2D;
+  --app-bg: #1A1E15; --frame: #080906; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.5; }
+button { font: inherit; color: inherit; cursor: pointer; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.wrap { max-width: 1140px; margin: 0 auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+
+/* Intro */
+.intro { padding-block: 56px 32px; display: grid; gap: 16px; max-width: 760px; }
+.eyebrow { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin: 0; }
+h1 { font-family: var(--font-display); font-weight: 500; font-size: clamp(36px, 6vw, 60px); line-height: 1.04; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.intro p { margin: 0; font-size: 19px; color: var(--muted); max-width: 62ch; }
+.meta { font-size: 14px !important; }
+
+/* Screen picker */
+.picker { display: flex; gap: 8px; overflow-x: auto; padding-block: 4px 20px; scrollbar-width: thin; }
+.chip { flex: none; border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 8px 16px; font-size: 14px; font-weight: 500; }
+.chip[aria-pressed="true"] { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+
+/* Stage */
+.stage { display: grid; grid-template-columns: 410px minmax(0, 1fr); gap: 56px; align-items: start; padding-block: 0 72px; }
+@media (max-width: 900px) { .stage { grid-template-columns: minmax(0, 1fr); gap: 28px; } .phone { margin: 0 auto; } }
+
+/* Phone */
+.phone { width: 390px; max-width: 100%; height: 800px; background: var(--frame); border-radius: 52px; padding: 12px; box-shadow: 0 30px 60px -30px rgba(31, 34, 25, 0.55); }
+@media (max-width: 480px) { .phone { height: 740px; border-radius: 44px; padding: 9px; } }
+.screen-glass { height: 100%; border-radius: 41px; background: var(--app-bg); overflow: hidden; display: flex; flex-direction: column; position: relative; }
+@media (max-width: 480px) { .screen-glass { border-radius: 35px; } }
+.status { display: flex; justify-content: space-between; align-items: center; padding: 14px 28px 6px; font-size: 14px; font-weight: 600; flex: none; }
+.status .dots { display: flex; gap: 5px; align-items: center; }
+.status .dots i { width: 6px; height: 6px; border-radius: 50%; background: currentColor; display: block; opacity: 0.8; }
+.app-body { flex: 1; overflow-y: auto; padding: 8px 18px 20px; min-height: 0; }
+.screen { display: grid; gap: 16px; animation: fade 260ms ease-out; }
+@keyframes fade { from { opacity: 0.4; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .screen { animation: none; } }
+
+.tabbar { flex: none; display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--line); background: var(--surface); padding: 8px 6px 18px; }
+.tab { border: 0; background: none; display: grid; justify-items: center; gap: 3px; font-size: 11px; font-weight: 600; color: var(--muted); padding: 4px 0; }
+.tab svg { width: 22px; height: 22px; }
+.tab[aria-current="true"] { color: var(--brand); }
+.tabbar.hide { display: none; }
+
+/* App pieces */
+.app-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.hello { font-family: var(--font-display); font-size: 26px; font-weight: 500; line-height: 1.15; margin: 0; }
+.sub { font-size: 14px; color: var(--muted); margin: 2px 0 0; }
+.lang { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 11px; font-size: 13px; font-weight: 600; flex: none; }
+.child { display: inline-flex; align-items: center; gap: 8px; background: var(--sage-soft); border-radius: 999px; padding: 5px 12px 5px 5px; font-size: 13px; font-weight: 600; justify-self: start; }
+.avatar { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--peach); font-size: 12px; font-weight: 700; color: var(--ink); }
+.card { background: var(--surface); border-radius: 20px; padding: 16px; display: grid; gap: 10px; border: 1px solid var(--line); }
+.card.brand { background: var(--brand); color: var(--brand-ink); border-color: var(--brand); }
+.card.brand .sub { color: var(--brand-ink); opacity: 0.85; }
+.label { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 0; }
+.card.brand .label { color: var(--peach); }
+.title { font-weight: 600; font-size: 16px; margin: 0; line-height: 1.3; }
+.row { display: flex; align-items: center; gap: 12px; }
+.row > .grow { flex: 1; min-width: 0; }
+.btn { border: 0; border-radius: 14px; padding: 12px 16px; font-weight: 600; font-size: 15px; background: var(--brand); color: var(--brand-ink); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+.card.brand .btn { background: var(--brand-ink); color: var(--brand); }
+.btn.ghost { background: transparent; color: var(--brand); border: 1px solid var(--line); }
+.section-h { display: flex; justify-content: space-between; align-items: baseline; margin: 6px 0 -4px; }
+.section-h h3 { font-family: var(--font-display); font-weight: 500; font-size: 20px; margin: 0; }
+.section-h span { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.activity { display: flex; gap: 12px; align-items: center; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 10px 12px 10px 10px; }
+.thumb { width: 56px; height: 56px; border-radius: 14px; background: var(--sage-soft); display: grid; place-items: center; flex: none; color: var(--brand); }
+.thumb.p { background: var(--peach); }
+.thumb svg { width: 22px; height: 22px; }
+.activity .grow { flex: 1; min-width: 0; text-align: left; border: 0; background: none; padding: 0; }
+.activity .meta-line { font-size: 13px; color: var(--muted); margin: 2px 0 0; }
+.check { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--sage); background: transparent; display: grid; place-items: center; flex: none; padding: 0; }
+.check svg { width: 16px; height: 16px; opacity: 0; color: var(--brand-ink); }
+.check[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); }
+.check[aria-pressed="true"] svg { opacity: 1; }
+.activity.done .title { text-decoration: line-through; text-decoration-color: var(--muted); }
+
+.meter { height: 8px; border-radius: 99px; background: var(--sage-soft); overflow: hidden; }
+.meter > i { display: block; height: 100%; border-radius: 99px; background: var(--sage); }
+.card.brand .meter { background: rgba(255, 255, 255, 0.18); }
+.card.brand .meter > i { background: var(--peach); }
+
+.back { border: 0; background: none; padding: 4px 0; font-weight: 600; font-size: 15px; color: var(--brand); display: inline-flex; gap: 6px; align-items: center; justify-self: start; }
+.video { aspect-ratio: 16 / 10; max-width: 100%; border-radius: 18px; background: linear-gradient(135deg, var(--sage-soft), var(--peach)); display: grid; place-items: center; position: relative; }
+.video .play { width: 60px; height: 60px; border-radius: 50%; background: var(--surface); display: grid; place-items: center; color: var(--brand); box-shadow: 0 8px 24px -10px rgba(0,0,0,0.4); }
+.video .dur { position: absolute; right: 12px; bottom: 10px; font-size: 12px; font-weight: 600; background: var(--surface); border-radius: 8px; padding: 2px 8px; }
+.steps { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 15px; }
+.tag { display: inline-block; font-size: 12px; font-weight: 600; border-radius: 99px; padding: 3px 10px; background: var(--sage-soft); white-space: nowrap; flex: none; }
+.prep { display: flex; gap: 12px; align-items: center; }
+.prep .grow { flex: 1; min-width: 0; }
+.prep .sub { margin: 0; }
+.prep-ico { width: 36px; height: 36px; border-radius: 50%; background: var(--sage-soft); color: var(--brand); display: grid; place-items: center; flex: none; }
+.prep-ico.warm { background: var(--peach); color: var(--ink); }
+.prep-ico svg { width: 18px; height: 18px; }
+.tag.warm { background: var(--peach); }
+
+/* Call */
+.call { position: absolute; inset: 0; background: var(--call-bg); color: var(--call-ink); display: flex; flex-direction: column; padding: 54px 18px 26px; gap: 14px; z-index: 2; }
+.call[hidden] { display: none !important; }
+.call-top { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
+.live { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.live i { width: 8px; height: 8px; border-radius: 50%; background: #E0745A; display: block; }
+.tile { flex: 1; border-radius: 24px; background: #2C3423; display: grid; place-items: center; position: relative; min-height: 0; }
+.tile .big { width: 110px; height: 110px; border-radius: 50%; background: #56643F; display: grid; place-items: center; font-family: var(--font-display); font-size: 40px; color: #F1EEDF; }
+.tile .name { position: absolute; left: 14px; bottom: 12px; font-size: 14px; font-weight: 600; background: rgba(0,0,0,0.35); padding: 3px 10px; border-radius: 99px; }
+.self { position: absolute; right: 12px; top: 12px; width: 92px; height: 124px; border-radius: 16px; background: #4A3B2C; display: grid; place-items: center; font-size: 13px; font-weight: 600; color: #F1E2D2; }
+.shared { background: #2C3423; border-radius: 16px; padding: 10px 12px; font-size: 13px; display: flex; gap: 10px; align-items: center; }
+.controls { display: flex; justify-content: center; gap: 18px; }
+.ctrl { width: 56px; height: 56px; border-radius: 50%; border: 0; background: #39432D; color: #EEF0E4; display: grid; place-items: center; }
+.ctrl svg { width: 22px; height: 22px; }
+.ctrl[aria-pressed="true"] { background: #EEF0E4; color: #1C2116; }
+.ctrl.end { background: #C2513A; color: #fff7f2; }
+
+/* Toast for demo-only buttons */
+.toast { position: absolute; left: 16px; right: 16px; bottom: 92px; z-index: 3; background: var(--ink); color: var(--app-bg); border-radius: 14px; padding: 12px 14px; font-size: 14px; font-weight: 500; text-align: center; opacity: 0; transform: translateY(8px); transition: opacity 200ms, transform 200ms; pointer-events: none; }
+.toast.on { opacity: 1; transform: none; }
+
+/* Progress */
+.bars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; align-items: end; height: 120px; }
+.bar { display: grid; gap: 6px; justify-items: center; align-self: end; font-size: 12px; color: var(--muted); }
+.bar i { width: 100%; max-width: 40px; border-radius: 10px 10px 4px 4px; background: var(--sage); display: block; }
+.bar.now i { background: var(--accent); }
+.bar b { color: var(--ink); font-size: 13px; font-variant-numeric: tabular-nums; }
+.goal { display: grid; gap: 6px; }
+.goal .row { justify-content: space-between; font-size: 14px; }
+.goal .row span:last-child { color: var(--muted); font-variant-numeric: tabular-nums; }
+.quote { font-family: var(--font-display); font-size: 17px; line-height: 1.4; margin: 0; }
+
+/* Journal */
+.add-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.add { border: 1px dashed var(--sage); background: var(--surface); border-radius: 14px; padding: 12px 6px; display: grid; justify-items: center; gap: 6px; font-size: 13px; font-weight: 600; }
+.add svg { width: 20px; height: 20px; color: var(--brand); }
+.entry { display: grid; gap: 8px; }
+.reply { background: var(--sage-soft); border-radius: 14px; padding: 10px 12px; font-size: 14px; }
+.reply b { display: block; font-size: 12px; margin-bottom: 2px; }
+
+/* Plan */
+.usage { display: grid; gap: 10px; }
+.usage .row { justify-content: space-between; font-size: 14px; }
+.usage .row span:last-child { font-weight: 600; font-variant-numeric: tabular-nums; }
+.plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.plan { border: 1px solid var(--line); border-radius: 14px; padding: 10px; background: var(--surface); display: grid; gap: 2px; }
+.plan.on { border: 2px solid var(--brand); }
+.plan b { font-size: 13px; }
+.plan span { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* Therapist */
+.kid { display: flex; gap: 12px; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--line); }
+.kid:last-child { border-bottom: 0; }
+
+/* Explainer panel */
+.panel { display: grid; gap: 22px; position: sticky; top: calc(24px + env(safe-area-inset-top, 0px)); }
+@media (max-width: 900px) { .panel { position: static; } }
+.panel .count { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; margin: 0; }
+.panel h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(28px, 3.6vw, 40px); line-height: 1.1; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.panel .lead { font-size: 18px; color: var(--muted); margin: 0; max-width: 56ch; }
+.why { border-top: 1px solid var(--line); padding-top: 20px; display: grid; gap: 8px; }
+.why h3 { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); margin: 0; }
+.why p { margin: 0; font-size: 17px; max-width: 56ch; }
+.builds { display: flex; flex-wrap: wrap; gap: 8px; }
+.builds span { border: 1px solid var(--line); background: var(--surface); border-radius: 10px; padding: 6px 12px; font-size: 14px; }
+.nav { display: flex; gap: 10px; flex-wrap: wrap; }
+.nav .btn { border-radius: 999px; padding: 11px 20px; }
+
+/* Closing band */
+.close { background: var(--brand); color: var(--brand-ink); }
+.close .wrap { padding-block: 64px; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+@media (max-width: 820px) { .close .wrap { grid-template-columns: minmax(0, 1fr); } }
+.close h2 { font-family: var(--font-display); font-weight: 500; font-size: clamp(30px, 4.4vw, 46px); line-height: 1.08; margin: 0 0 14px; text-wrap: balance; }
+.close p { margin: 0; font-size: 18px; opacity: 0.9; max-width: 56ch; }
+.contact { background: rgba(255, 255, 255, 0.08); border-radius: 20px; padding: 22px; display: grid; gap: 12px; }
+:root[data-theme="dark"] .contact { background: rgba(0, 0, 0, 0.08); }
+.contact .who { font-family: var(--font-display); font-size: 24px; }
+.crow { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 16px; flex-wrap: wrap; }
+.crow span { user-select: all; overflow-wrap: anywhere; min-width: 0; }
+.copy { border: 1px solid currentColor; background: transparent; border-radius: 99px; padding: 5px 12px; font-size: 13px; font-weight: 600; color: inherit; }
+.fine { font-size: 13px; color: var(--muted); padding-block: 20px; }
+</style>
+</head>
+<body>
+
+<header class="wrap intro">
+  <p class="eyebrow">Concept preview for SUNOZA</p>
+  <h1>Your parent guidance, in every family’s pocket</h1>
+  <p>sunoza.in already has parent accounts, child screening, therapist profiles and monthly plans. This is how those could come together in a mobile app for iPhone and Android. Tap through it below, ideally on your phone.</p>
+  <p class="meta">Prepared by Abhishek Goyal · November 2026 · Names and numbers are examples</p>
+</header>
+
+<main class="wrap">
+  <nav class="picker" aria-label="Choose a screen" id="picker"></nav>
+  <div class="stage">
+    <div class="phone" aria-label="SUNOZA app preview">
+      <div class="screen-glass">
+        <div class="status" aria-hidden="true"><span>9:41</span><span class="dots"><i></i><i></i><i></i></span></div>
+        <div class="app-body" id="appBody">
+
+          <!-- TODAY -->
+          <section class="screen" data-screen="today">
+            <div class="app-head">
+              <div>
+                <p class="hello" data-i18n="greet">Good morning, Priya</p>
+                <p class="sub" data-i18n="date">Wednesday, 25 November</p>
+              </div>
+              <button class="lang" id="langBtn" type="button" aria-label="Switch language">हिंदी</button>
+            </div>
+            <span class="child"><span class="avatar">A</span>Aarav · 4 years</span>
+
+            <div class="card brand">
+              <p class="label" data-i18n="next">Next session</p>
+              <div class="row">
+                <div class="grow">
+                  <p class="title">Thu 26 Nov · 5:00 PM</p>
+                  <p class="sub">Neha Kapoor · Speech and language</p>
+                </div>
+              </div>
+              <button class="btn" type="button" data-go="call"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="3"/><path d="m16 10 6-3v10l-6-3"/></svg><span data-i18n="join">Join video call</span></button>
+            </div>
+
+            <div class="section-h"><h3 data-i18n="todayTitle">Today’s activities</h3><span id="doneCount">1 of 3 done</span></div>
+
+            <div class="activity done" data-act>
+              <span class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></svg></span>
+              <button class="grow" type="button" data-go="activity"><p class="title">Choose and ask</p><p class="meta-line">Communication · 8 min video</p></button>
+              <button class="check" type="button" aria-pressed="true" aria-label="Mark Choose and ask as done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></button>
+            </div>
+            <div class="activity" data-act>
+              <span class="thumb p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 10h18M9 4v16"/></svg></span>
+              <button class="grow" type="button" data-go="activity"><p class="title">Picture routine for bath time</p><p class="meta-line">Routines · 5 min video</p></button>
+              <button class="check" type="button" aria-pressed="false" aria-label="Mark Picture routine as done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></button>
+            </div>
+            <div class="activity" data-act>
+              <span class="thumb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M8 12h8"/></svg></span>
+              <button class="grow" type="button" data-go="activity"><p class="title">Calm corner breathing</p><p class="meta-line">Emotional regulation · 4 min</p></button>
+              <button class="check" type="button" aria-pressed="false" aria-label="Mark Calm corner breathing as done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10"/></svg></button>
+            </div>
+
+            <div class="card">
+              <div class="row"><div class="grow"><p class="title" data-i18n="screening">Finish the screening form</p><p class="sub">3 of 5 sections done · shared with your therapist</p></div></div>
+              <div class="meter"><i style="width:60%"></i></div>
+            </div>
+          </section>
+
+          <!-- ACTIVITY -->
+          <section class="screen" data-screen="activity" hidden>
+            <button class="back" type="button" data-go="today">← Today</button>
+            <div class="video" role="img" aria-label="Activity video, 8 minutes">
+              <span class="play"><svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+              <span class="dur">8:12</span>
+            </div>
+            <div>
+              <span class="tag">Communication</span>
+              <p class="hello" style="margin-top:8px">Choose and ask</p>
+              <p class="sub">Set by Neha Kapoor for this week</p>
+            </div>
+            <div class="card">
+              <p class="label">How to do it</p>
+              <ol class="steps">
+                <li>Hold up two snacks Aarav likes.</li>
+                <li>Ask “Which one?” and wait five seconds.</li>
+                <li>Accept a point, a sound or a word, then hand it over.</li>
+                <li>Name it back to him: “Banana! You chose banana.”</li>
+              </ol>
+            </div>
+            <button class="btn" type="button" data-go="journal"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="3"/><path d="m16 10 6-3v10l-6-3"/></svg>Record a clip for Neha</button>
+            <button class="btn ghost" type="button" data-go="today" id="markDone">Mark as done</button>
+          </section>
+
+          <!-- SESSIONS -->
+          <section class="screen" data-screen="sessions" hidden>
+            <p class="hello">Sessions</p>
+            <div class="card brand">
+              <p class="label">Upcoming · in 1 day</p>
+              <p class="title">Thu 26 Nov · 5:00 to 5:45 PM</p>
+              <p class="sub">Video session with Neha Kapoor</p>
+              <button class="btn" type="button" data-go="call">Join video call</button>
+            </div>
+            <div class="card">
+              <p class="label">Before the call</p>
+              <div class="prep">
+                <span class="prep-ico warm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="3"/><path d="m16 10 6-3v10l-6-3"/></svg></span>
+                <div class="grow"><p class="title">Clip added</p><p class="sub">Neha will watch Tuesday’s clip first</p></div>
+              </div>
+              <div class="prep">
+                <span class="prep-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12Z"/></svg></span>
+                <div class="grow"><p class="title">2 questions ready</p><p class="sub">From your notes this week</p></div>
+              </div>
+            </div>
+            <div class="section-h"><h3>Past sessions</h3><span>November</span></div>
+            <div class="card">
+              <div class="row"><div class="grow"><p class="title">Thu 19 Nov · Neha Kapoor</p><p class="sub">Notes and 3 new activities added</p></div><span class="tag">Notes</span></div>
+            </div>
+            <div class="card">
+              <div class="row"><div class="grow"><p class="title">Fri 6 Nov · Rohan Mehta</p><p class="sub">Occupational therapy · sensory plan</p></div><span class="tag">Notes</span></div>
+            </div>
+            <button class="btn ghost" type="button">Book another session</button>
+          </section>
+
+          <!-- PROGRESS -->
+          <section class="screen" data-screen="progress" hidden>
+            <p class="hello">November report</p>
+            <div class="card">
+              <p class="label">Home activities each week</p>
+              <div class="bars" role="img" aria-label="Activities done: week 1, 10; week 2, 12; week 3, 9; this week so far, 9">
+                <div class="bar"><b>10</b><i style="height:66px"></i>Wk 1</div>
+                <div class="bar"><b>12</b><i style="height:80px"></i>Wk 2</div>
+                <div class="bar"><b>9</b><i style="height:60px"></i>Wk 3</div>
+                <div class="bar now"><b>9</b><i style="height:60px"></i>This wk</div>
+              </div>
+            </div>
+            <div class="card">
+              <p class="label">Goals this month</p>
+              <div class="goal"><div class="row"><span>Asks by pointing or a word</span><span>6 of 10</span></div><div class="meter"><i style="width:60%"></i></div></div>
+              <div class="goal"><div class="row"><span>Calm bath time</span><span>3 of 4 weeks</span></div><div class="meter"><i style="width:75%"></i></div></div>
+              <div class="goal"><div class="row"><span>Tries new textures</span><span>2 of 5</span></div><div class="meter"><i style="width:40%"></i></div></div>
+            </div>
+            <div class="card">
+              <p class="label">From Neha</p>
+              <p class="quote">“Aarav is pointing to choose snacks much more often. Next month we’ll start two-word requests.”</p>
+            </div>
+            <button class="btn" type="button">Share report as PDF</button>
+          </section>
+
+          <!-- JOURNAL -->
+          <section class="screen" data-screen="journal" hidden>
+            <p class="hello">Journal</p>
+            <p class="sub" style="margin-top:-10px">Moments you share are seen by Aarav’s therapists.</p>
+            <div class="add-row">
+              <button class="add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="12" cy="12" r="3"/></svg>Photo</button>
+              <button class="add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="3"/><path d="m16 10 6-3v10l-6-3"/></svg>Clip</button>
+              <button class="add" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16v4Z"/></svg>Note</button>
+            </div>
+            <div class="card entry">
+              <div class="row"><span class="tag warm">Clip · 0:42</span><span class="sub" style="margin:0">Tue 24 Nov</span></div>
+              <p class="title">Asked for “more” at lunch, twice!</p>
+              <div class="reply"><b>Neha Kapoor replied</b>Lovely. Next time wait a little longer before you help. He’s close to saying it on his own.</div>
+            </div>
+            <div class="card entry">
+              <div class="row"><span class="tag">Note</span><span class="sub" style="margin:0">Mon 23 Nov</span></div>
+              <p class="title">Bath time was easier with the picture card. He pointed to “towel” himself.</p>
+            </div>
+            <div class="card entry">
+              <div class="row"><span class="tag">Photo</span><span class="sub" style="margin:0">Sat 21 Nov</span></div>
+              <p class="title">Played with the sand tray for 10 minutes. First time he didn’t pull away.</p>
+              <div class="reply"><b>Rohan Mehta replied</b>Great sign for the sensory plan. Keep it short and fun.</div>
+            </div>
+          </section>
+
+          <!-- PLAN -->
+          <section class="screen" data-screen="plan" hidden>
+            <p class="hello">Your plan</p>
+            <div class="card brand">
+              <p class="label">Grow · ₹1,499 a month</p>
+              <p class="sub">Renews on 1 December · Paid by UPI</p>
+              <div class="usage">
+                <div class="row"><span>Online therapist session</span><span>1 booked</span></div>
+                <div class="row"><span>Therapist reviews</span><span>1 of 2 used</span></div>
+                <div class="row"><span>Home therapy videos</span><span>12 this month</span></div>
+                <div class="row"><span>Monthly progress report</span><span>Ready 30 Nov</span></div>
+              </div>
+            </div>
+            <div class="section-h"><h3>All plans</h3><span>Monthly</span></div>
+            <div class="plans">
+              <div class="plan"><b>Start</b><span>₹499</span></div>
+              <div class="plan on"><b>Grow</b><span>₹1,499</span></div>
+              <div class="plan"><b>Thrive</b><span>₹2,999</span></div>
+            </div>
+            <div class="card">
+              <p class="title">Thrive adds 2 sessions and 4 therapist reviews a month</p>
+              <p class="sub">With priority support and unlimited curated videos.</p>
+              <button class="btn" type="button">Upgrade to Thrive</button>
+            </div>
+          </section>
+
+          <!-- THERAPIST -->
+          <section class="screen" data-screen="therapist" hidden>
+            <div class="app-head">
+              <div><p class="hello">Good evening, Neha</p><p class="sub">Therapist view · 3 things need you</p></div>
+              <span class="tag">Therapist</span>
+            </div>
+            <div class="card brand">
+              <p class="label">Next up</p>
+              <p class="title">Aarav · Thu 5:00 PM</p>
+              <p class="sub">1 new clip to watch before the call</p>
+              <button class="btn" type="button" data-go="call">Open session</button>
+            </div>
+            <div class="card">
+              <p class="label">My children</p>
+              <div class="kid"><span class="avatar">A</span><div class="grow" style="flex:1;min-width:0"><p class="title">Aarav, 4</p><p class="sub">Clip from Tuesday to review</p></div><span class="tag warm">New</span></div>
+              <div class="kid"><span class="avatar">M</span><div class="grow" style="flex:1;min-width:0"><p class="title">Meera, 6</p><p class="sub">Session tomorrow, 11:00 AM</p></div><span class="tag">Thu</span></div>
+              <div class="kid"><span class="avatar">K</span><div class="grow" style="flex:1;min-width:0"><p class="title">Kabir, 3</p><p class="sub">Screening form shared with you</p></div><span class="tag warm">New</span></div>
+            </div>
+            <button class="btn ghost" type="button">Send this week’s activity plan</button>
+          </section>
+
+        </div>
+
+        <nav class="tabbar" id="tabbar" aria-label="App tabs">
+          <button class="tab" type="button" data-tab="today"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span data-i18n="tToday">Today</span></button>
+          <button class="tab" type="button" data-tab="sessions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span data-i18n="tSessions">Sessions</span></button>
+          <button class="tab" type="button" data-tab="progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg><span data-i18n="tProgress">Progress</span></button>
+          <button class="tab" type="button" data-tab="journal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4Z"/><path d="M9 9h6M9 13h4"/></svg><span data-i18n="tJournal">Journal</span></button>
+          <button class="tab" type="button" data-tab="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg><span data-i18n="tPlan">Plan</span></button>
+        </nav>
+
+        <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+        <!-- CALL OVERLAY -->
+        <div class="call" id="call" hidden>
+          <div class="call-top"><span class="live"><i></i>Live · <span id="timer">00:00</span></span><span>Aarav’s session</span></div>
+          <div class="tile">
+            <span class="big">NK</span>
+            <span class="name">Neha Kapoor</span>
+            <span class="self">You</span>
+          </div>
+          <div class="shared"><span class="tag warm" style="color:#262A21">Shared</span>Aarav’s lunch clip from Tuesday</div>
+          <div class="controls">
+            <button class="ctrl" type="button" aria-pressed="false" aria-label="Mute microphone" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/></svg></button>
+            <button class="ctrl" type="button" aria-pressed="false" aria-label="Turn camera off" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="3"/><path d="m16 10 6-3v10l-6-3"/></svg></button>
+            <button class="ctrl end" type="button" aria-label="End call" id="endCall"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 15c5-5 13-5 18 0l-2 3-4-1v-3a10 10 0 0 0-6 0v3l-4 1-2-3Z"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <aside class="panel" aria-live="polite">
+      <p class="count" id="pCount">Screen 1 of 8</p>
+      <h2 id="pTitle"></h2>
+      <p class="lead" id="pLead"></p>
+      <div class="why">
+        <h3>Why it helps SUNOZA</h3>
+        <p id="pWhy"></p>
+      </div>
+      <div class="why">
+        <h3>Builds on what sunoza.in already has</h3>
+        <div class="builds" id="pBuilds"></div>
+      </div>
+      <div class="nav">
+        <button class="btn ghost" type="button" id="prevBtn">Previous</button>
+        <button class="btn" type="button" id="nextBtn">Next screen</button>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<section class="close">
+  <div class="wrap">
+    <div>
+      <h2>There’s a full plan behind this preview</h2>
+      <p>I’ve prepared the complete proposal: every feature for parents and therapists, how it connects to your current website, timelines and options to start small or go all in. I’d like to walk you through it on a 30-minute call, at a time that suits you.</p>
+    </div>
+    <div class="contact">
+      <div class="who">Abhishek Goyal</div>
+      <div class="crow"><span id="cPhone">+91 84475 88904</span><button class="copy" type="button" data-copy="cPhone">Copy</button></div>
+      <div class="crow"><span id="cMail">contact@abhishekgoyal.me</span><button class="copy" type="button" data-copy="cMail">Copy</button></div>
+    </div>
+  </div>
+</section>
+<p class="wrap fine">A concept preview by Abhishek Goyal, not a live app. Children, therapists and figures shown are examples. Plan prices are taken from sunoza.in.</p>
+
+<script>
+(function () {
+  var order = ['today', 'activity', 'call', 'sessions', 'progress', 'journal', 'plan', 'therapist'];
+  var info = {
+    today: { chip: 'Today', tab: 'today', title: 'A reason to open the app every day',
+      lead: 'Each morning, parents see the next session, today’s short home activities and anything left to finish, like the screening form.',
+      why: 'Your Grow and Thrive plans promise a weekly activity schedule and home therapy videos. This screen delivers them daily, so families feel the value of their plan and keep renewing it. Tap the circles to tick activities off, or switch to Hindi.',
+      builds: ['Child profiles', 'Screening forms', 'Packages'] },
+    activity: { chip: 'Activity', tab: 'today', title: 'Therapy at home, step by step',
+      lead: 'A short video and four plain steps, set by the child’s own therapist. Parents can record a clip of how it went.',
+      why: 'It turns the “home therapy videos” in your plans into something parents actually use, and every clip gives your therapists a real view of the child between sessions.',
+      builds: ['Parent guidance topics', 'Therapist profiles'] },
+    call: { chip: 'Video call', tab: 'sessions', title: 'One tap to the specialist',
+      lead: 'The video session runs inside the app. No links to find, no separate calling app, and the therapist can bring up the parent’s clip during the call.',
+      why: 'Your website’s main promise is “a specialist conversation from home”. Keeping the call in the app makes it feel professional and lets you track every session against the family’s plan.',
+      builds: ['Video consultations', 'Therapists'] },
+    sessions: { chip: 'Sessions', tab: 'sessions', title: 'Booking without the back and forth',
+      lead: 'Upcoming and past sessions in one place, with notes after each call and reminders before the next one.',
+      why: 'Today booking runs through a contact form and a call back. In the app, families book themselves and get reminders, so fewer sessions are missed and your team spends less time on the phone.',
+      builds: ['“Book a video consultation”', 'How it works'] },
+    progress: { chip: 'Progress', tab: 'progress', title: 'Progress parents can see',
+      lead: 'A monthly report with home activities done, goals set by the therapist and a note in plain words. Easy to share with family or school.',
+      why: 'Progress tracking and monthly reports are part of your Grow and Thrive plans. When parents can see progress, they are far more likely to stay on a plan and recommend SUNOZA.',
+      builds: ['Progress tracking', 'Monthly progress report', 'Assessments'] },
+    journal: { chip: 'Journal', tab: 'journal', title: 'Moments between sessions',
+      lead: 'Parents share photos, short clips and notes from everyday life. Therapists reply with quick guidance.',
+      why: 'This is how “therapist review” in your plans becomes real. Families feel supported all week, not only during the call, and therapists arrive at each session already knowing what happened.',
+      builds: ['Therapist reviews', 'Parent guidance'] },
+    plan: { chip: 'Plan', tab: 'plan', title: 'Plans, paid in the app',
+      lead: 'Families see what their plan includes, what they’ve used this month, and can upgrade or renew with UPI or a card.',
+      why: 'Your Start, Grow and Thrive plans become a clear monthly subscription. Seeing what Thrive adds, right next to what they use, makes upgrading an easy decision.',
+      builds: ['Start ₹499', 'Grow ₹1,499', 'Thrive ₹2,999'] },
+    therapist: { chip: 'Therapist view', tab: null, title: 'The same app for your therapists',
+      lead: 'Therapists see their assigned children, upcoming sessions, new clips to review and shared screening forms, and send activity plans to parents.',
+      why: 'Good therapists are what SUNOZA offers. Giving them a simple tool on their phone helps you recruit and keep them, and keeps every child’s care in one place.',
+      builds: ['Therapist sign-in', 'Therapist applications', 'Shared screenings'] }
+  };
+
+  var current = 'today';
+  var picker = document.getElementById('picker');
+  order.forEach(function (id) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'chip'; b.textContent = info[id].chip; b.dataset.chip = id;
+    b.addEventListener('click', function () { show(id); });
+    picker.appendChild(b);
+  });
+
+  var call = document.getElementById('call');
+  var timerEl = document.getElementById('timer');
+  var timerId = null, seconds = 0;
+  function startTimer() {
+    stopTimer(); seconds = 754; tick();
+    timerId = setInterval(tick, 1000);
+  }
+  function tick() {
+    var m = Math.floor(seconds / 60), s = seconds % 60;
+    timerEl.textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    seconds++;
+  }
+  function stopTimer() { if (timerId) { clearInterval(timerId); timerId = null; } }
+
+  var lastTab = 'today';
+  function show(id) {
+    current = id;
+    var d = info[id];
+    if (id === 'call') {
+      call.hidden = false; startTimer();
+      showScreen('sessions');
+    } else {
+      call.hidden = true; stopTimer();
+      showScreen(id);
+    }
+    document.getElementById('tabbar').classList.toggle('hide', id === 'therapist');
+    var tab = d.tab || lastTab;
+    if (d.tab) lastTab = d.tab;
+    document.querySelectorAll('.tab').forEach(function (t) {
+      t.setAttribute('aria-current', t.dataset.tab === tab ? 'true' : 'false');
+    });
+    document.querySelectorAll('.chip').forEach(function (c) {
+      c.setAttribute('aria-pressed', c.dataset.chip === id ? 'true' : 'false');
+    });
+    var i = order.indexOf(id);
+    document.getElementById('pCount').textContent = 'Screen ' + (i + 1) + ' of ' + order.length;
+    document.getElementById('pTitle').textContent = d.title;
+    document.getElementById('pLead').textContent = d.lead;
+    document.getElementById('pWhy').textContent = d.why;
+    var builds = document.getElementById('pBuilds');
+    builds.textContent = '';
+    d.builds.forEach(function (t) { var s = document.createElement('span'); s.textContent = t; builds.appendChild(s); });
+    document.getElementById('prevBtn').disabled = i === 0;
+    document.getElementById('nextBtn').textContent = i === order.length - 1 ? 'Back to start' : 'Next screen';
+  }
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(function (s) { s.hidden = s.dataset.screen !== id; });
+    document.getElementById('appBody').scrollTop = 0;
+  }
+
+  document.addEventListener('click', function (e) {
+    var go = e.target.closest('[data-go]');
+    if (go) { show(go.dataset.go); return; }
+    var tab = e.target.closest('[data-tab]');
+    if (tab) { show(tab.dataset.tab); return; }
+    var tg = e.target.closest('[data-toggle]');
+    if (tg) { tg.setAttribute('aria-pressed', tg.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); return; }
+    var demo = e.target.closest('.phone button');
+    if (demo && !demo.matches('.check, .lang, #endCall')) { toast('This works in the full app.'); }
+  });
+
+  var toastEl = document.getElementById('toast'), toastId = null;
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add('on');
+    clearTimeout(toastId);
+    toastId = setTimeout(function () { toastEl.classList.remove('on'); }, 1800);
+  }
+  document.getElementById('endCall').addEventListener('click', function () { show('sessions'); });
+  document.getElementById('prevBtn').addEventListener('click', function () {
+    var i = order.indexOf(current); if (i > 0) show(order[i - 1]);
+  });
+  document.getElementById('nextBtn').addEventListener('click', function () {
+    var i = order.indexOf(current); show(order[(i + 1) % order.length]);
+  });
+
+  // Activity check-off
+  var lang = 'en';
+  function updateDone() {
+    var n = document.querySelectorAll('[data-act] .check[aria-pressed="true"]').length;
+    document.getElementById('doneCount').textContent = lang === 'hi' ? ('3 में से ' + n + ' पूरी') : (n + ' of 3 done');
+  }
+  document.querySelectorAll('[data-act] .check').forEach(function (c) {
+    c.addEventListener('click', function () {
+      var on = c.getAttribute('aria-pressed') !== 'true';
+      c.setAttribute('aria-pressed', on ? 'true' : 'false');
+      c.closest('[data-act]').classList.toggle('done', on);
+      updateDone();
+    });
+  });
+
+  document.getElementById('markDone').addEventListener('click', function () {
+    var c = document.querySelector('[data-act] .check');
+    c.setAttribute('aria-pressed', 'true');
+    c.closest('[data-act]').classList.add('done');
+    updateDone();
+  });
+
+  // Hindi / English
+  var dict = {
+    en: { greet: 'Good morning, Priya', date: 'Wednesday, 25 November', next: 'Next session', join: 'Join video call', todayTitle: 'Today’s activities', screening: 'Finish the screening form', tToday: 'Today', tSessions: 'Sessions', tProgress: 'Progress', tJournal: 'Journal', tPlan: 'Plan' },
+    hi: { greet: 'सुप्रभात, प्रिया', date: 'बुधवार, 25 नवंबर', next: 'अगला सत्र', join: 'वीडियो कॉल से जुड़ें', todayTitle: 'आज की गतिविधियाँ', screening: 'स्क्रीनिंग फ़ॉर्म पूरा करें', tToday: 'आज', tSessions: 'सत्र', tProgress: 'प्रगति', tJournal: 'डायरी', tPlan: 'प्लान' }
+  };
+  var langBtn = document.getElementById('langBtn');
+  langBtn.addEventListener('click', function () {
+    lang = lang === 'en' ? 'hi' : 'en';
+    document.querySelectorAll('[data-i18n]').forEach(function (el) { el.textContent = dict[lang][el.dataset.i18n]; });
+    langBtn.textContent = lang === 'en' ? 'हिंदी' : 'English';
+    updateDone();
+  });
+
+  // Copy contact details
+  document.querySelectorAll('[data-copy]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var el = document.getElementById(b.dataset.copy);
+      var text = el.textContent;
+      function done() { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1500); }
+      function fallback() { var r = document.createRange(); r.selectNodeContents(el); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected'; setTimeout(function () { b.textContent = 'Copy'; }, 1500); }
+      try { navigator.clipboard.writeText(text).then(done, fallback); } catch (err) { fallback(); }
+    });
+  });
+
+  show('today');
+})();
+</script>
+
+<!-- Cloudflare Web Analytics: cookieless page count, live site only, never automated browsers.
+     Mirrors src/components/WebAnalytics.astro (token: CF_BEACON_TOKEN in src/data/analytics.ts). -->
+<script>
+(function () {
+  var live = ['abhishekgoyal.me', 'www.abhishekgoyal.me'].indexOf(location.hostname) !== -1;
+  var bot = navigator.webdriver === true || navigator.userAgent.indexOf('Chrome-Lighthouse') !== -1;
+  if (!live || bot) return;
+  var s = document.createElement('script');
+  s.defer = true;
+  s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  s.setAttribute('data-cf-beacon', JSON.stringify({ token: 'cb74190f341643a0b9cf43114cff4d0f' }));
+  document.head.appendChild(s);
+})();
+</script>
+</body>
+</html>

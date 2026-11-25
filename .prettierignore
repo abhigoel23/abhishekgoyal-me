@@ -7,3 +7,5 @@ playwright-report/
 test-results/
 worker-configuration.d.ts
 .claude/worktrees/
+# Verbatim copy of an external client preview page; kept byte-close to its source, not reformatted.
+public/sunoza.html
