@@ -7,3 +7,8 @@ https://:host.abhigoel23.workers.dev/*
 # form it belongs to hasn't shipped (#111).
 /checklist/offline-first-android-launch-checklist.pdf
   X-Robots-Tag: noindex
+
+# Unlisted client concept preview (public/sunoza.html): shared by direct link only, never indexed.
+# Not in the sitemap (only Astro pages are) and not linked from any page.
+/sunoza
+  X-Robots-Tag: noindex, nofollow
