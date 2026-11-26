@@ -6,8 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
-        One issue per post, including skipped ones. The target is one post every 2 weeks. To skip one,
-        close this issue as **not planned** and give the reason, so the monthly review can count it.
+        One issue per post, including dropped ones. There's no fixed cadence: write a post when it serves a
+        specific conversation (docs/GROWTH.md). To drop one, close this issue as **not planned** and give the reason.
   - type: input
     id: topic
     attributes:

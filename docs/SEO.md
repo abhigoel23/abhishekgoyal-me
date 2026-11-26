@@ -19,10 +19,10 @@ work; this map is for everything else. Measured in the monthly review ([GROWTH.m
 
 - **Every post names its target query.** The Post issue template asks for it, and the post links to one
   service page and sets `offer`. A post with no query in this map gets a row here first.
-- **Measured monthly.** The monthly review issue lists each service page with its query, and asks for its
-  Search Console clicks and impressions, plus impressions and position for each post's primary query.
-  The numbers go in the Monthly tab's Notes (the repo is public). Service pages are listed from
-  `src/data/services.ts`, so a new page appears in the next review without an edit.
+- **Measured when it matters.** The monthly review checks the site's total search clicks and impressions
+  ([GROWTH.md](./GROWTH.md#the-monthly-review)). Per-page and per-query numbers (Search Console →
+  Performance → Pages or Queries) are worth reading once impressions grow without clicks; they go in the
+  Monthly tab's Notes, never in GitHub (the repo is public).
 
 Checked with Google autocomplete (English, India and global) on 2026-09-25. Re-check a query before
 writing its page, and replace the evidence column with Search Console data once there is some.
@@ -114,7 +114,6 @@ HelperBook landing page, not in this site's service pages.
 2. `/services/mvp`, then `/services/india`.
 3. Post #5 (KMP vs React Native), which links to `/services/kmp`.
 4. `/services/rescue`, once the Compose-migration question is settled.
-5. The remaining posts, one every two weeks, in the order above.
+5. The remaining posts, in the order above, when one serves a conversation ([GROWTH.md](./GROWTH.md)).
 
-Each page is its own Issue and PR, and gets a row in the monthly review once Search Console shows
-impressions for it.
+Each page is its own Issue and PR.

@@ -3,8 +3,6 @@ import { MONTHLY_HEADERS } from './server/monthly';
 import { isMonth, lastMonth, monthName, reviewBody, reviewTitle } from './monthlyReview';
 
 const REPO = 'abhigoel23/abhishekgoyal-me';
-/** The skipped-posts search query, decoded. */
-const skippedQuery = (body: string) => decodeURIComponent(/issues\?q=([^)]+)\)/.exec(body)![1]!);
 
 describe('month helpers', () => {
   it('validates YYYY-MM', () => {
@@ -34,31 +32,25 @@ describe('reviewBody', () => {
       12,
     );
     expect(body).toContain('**October 2026**');
-    expect(body).toContain('(target: one every 2 weeks): 1');
+    expect(body).toContain('**Posts published**: 1');
     expect(body).toContain('- [Post A](https://abhishekgoyal.me/writing/a)');
     expect(body).toContain('**Sitemap URLs**: 12');
     expect(body).toContain('row `2026-10`');
-    expect(skippedQuery(body)).toContain('closed:2026-10-01..2026-10-31');
   });
 
   it('says so when nothing was published', () => {
     const body = reviewBody('2026-10', [], REPO);
     expect(body).toContain('- None this month.');
     expect(body).not.toContain('Sitemap URLs');
-    expect(skippedQuery(reviewBody('2027-02', [], REPO))).toContain(
-      'closed:2027-02-01..2027-02-28',
-    );
   });
 
-  it('lists each service page with its target query', () => {
-    const body = reviewBody('2026-10', [], REPO, undefined, [
-      { url: 'https://abhishekgoyal.me/services/kmp', query: 'is kotlin multiplatform worth it' },
-    ]);
-    expect(body).toContain('URLs containing `/services/`');
-    expect(body).toContain(
-      '  - https://abhishekgoyal.me/services/kmp (written for “is kotlin multiplatform worth it”)',
-    );
-    expect(body).toContain("each post's primary query in docs/SEO.md");
+  it('is the quick check: search totals and the trend, no per-page or GA4 steps', () => {
+    const body = reviewBody('2026-10', [], REPO);
+    expect(body).toContain('**Search clicks** and **impressions**');
+    expect(body).toContain('**2. The trend**');
+    expect(body).not.toContain('/services/');
+    expect(body).not.toContain('GA4');
+    expect(body).not.toContain('every 2 weeks');
   });
 
   it('points the conversion formula at the right Monthly columns', () => {

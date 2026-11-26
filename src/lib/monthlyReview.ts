@@ -4,8 +4,6 @@
 // No imports: Node loads this directly.
 
 export type PublishedPost = { title: string; url: string };
-/** A page written for one search query (docs/SEO.md), checked in Search Console each month. */
-export type SearchTarget = { url: string; query: string };
 
 const MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 
@@ -38,51 +36,27 @@ export function reviewBody(
   posts: PublishedPost[],
   repo: string,
   sitemapUrls?: number,
-  searchTargets: SearchTarget[] = [],
 ): string {
-  const [year, m] = month.split('-').map(Number);
-  const lastDay = new Date(Date.UTC(year!, m!, 0)).toISOString().slice(0, 10);
-  const skipped = `https://github.com/${repo}/issues?q=${encodeURIComponent(
-    `is:issue label:routine "Post:" in:title reason:"not planned" closed:${month}-01..${lastDay}`,
-  )}`;
   const postLines = posts.length
     ? posts.map((p) => `- [${p.title}](${p.url})`)
     : ['- None this month.'];
   return [
-    `Review of **${monthName(month)}** (UTC). Definitions and where each number comes from: [docs/GROWTH.md](https://github.com/${repo}/blob/main/docs/GROWTH.md).`,
+    `Review of **${monthName(month)}** (UTC), about 10 minutes. What each number means: [docs/GROWTH.md](https://github.com/${repo}/blob/main/docs/GROWTH.md).`,
     '',
     '> The numbers go in the private Leads Sheet → **Monthly** tab, never in this issue: the repo is public.',
     '',
-    `**Posts published** (target: one every 2 weeks): ${posts.length}`,
+    `**Posts published**: ${posts.length}`,
     ...postLines,
-    `- Skipped posts: [Post issues closed as not planned](${skipped})`,
     '',
     `**1. Monthly tab**, row \`${month}\``,
-    '- [ ] The row is there. The Worker writes it on the 1st, 09:00 IST; if it\'s missing, see RUNBOOK → "The Monthly row is missing"',
-    '- [ ] **Visits**: Cloudflare → Analytics & Logs → Web Analytics → abhishekgoyal.me → last month → Visits',
-    '- [ ] **Conversion %**: `=Leads/Visits` for the row (e.g. `=B3/M3`), formatted as a percentage',
+    '- [ ] The row is there (the Worker writes it on the 1st, 09:00 IST; if it\'s missing, see RUNBOOK → "The Monthly row is missing"). Every real lead was answered, and Failed deliveries is 0 (if not, RUNBOOK)',
+    '- [ ] **Visits**: Cloudflare → Analytics & Logs → Web Analytics → abhishekgoyal.me → last month → Visits. **Conversion %**: `=Leads/Visits` for the row (e.g. `=B3/M3`), formatted as a percentage',
+    '- [ ] Search Console, last month: **Search clicks** and **impressions** (Performance), **Indexed pages** (Indexing → Pages)',
     `- [ ] **Posts published**: ${posts.length}${sitemapUrls === undefined ? '' : ` · **Sitemap URLs**: ${sitemapUrls}`}`,
     '',
-    '**2. Search Console** (last month)',
-    '- [ ] Indexing → Pages: **Indexed pages**, and anything new under "Why pages aren\'t indexed"',
-    '- [ ] Performance: **Search clicks** and **impressions**; top 3 queries and pages in Notes',
-    `- [ ] Performance → Pages, filtered to URLs containing \`/services/\`: clicks and impressions for each service page, in Notes (docs/SEO.md → The map)`,
-    ...searchTargets.map((t) => `  - ${t.url} (written for “${t.query}”)`),
-    "- [ ] Performance → Queries: impressions and average position for each post's primary query in docs/SEO.md → Posts, in Notes. A page or query with impressions but no clicks: check its title and description",
-    '',
-    '**3. GA4** (only visitors who accept the consent bar)',
-    '- [ ] Explore, with the date range set to this month: **Lead funnel** (both tabs), **Landing pages by conversion**, **Source / medium** (and its CTA clicks tab)',
-    '',
-    '**4. Leads and Subscribers Sheets**',
-    '- [ ] Every lead this month was answered; first-touch source noted; spam deleted',
-    '- [ ] Failed deliveries in the Monthly row is 0; if not, RUNBOOK',
-    '',
-    '**5. Newsletter**',
-    "- [ ] Something new since the last note, and none sent this month? Draft it with `pnpm digest <last note's date>`, then send it test → production (RUNBOOK → Sending a note)",
-    '',
-    '**6. Decide**',
-    '- [ ] An experiment running? If its test window has ended, record the result in its issue (docs/GROWTH.md → Experiments)',
-    '- [ ] One line in Notes: what changed, and what to try next; a new experiment starts from an Experiment issue',
+    '**2. The trend** (search impressions over the last three rows)',
+    '- [ ] Impressions growing but no clicks? Check the titles and descriptions of the pages getting them (Search Console → Performance → Pages)',
+    '- [ ] One line in Notes: anything that changed',
     '- [ ] Close this issue',
   ].join('\n');
 }

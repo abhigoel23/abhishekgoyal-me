@@ -1,8 +1,12 @@
 # Growth
 
-How the site is measured once a month, and where each number comes from. The routine: a post every 2
-weeks ([CONTENT.md](./CONTENT.md), [TOPICS.md](./TOPICS.md)), cross-posted to LinkedIn and dev.to, and
-one review a month.
+How the site is measured once a month, and where each number comes from.
+
+**The site's job (decided 26 Nov 2026, #270):** it's the proof page that referrals, recruiters and founders
+land on, not a lead source. By the October 2026 review it had brought 0 search clicks and 0 real leads,
+with about 80 real visits a month. So posts are written only when they serve a specific conversation
+([CONTENT.md](./CONTENT.md)), and the monthly review is a quick check of about 10 minutes: are search
+impressions growing? Revisit this once search clicks or real leads start to appear.
 
 ## The three numbers
 
@@ -18,13 +22,13 @@ Why these sources:
   is consent-gated too. D1 has every lead.
 - **Cloudflare Web Analytics, not GA4, counts visits.** It needs no consent, so it sees everyone. Leads
   and visits then cover the same people.
-- **Visits before #246 are inflated by CI.** Until then the beacon also counted the Playwright smoke run
-  after every deploy and the nightly Lighthouse run, both against production (about 12.5k of
-  September's 13.4k visits, all US / direct / Chrome). September 2026 and October up to that deploy are
-  affected: the 2026-09 Visits value is an estimate from non-US visits only (~870), and October's is
-  high. Compare trends from November 2026 on.
-- **GA4 is for the shape, not the totals:** which sources and landing pages lead to leads, and where the
-  funnel drops (the saved explorations listed in [ANALYTICS.md](./ANALYTICS.md#ga4-admin-settings)).
+- **Visits before #246's deploy (12 Oct 2026) are inflated by CI.** Until then the beacon also counted the
+  Playwright smoke run after every deploy and the nightly Lighthouse run, both against production (all
+  US or Canada / direct / Chrome). The 2026-09 and 2026-10 Visits values are estimates: September's from
+  non-US visits (~870), October's from India and the UK only (~80). November 2026 on is clean, so
+  compare trends from there.
+- **GA4 is optional.** With a handful of consented visitors a month it shows little. Its saved explorations
+  ([ANALYTICS.md](./ANALYTICS.md#ga4-admin-settings)) are there for when traffic grows.
 - With a handful of leads a month, a percentage swings wildly. Read the counts and the trend over
   several months before the percentage.
 
@@ -72,36 +76,24 @@ visits and leads to the note that brought them.
 
 ## Experiments
 
-CTA experiments run **one change at a time**, compared with the weeks before it. With a few hundred visits
-a month, a real A/B split would take months to mean anything and would add a cookie; a sequential test
-with its rule written in advance is honest about what it can show.
-
-1. **Start from the monthly review.** The hypothesis comes from something the numbers showed. The first
-   experiment can start once October gives a full month of baseline, so in November at the earliest.
-2. **Open an issue from the Experiment template** (`.github/ISSUE_TEMPLATE/experiment.yml`) and fill in
-   everything above Result **before** the change is merged: hypothesis, the one change, the metric, both
-   windows and the decision rule, including the minimum number of clicks below which the result is
-   inconclusive.
-3. **Measure clicks, not leads.** Leads are too few to show a difference in weeks. The metric is usually a
-   CTA's clicks per 100 views of its page, from GA4 → Explore → Source / medium → **CTA clicks** (the
-   `cta` dimension exists from 2026-09-24). Both numbers come from consented visitors only, so the ratio is
-   consistent; record leads from the Monthly tab alongside anyway.
-4. **Keep the `data-cta` id** when only the wording or look changes (the copy lives in `src/data/`), so
-   the before and after windows count the same thing. A new element gets a new id, added to the CTA table
-   in [ANALYTICS.md](./ANALYTICS.md#event-table).
-5. **Ship the change in its own PR** that refers to the issue, and note the day it went live. Change
-   nothing else about that CTA or page during the window, and write down what else happened: a post, a
-   newsletter note, a traffic spike. Those can explain a difference as well as the change can.
-6. **Record the result**, including "inconclusive" and "no clear difference", apply the decision (keep, or
-   revert in a PR), and close the issue. Then the next experiment can start.
+**Paused.** With under a hundred real visits a month, a CTA change can't show a difference in any
+reasonable window. Restart once visits reach a few hundred a month: one change at a time, opened from the
+Experiment template (`.github/ISSUE_TEMPLATE/experiment.yml`) with its metric, windows and decision rule
+written before the change ships, measured in CTA clicks per 100 page views from GA4.
 
 ## The monthly review
 
 At 10:00 IST on the 1st, `.github/workflows/monthly-review.yml` opens **Monthly review YYYY-MM**
-(label `routine`, no milestone). It holds the checklist, posts published that month, a link to skipped
-Post issues, the live sitemap's URL count, and each service page with the search query it's written for
-([SEO.md](./SEO.md)), but no lead or subscriber numbers. Work through it, fill in
-the Monthly row, then close the issue.
+(label `routine`, no milestone). It holds the quick check (about 10 minutes), the posts published that
+month and the live sitemap's URL count, but no lead or subscriber numbers:
+
+1. **The Monthly row:** it's there, every real lead was answered, and Failed deliveries is 0.
+2. **Fill in** Visits and Conversion % (columns M–N), Search clicks and impressions (Q–R), Indexed pages and
+   Sitemap URLs (O–P), and Posts published (S).
+3. **Read the trend** of search impressions over the last three rows. If they grow but clicks don't, check
+   the titles and descriptions of the pages getting them. Per-page and per-query detail
+   ([SEO.md](./SEO.md)) is optional, for when that happens.
+4. **One line in Notes**, then close the issue.
 
 To open one by hand (for example, for a missed month): Actions → Monthly review → Run workflow, with
 `month` set to `YYYY-MM`. If that month's issue already exists, the run doesn't open another.
