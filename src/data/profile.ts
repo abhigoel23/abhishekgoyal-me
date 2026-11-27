@@ -7,11 +7,20 @@ export const profile = {
   jobTitle: 'Hands-on Mobile Architect',
   headline:
     'Hands-on Mobile Architect — Android / Kotlin / Compose / KMP · Native iOS · React Native · 0-to-1 Specialist',
-  positioning: 'I build mobile products from zero to shipped, and own every step in between.',
+  positioning:
+    'Mobile architecture for apps that must work in the field, from first commit to 50,000+ users.',
   intro:
-    'Mobile engineer with 13 years on Android and iOS, owning products end to end. Most recently I designed and built HelperBook, a fully offline household-payroll app, and shipped it on Google Play.',
+    '13 years on Android and iOS. As founding engineer, then Head of Mobility, I architected the offline-first Pulse platform and grew it to 100+ B2B clients in 10+ countries, leading 4–6 mobile engineers. Since then I have built a video-first hiring platform’s Android client end to end.',
   location: { city: 'Gurugram', country: 'India' },
-  pillars: ['0-to-1', 'Offline-first', 'Privacy by design', 'End-to-end ownership'],
+  pillars: [
+    'Former Head of Mobility',
+    'Offline-first architecture',
+    'Android & iOS',
+    'India · US · EU',
+  ],
+  // Plain-text trust signals (no numbers, no logos), shown in the hero and the footer. Confirmed by
+  // Abhishek on 2026-11-27.
+  credentials: ['GST registered', 'D-U-N-S® verified', 'Organizational Play Store publisher'],
   stats: [
     { value: '13', label: 'years building mobile apps' },
     { value: '100+', label: 'B2B clients on an offline-first engine I architected' },

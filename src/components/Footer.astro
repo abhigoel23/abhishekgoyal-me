@@ -34,6 +34,7 @@ const year = new Date().getFullYear();
             {profile.email}
           </a>
         </p>
+        <p class="mt-3">{profile.credentials.join(' · ')}</p>
       </div>
       <ul class="flex flex-wrap gap-x-5 gap-y-2">
         <li>
@@ -54,11 +55,6 @@ const year = new Date().getFullYear();
         <li>
           <a class="hover:text-ink" href={profile.links.linkedin}>
             LinkedIn
-          </a>
-        </li>
-        <li>
-          <a class="hover:text-ink" href={profile.links.helperbook}>
-            HelperBook
           </a>
         </li>
       </ul>

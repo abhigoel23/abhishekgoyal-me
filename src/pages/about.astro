@@ -6,6 +6,7 @@ import Container from '../components/Container.astro';
 import Section from '../components/Section.astro';
 import { aboutIntro, values } from '../data/about';
 import { aboutCareer, certifications, education } from '../data/career';
+import { bookCall } from '../data/lead';
 import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
 import { profile } from '../data/profile';
@@ -113,14 +114,20 @@ const aboutPage = { '@type': 'AboutPage', mainEntity: { '@id': `${profile.url}/#
     <div class="rounded-brand border border-line px-6 py-12 text-center sm:px-12">
       <h2 class="text-h2">Want to work together?</h2>
       <p class="mx-auto mt-3 max-w-xl text-muted">
-        Whether it’s a project or a full-time role, I’d like to hear about it.
+        Tell me what exists today and what you need by when.
       </p>
       <div class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
         <Button href={primaryCta.href} size="lg">
           {primaryCta.label}
         </Button>
-        <a class="link text-sm font-medium" href="/hire">
-          Hiring full-time? →
+        <a
+          class="link text-sm font-medium"
+          href={bookCall.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-cta="book_call"
+        >
+          {bookCall.label} <span aria-hidden="true">↗</span>
         </a>
       </div>
     </div>

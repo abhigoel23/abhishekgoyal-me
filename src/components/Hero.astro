@@ -1,9 +1,10 @@
 ---
-// Home-page hero: positioning, intro, primary CTA, the employer link and the photo. The photo sits on a
+// Home-page hero: positioning, intro, primary CTA, the intro-call link, credentials and the photo. The photo sits on a
 // surface-coloured box so it isn't an empty frame while it decodes.
 import { Image } from 'astro:assets';
 import photo from '../assets/profile/abhishek-goyal.jpg';
-import { hireCta, primaryCta } from '../data/nav';
+import { bookCall } from '../data/lead';
+import { primaryCta } from '../data/nav';
 import { profile } from '../data/profile';
 import Button from './Button.astro';
 
@@ -28,10 +29,11 @@ const Heading = headingLevel;
       <Button href={primaryCta.href} size="lg" cta="hero_start_project">
         {primaryCta.label}
       </Button>
-      <Button href={hireCta.href} variant="secondary" size="lg" cta="hero_hire">
-        {hireCta.label} →
+      <Button href={bookCall.href} variant="secondary" size="lg" cta="book_call">
+        {bookCall.shortLabel} <span aria-hidden="true">↗</span>
       </Button>
     </div>
+    <p class="mt-6 text-sm text-muted">{profile.credentials.join(' · ')}</p>
   </div>
   <figure class="mx-auto w-full max-w-xs">
     <Image
