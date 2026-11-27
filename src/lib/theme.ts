@@ -1,4 +1,5 @@
-// Design tokens: the Studio direction chosen in docs/decisions/005-brand-direction.md.
+// Design tokens: the light editorial palette in docs/decisions/007-light-editorial.md (fonts, accent and
+// radius from the Studio direction, ADR 005).
 // Base.astro writes these as CSS variables; global.css maps them to Tailwind utilities.
 
 export type ThemeTokens = {
@@ -24,17 +25,19 @@ export const fonts: { display: FontVar; body: FontVar; mono: FontVar; label: str
 
 export const shape = { radius: '0.25rem', displayWeight: 400, displayTracking: '-0.01em' };
 
+// Light is the default: white cards on a warm off-white page, separated by 1px lines rather than shadows.
 export const light: ThemeTokens = {
-  bg: '#F6F6F3',
-  surface: '#ECECE6',
-  ink: '#14171C',
-  muted: '#535963',
-  line: '#D9D9D1',
+  bg: '#FAF9F6',
+  surface: '#FFFFFF',
+  ink: '#0F172A',
+  muted: '#475569',
+  line: '#DEDBD2',
   accent: '#1F4E79',
   onAccent: '#FFFFFF',
   focus: '#1F4E79',
 };
 
+// Kept for people who choose it: cards sit one step above the page, as in light.
 export const dark: ThemeTokens = {
   bg: '#0E1116',
   surface: '#171B22',

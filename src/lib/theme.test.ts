@@ -23,6 +23,17 @@ describe.each([
   });
 });
 
+describe('light palette (ADR 007)', () => {
+  it('puts white cards on an off-white page with the resume blue as the only accent', () => {
+    expect(light).toMatchObject({
+      bg: '#FAF9F6',
+      surface: '#FFFFFF',
+      ink: '#0F172A',
+      accent: '#1F4E79',
+    });
+  });
+});
+
 describe('themeCss', () => {
   it('kebab-cases token names', () => {
     expect(colorVars(light)).toContain('--on-accent:#FFFFFF;');

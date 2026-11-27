@@ -29,5 +29,17 @@ for (const path of pages) {
     );
     const person = jsonLd['@graph'].find((node: { '@type': string }) => node['@type'] === 'Person');
     expect(person).toMatchObject({ name: 'Abhishek Goyal', jobTitle: expect.any(String) });
+    const organization = jsonLd['@graph'].find(
+      (node: { '@type': string }) => node['@type'] === 'Organization',
+    );
+    expect(organization).toMatchObject({ legalName: 'Abhishek Goyal', duns: expect.any(String) });
   });
 }
+
+test('the sitemap dates posts, and only posts', async ({ request }) => {
+  const sitemap = await (await request.get('/sitemap-0.xml')).text();
+  expect(sitemap).toMatch(
+    /<loc>https:\/\/abhishekgoyal\.me\/writing\/[^<]+<\/loc><lastmod>\d{4}-\d\d-\d\dT/,
+  );
+  expect(sitemap).toMatch(/<loc>https:\/\/abhishekgoyal\.me\/services<\/loc>(?!<lastmod>)/);
+});

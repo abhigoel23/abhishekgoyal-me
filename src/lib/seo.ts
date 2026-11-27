@@ -4,6 +4,9 @@ import { profile } from '../data/profile';
 export const SITE_URL = profile.url;
 const PERSON_ID = `${SITE_URL}/#person`;
 const WEBSITE_ID = `${SITE_URL}/#website`;
+const ORGANIZATION_ID = `${SITE_URL}/#organization`;
+/** Where the practice takes clients (ADR 007): India, the US and the EU. */
+const AREA_SERVED = profile.business.areaServed;
 
 /** "Services · Abhishek Goyal"; the home page passes its own full title. */
 export function pageTitle(title: string): string {
@@ -42,7 +45,30 @@ export function personJsonLd() {
       addressCountry: 'IN',
     },
     sameAs: [profile.links.linkedin, profile.links.github],
+    worksFor: { '@id': ORGANIZATION_ID },
     knowsAbout: [...profile.knowsAbout],
+  };
+}
+
+/** The registered business: Abhishek's sole proprietorship, with its D-U-N-S number. */
+export function organizationJsonLd() {
+  return {
+    '@type': 'Organization',
+    '@id': ORGANIZATION_ID,
+    name: profile.name,
+    legalName: profile.business.legalName,
+    duns: profile.business.duns,
+    url: SITE_URL,
+    email: profile.email,
+    description: profile.positioning,
+    founder: { '@id': PERSON_ID },
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: profile.location.city,
+      addressCountry: 'IN',
+    },
+    areaServed: AREA_SERVED,
+    sameAs: [profile.links.linkedin, profile.links.github],
   };
 }
 
@@ -77,12 +103,13 @@ export function professionalServiceJsonLd(services: readonly { title: string; su
     url: `${SITE_URL}/services`,
     description: profile.positioning,
     founder: { '@id': PERSON_ID },
+    parentOrganization: { '@id': ORGANIZATION_ID },
     address: {
       '@type': 'PostalAddress',
       addressLocality: profile.location.city,
       addressCountry: 'IN',
     },
-    areaServed: 'Worldwide',
+    areaServed: AREA_SERVED,
     hasOfferCatalog: {
       '@type': 'OfferCatalog',
       name: 'Services',
@@ -107,7 +134,7 @@ export function serviceJsonLd(service: {
     description: service.summary,
     url: `${SITE_URL}/services/${service.id}`,
     provider: { '@id': PERSON_ID },
-    areaServed: service.areaServed ?? 'Worldwide',
+    areaServed: service.areaServed ?? AREA_SERVED,
   };
 }
 
@@ -134,11 +161,11 @@ export function blogPostingJsonLd(post: {
   };
 }
 
-/** One @graph with the site-wide entities plus any page-specific ones (BlogPosting, FAQPage… in later milestones). */
+/** One @graph with the site-wide entities (WebSite, Person, Organization) plus any page-specific ones (BlogPosting, FAQPage… in later milestones). */
 export function jsonLdGraph(extra: Record<string, unknown>[] = []) {
   return {
     '@context': 'https://schema.org',
-    '@graph': [websiteJsonLd(), personJsonLd(), ...extra],
+    '@graph': [websiteJsonLd(), personJsonLd(), organizationJsonLd(), ...extra],
   };
 }
 

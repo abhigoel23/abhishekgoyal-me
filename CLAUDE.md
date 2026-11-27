@@ -32,7 +32,7 @@ pnpm 12 has no `-s` flag; use `--silent`.
   for it with `CLOUDFLARE_ENV=staging pnpm build`; `pnpm cf:types` regenerates the git-ignored `Env` types
 - `src/worker.ts` — Worker entry: Astro `fetch`, plus the lead `queue` consumer and daily `scheduled` cron
 - `src/pages/` — routes, prerendered by default; `src/pages/api/*` opt out with `prerender = false`
-- `src/lib/theme.ts` — design tokens (Studio, ADR 005); `/styleguide` shows them. Components use semantic
+- `src/lib/theme.ts` — design tokens (light editorial, ADR 007); `/styleguide` shows them. Components use semantic
   utilities only (`bg-surface`, `text-muted`, `rounded-brand`), never raw colours
 - `src/data/career.ts` + `resume.ts` — resume source; `pnpm build` prints `/resume` to `resume.pdf` (1 page or fail)
 - `src/lib/` — shared TS; `src/lib/server/` is server-only (M3). `src/lib/lead.ts` is the lead zod schema

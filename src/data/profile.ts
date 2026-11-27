@@ -21,6 +21,17 @@ export const profile = {
   // Plain-text trust signals (no numbers, no logos), shown in the hero and the footer. Confirmed by
   // Abhishek on 2026-11-27.
   credentials: ['GST registered', 'D-U-N-S® verified', 'Organizational Play Store publisher'],
+  // The registered business behind the site, for the Organization JSON-LD. A GST-registered sole
+  // proprietorship in Abhishek's own name; D-U-N-S number published with his approval on 2026-11-27.
+  business: {
+    legalName: 'Abhishek Goyal',
+    duns: '311891418',
+    areaServed: [
+      { '@type': 'Country', name: 'India' },
+      { '@type': 'Country', name: 'United States' },
+      { '@type': 'Place', name: 'European Union' },
+    ],
+  },
   stats: [
     { value: '13', label: 'years building mobile apps' },
     { value: '100+', label: 'B2B clients on an offline-first engine I architected' },

@@ -1,0 +1,55 @@
+---
+// A full-width case-study card for the home page: story on the left, headline outcomes on the right. The
+// flagship (Pulse) gets a larger title and a label. The whole card is one link, like Card.astro.
+import type { CollectionEntry } from 'astro:content';
+import Tag from './Tag.astro';
+
+type Props = { entry: CollectionEntry<'work'>; label?: string; footerLabel?: string };
+const { entry, label, footerLabel = 'Read the case study →' } = Astro.props;
+const { data } = entry;
+---
+
+<article class="group relative grid gap-8 rounded-brand border border-line bg-surface p-6 transition-colors hover:border-ink/40 sm:p-8 md:grid-cols-[1.4fr_1fr] md:gap-12">
+  <div class="flex flex-col">
+    <p class="eyebrow mb-4">
+      {label && <span class="text-accent">{label} · </span>}
+      {data.role} · {data.period}
+    </p>
+    <h3 class:list={[label ? 'text-h2' : 'text-h3']}>
+      <a
+        href={`/work/${entry.id}`}
+        class="after:absolute after:inset-0 after:rounded-brand focus-visible:outline-none"
+      >
+        {data.title}
+      </a>
+    </h3>
+    <p class="mt-4 max-w-xl text-muted">{data.summary}</p>
+    <ul class="mt-auto flex flex-wrap gap-2 pt-6" aria-label="Stack">
+      {data.stack.slice(0, 5).map((tag) => (
+        <li>
+          <Tag>{tag}</Tag>
+        </li>
+      ))}
+    </ul>
+    <span aria-hidden="true" class="mt-5 text-sm font-medium text-accent">
+      {footerLabel}
+    </span>
+  </div>
+  {data.outcomes.length > 0 && (
+    <dl class="grid content-start gap-x-6 gap-y-5 border-t border-line pt-6 max-md:grid-cols-2 md:border-t-0 md:border-l md:pt-0 md:pl-8">
+      {data.outcomes.map((outcome) => (
+        <div class="flex flex-col-reverse justify-end gap-1">
+          <dt class="text-sm text-muted">{outcome.label}</dt>
+          <dd class="font-display text-h3">{outcome.value}</dd>
+        </div>
+      ))}
+    </dl>
+  )}
+</article>
+
+<style>
+  article:has(a:focus-visible) {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+</style>

@@ -50,7 +50,7 @@ const discovery = engagements.find((e) => e.recommended);
   <Section id="problems" eyebrow="Who it’s for" title="Sounds familiar?" tone="surface">
     <ul class="grid gap-4 sm:grid-cols-2">
       {page.problems.map((problem) => (
-        <li class="flex gap-3 rounded-brand border border-line bg-bg p-5">
+        <li class="flex gap-3 rounded-brand border border-line bg-surface p-5">
           <span aria-hidden="true" class="text-accent">
             →
           </span>
@@ -87,7 +87,7 @@ const discovery = engagements.find((e) => e.recommended);
         ))}
       </ul>
       {discovery && (
-        <div class="rounded-brand border border-accent bg-bg p-6">
+        <div class="rounded-brand border border-accent bg-surface p-6">
           <p class="eyebrow mb-2">How we start</p>
           <h3 class="text-h3">{discovery.title}</h3>
           <p class="mt-2 text-muted">{discovery.body}</p>
@@ -130,7 +130,7 @@ const discovery = engagements.find((e) => e.recommended);
   </Section>
 
   <Container class="pb-8">
-    <div class="rounded-brand bg-surface px-6 py-12 text-center sm:px-12">
+    <div class="rounded-brand border border-line bg-surface px-6 py-12 text-center sm:px-12">
       <h2 class="text-h2">{page.ctaHeading}</h2>
       <p class="mx-auto mt-3 max-w-xl text-muted">
         Tell me what exists today and what you need by when.
