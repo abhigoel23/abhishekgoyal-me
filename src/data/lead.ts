@@ -110,6 +110,7 @@ export const thanksCopy = {
 export const bookCall = {
   href: 'https://cal.com/abhishek-goyal/intro-call',
   label: 'Book a 20-minute intro call',
+  shortLabel: 'Book an intro call',
   note: 'Opens Cal.com in a new tab.',
   contactLead: 'Prefer to talk first?',
   thanksLead: 'Want to talk sooner? Pick a time that suits you.',

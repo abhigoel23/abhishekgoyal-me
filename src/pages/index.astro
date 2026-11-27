@@ -6,6 +6,8 @@ import Container from '../components/Container.astro';
 import Hero from '../components/Hero.astro';
 import ProofStrip from '../components/ProofStrip.astro';
 import Section from '../components/Section.astro';
+import { homeCopy } from '../data/home';
+import { bookCall } from '../data/lead';
 import { primaryCta } from '../data/nav';
 import { pages } from '../data/pages';
 import { listedServices } from '../data/services';
@@ -27,7 +29,7 @@ const latestPosts = (await getPosts()).slice(0, 3);
     </div>
   </Container>
 
-  <Section id="work" eyebrow="Selected work" title="Case studies">
+  <Section id="work" eyebrow={homeCopy.work.eyebrow} title={homeCopy.work.title}>
     <ul class="grid gap-6 md:grid-cols-2">
       {featured.map((entry) => (
         <li>
@@ -43,16 +45,16 @@ const latestPosts = (await getPosts()).slice(0, 3);
     </ul>
     <p class="mt-8">
       <a class="link font-medium" href="/work">
-        All case studies →
+        {homeCopy.work.link}
       </a>
     </p>
   </Section>
 
   <Section
     id="services"
-    eyebrow="Services"
-    title="How I can help"
-    intro="For founders and product teams who need a mobile app built, rescued or moved to shared code."
+    eyebrow={homeCopy.services.eyebrow}
+    title={homeCopy.services.title}
+    intro={homeCopy.services.intro}
     tone="surface"
   >
     <ul class="grid gap-x-10 gap-y-8 sm:grid-cols-2">
@@ -69,7 +71,7 @@ const latestPosts = (await getPosts()).slice(0, 3);
     </ul>
     <p class="mt-10">
       <a class="link font-medium" href="/services">
-        Services, process and FAQ →
+        {homeCopy.services.link}
       </a>
     </p>
   </Section>
@@ -99,14 +101,21 @@ const latestPosts = (await getPosts()).slice(0, 3);
 
   <Container class="py-16 sm:py-24">
     <div class="rounded-brand border border-line px-6 py-12 text-center sm:px-12">
-      <h2 class="text-h2">Have an app to build or fix?</h2>
-      <p class="mx-auto mt-3 max-w-xl text-muted">
-        Tell me what exists today and what you need by when.
-      </p>
-      <div class="mt-8">
+      <h2 class="text-h2">{homeCopy.closing.title}</h2>
+      <p class="mx-auto mt-3 max-w-xl text-muted">{homeCopy.closing.body}</p>
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
         <Button href={primaryCta.href} size="lg">
           {primaryCta.label}
         </Button>
+        <a
+          class="link text-sm font-medium"
+          href={bookCall.href}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-cta="book_call"
+        >
+          {bookCall.label} <span aria-hidden="true">↗</span>
+        </a>
       </div>
     </div>
   </Container>

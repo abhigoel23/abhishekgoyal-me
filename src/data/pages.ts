@@ -15,15 +15,15 @@ export const pages = {
   // not just the name: only people who already know him search for that. Share images keep their own
   // headlines (ogTitle).
   '/': {
-    title: `${profile.name} — Android, iOS and offline-first mobile app developer`,
+    title: `${profile.name} — ${profile.jobTitle} · Android, iOS, offline-first`,
     description:
-      'Mobile app developer for startups and product teams: Android, iOS, Kotlin Multiplatform and React Native. 13 years, from MVPs to an app with 50,000+ users.',
+      'Former Head of Mobility who architected an offline-first platform for 100+ B2B clients and 50,000+ users. Android, iOS, KMP and React Native; 13 years.',
     ogTitle: profile.positioning,
   },
   '/work': {
     title: 'Mobile app case studies',
     description:
-      'Mobile app case studies: an offline-first inspection app with 50,000+ users, a KMP household salary app, a video hiring app and a streaming app prototype.',
+      'Mobile app case studies: an offline-first inspection app with 50,000+ users, a video hiring app, a KMP household salary app and a streaming app prototype.',
     ogTitle: 'Case studies: mobile products taken from zero to shipped',
   },
   '/services': {
@@ -59,8 +59,8 @@ export const pages = {
   '/contact': {
     title: 'Contact',
     description:
-      'Start a project or ask about a full-time role. Tell Abhishek Goyal what you need and hear back within 2 working days.',
-    ogTitle: 'Start a project, or ask about a full-time role',
+      'Start a project or book an intro call. Tell Abhishek Goyal what you need and hear back within 2 working days.',
+    ogTitle: 'Start a project, or book an intro call',
   },
   '/checklist': {
     title: 'Offline-first Android launch checklist',
