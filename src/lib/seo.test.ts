@@ -7,6 +7,7 @@ import {
   faqJsonLd,
   jsonLdGraph,
   ogImagePath,
+  organizationJsonLd,
   pageTitle,
   personJsonLd,
   professionalServiceJsonLd,
@@ -59,9 +60,25 @@ describe('JSON-LD', () => {
     expect(person.sameAs.every((url) => url.startsWith('https://'))).toBe(true);
   });
 
-  it('links the website to the person', () => {
+  it('links the website to the person and the business', () => {
     const graph = jsonLdGraph()['@graph'];
-    expect(graph.map((node) => node['@type'])).toEqual(['WebSite', 'Person']);
+    expect(graph.map((node) => node['@type'])).toEqual(['WebSite', 'Person', 'Organization']);
+  });
+
+  it('describes the registered business with its legal name, D-U-N-S and markets', () => {
+    const org = organizationJsonLd();
+    expect(org).toMatchObject({
+      '@id': 'https://abhishekgoyal.me/#organization',
+      legalName: 'Abhishek Goyal',
+      founder: { '@id': 'https://abhishekgoyal.me/#person' },
+    });
+    expect(org.duns).toMatch(/^\d{9}$/);
+    expect(org.areaServed.map((area) => area.name)).toEqual([
+      'India',
+      'United States',
+      'European Union',
+    ]);
+    expect(personJsonLd().worksFor).toEqual({ '@id': org['@id'] });
   });
 
   it('escapes < so data cannot break out of the script tag', () => {
@@ -162,7 +179,7 @@ describe('serviceJsonLd', () => {
       name: 'Offline-first apps',
       url: 'https://abhishekgoyal.me/services/offline-first',
       provider: { '@id': 'https://abhishekgoyal.me/#person' },
-      areaServed: 'Worldwide',
+      areaServed: organizationJsonLd().areaServed,
     });
   });
 

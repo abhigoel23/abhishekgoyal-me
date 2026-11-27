@@ -36,7 +36,7 @@ const path = Astro.url.pathname;
         </Button>
       </div>
       <details class="group relative md:hidden">
-        <summary class="flex size-11 cursor-pointer list-none items-center justify-center rounded-full hover:bg-surface [&::-webkit-details-marker]:hidden">
+        <summary class="flex size-11 cursor-pointer list-none items-center justify-center rounded-full hover:bg-line/50 [&::-webkit-details-marker]:hidden">
           <span class="sr-only">Menu</span>
           <svg
             aria-hidden="true"
@@ -53,12 +53,12 @@ const path = Astro.url.pathname;
         </summary>
         <nav
           aria-label="Primary"
-          class="absolute right-0 z-10 mt-2 w-56 rounded-brand border border-line bg-bg p-2 shadow-lg"
+          class="absolute right-0 z-10 mt-2 w-56 rounded-brand border border-line bg-surface p-2"
         >
           <ul>
             {[...nav, primaryCta].map((item) => (
               <li>
-                <a href={item.href} class="block rounded-brand px-3 py-2.5 hover:bg-surface">
+                <a href={item.href} class="block rounded-brand px-3 py-2.5 hover:bg-bg">
                   {item.label}
                 </a>
               </li>

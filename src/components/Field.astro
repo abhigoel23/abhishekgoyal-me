@@ -25,7 +25,7 @@ const id = `field-${name}`;
 const describedBy =
   [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ') || undefined;
 const control = [
-  'mt-2 block w-full rounded-brand border bg-bg px-3.5 py-2.5 text-base text-ink placeholder:text-muted',
+  'mt-2 block w-full rounded-brand border bg-surface px-3.5 py-2.5 text-base text-ink placeholder:text-muted',
   'focus-visible:outline-2 focus-visible:outline-offset-1',
   error ? 'border-accent' : 'border-line hover:border-ink/40',
 ];

@@ -18,6 +18,8 @@ const work = defineCollection({
       platform: z.string(),
       stack: z.array(z.string()),
       order: z.number(),
+      /** Which /work section it's listed under: client work, my own products, or prototypes. */
+      kind: z.enum(['client', 'product', 'prototype']),
       featured: z.boolean().default(true),
       /** Headline results shown under the title. Each must be traceable to the resume. */
       outcomes: z

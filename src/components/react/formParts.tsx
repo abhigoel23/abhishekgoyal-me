@@ -162,7 +162,7 @@ export function errorCopyFor(error: string | undefined, copy: ErrorCopy): string
 
 export const controlClass = (hasError: boolean) =>
   [
-    'mt-2 block w-full rounded-brand border bg-bg px-3.5 py-2.5 text-base text-ink placeholder:text-muted',
+    'mt-2 block w-full rounded-brand border bg-surface px-3.5 py-2.5 text-base text-ink placeholder:text-muted',
     'focus-visible:outline-2 focus-visible:outline-offset-1',
     hasError ? 'border-accent' : 'border-line hover:border-ink/40',
   ].join(' ');

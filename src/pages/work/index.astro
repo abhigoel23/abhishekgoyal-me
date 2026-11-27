@@ -3,32 +3,45 @@ import { getCollection } from 'astro:content';
 import Card from '../../components/Card.astro';
 import Container from '../../components/Container.astro';
 import { pages } from '../../data/pages';
+import { workCopy } from '../../data/work';
 import Base from '../../layouts/Base.astro';
 
 const work = (await getCollection('work')).sort((a, b) => a.data.order - b.data.order);
+const sections = workCopy.sections
+  .map((section) => ({
+    ...section,
+    entries: work.filter((entry) => entry.data.kind === section.kind),
+  }))
+  .filter((section) => section.entries.length > 0);
 ---
 
 <Base {...pages['/work']}>
   <Container class="py-16 sm:py-24">
-    <p class="eyebrow mb-3">Case studies</p>
-    <h1 class="text-h1 max-w-3xl">Mobile products, taken from zero to shipped</h1>
-    <p class="mt-5 max-w-2xl text-lead text-muted">
-      Three shipped products where I owned the mobile side end to end: architecture, the app itself
-      and the release. Plus a coded prototype of a micro-drama streaming app.
-    </p>
-    <ul class="mt-14 grid gap-6 md:grid-cols-2">
-      {work.map((entry) => (
-        <li>
-          <Card
-            eyebrow={`${entry.data.role} · ${entry.data.period}`}
-            title={entry.data.title}
-            summary={entry.data.summary}
-            tags={entry.data.stack.slice(0, 4)}
-            href={`/work/${entry.id}`}
-            headingLevel="h2"
-          />
-        </li>
-      ))}
-    </ul>
+    <p class="eyebrow mb-3">{workCopy.eyebrow}</p>
+    <h1 class="text-h1 max-w-3xl">{workCopy.title}</h1>
+    <p class="mt-5 max-w-2xl text-lead text-muted">{workCopy.intro}</p>
+    {sections.map((section) => (
+      <section id={section.id} aria-labelledby={`${section.id}-title`} class="mt-16 sm:mt-20">
+        <header class="mb-8 max-w-2xl border-t border-line pt-6">
+          <h2 id={`${section.id}-title`} class="text-h2">
+            {section.title}
+          </h2>
+          <p class="mt-2 text-muted">{section.intro}</p>
+        </header>
+        <ul class="grid gap-6 md:grid-cols-2">
+          {section.entries.map((entry) => (
+            <li>
+              <Card
+                eyebrow={`${entry.data.role} · ${entry.data.period}`}
+                title={entry.data.title}
+                summary={entry.data.summary}
+                tags={entry.data.stack.slice(0, 4)}
+                href={`/work/${entry.id}`}
+              />
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
   </Container>
 </Base>

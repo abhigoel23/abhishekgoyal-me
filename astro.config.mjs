@@ -5,6 +5,9 @@ import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
+import { writingLastmod } from './src/lib/sitemapLastmod.mjs';
+
+const lastmod = writingLastmod('./src/content/writing');
 
 /**
  * @param {string} name
@@ -55,6 +58,11 @@ export default defineConfig({
           !path.startsWith('/checklist/') &&
           !path.startsWith('/subscribe')
         );
+      },
+      // Only posts and /writing carry a real date (src/lib/sitemapLastmod.mjs).
+      serialize: (item) => {
+        const date = lastmod.get(new URL(item.url).pathname);
+        return date ? { ...item, lastmod: date.toISOString() } : item;
       },
     }),
   ],

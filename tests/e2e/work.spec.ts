@@ -1,9 +1,19 @@
 import { expect, test } from '@playwright/test';
 
-test('work index links to every case study', async ({ page }) => {
+test('work index groups every case study by kind', async ({ page }) => {
   await page.goto('/work');
-  for (const slug of ['helperbook', 'pulse', 'video-hiring', 'loveflix']) {
-    await expect(page.locator(`main a[href="/work/${slug}"]`)).toBeVisible();
+  const sections = {
+    'client-work': ['pulse', 'video-hiring'],
+    'own-products': ['helperbook'],
+    prototypes: ['loveflix'],
+  };
+  for (const [id, slugs] of Object.entries(sections)) {
+    const section = page.locator(`main section#${id}`);
+    await expect(section.getByRole('heading', { level: 2 })).toBeVisible();
+    await expect(section.locator('a[href^="/work/"]')).toHaveCount(slugs.length);
+    for (const slug of slugs) {
+      await expect(section.locator(`a[href="/work/${slug}"]`)).toBeVisible();
+    }
   }
 });
 

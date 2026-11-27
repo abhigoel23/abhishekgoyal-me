@@ -1,0 +1,95 @@
+---
+// The hero's offline-first sync diagram: device SQLite → upload queue → API → dashboard, as inline SVG so it
+// themes with the tokens and costs no image request. Copy lives in src/data/home.ts.
+import { syncDiagram } from '../data/home';
+
+const box = { x: 24, width: 312, height: 64, gap: 46 };
+const top = (i: number) => 12 + i * (box.height + box.gap);
+const height = top(syncDiagram.nodes.length) - box.gap + 12;
+// The hop from the queue to the API is the one that can wait for signal.
+const networkHop = 1;
+const arrowX = 56;
+---
+
+<figure class="w-full max-w-sm md:ml-auto">
+  <svg
+    viewBox={`0 0 360 ${height}`}
+    class="h-auto w-full"
+    role="img"
+    aria-labelledby="sync-title sync-desc"
+  >
+    <title id="sync-title">{syncDiagram.title}</title>
+    <desc id="sync-desc">{syncDiagram.description}</desc>
+    <defs>
+      <marker
+        id="sync-arrow"
+        viewBox="0 0 10 10"
+        refX="5"
+        refY="9"
+        markerWidth="7"
+        markerHeight="7"
+        orient="auto-start-reverse"
+      >
+        <path d="M0 0 L5 9 L10 0 Z" class="fill-muted"></path>
+      </marker>
+    </defs>
+    {syncDiagram.nodes.map((node, i) => {
+      const y = top(i);
+      return (
+        <g>
+          <rect
+            x={box.x}
+            y={y}
+            width={box.width}
+            height={box.height}
+            rx="4"
+            class:list={['fill-surface', i === 0 ? 'stroke-accent' : 'stroke-line']}
+            stroke-width="1"
+            vector-effect="non-scaling-stroke"
+          />
+          <text x={box.x + 20} y={y + 28} class="fill-ink font-sans text-[15px] font-medium">
+            {node.label}
+          </text>
+          <text x={box.x + 20} y={y + 47} class="fill-muted font-sans text-[12px]">
+            {node.note}
+          </text>
+          <text
+            x={box.x + box.width - 16}
+            y={y + 28}
+            text-anchor="end"
+            class="fill-muted font-mono text-[11px]"
+          >
+            {String(i + 1).padStart(2, '0')}
+          </text>
+          {i < syncDiagram.nodes.length - 1 && (
+            <line
+              x1={arrowX}
+              y1={y + box.height + 4}
+              x2={arrowX}
+              y2={y + box.height + box.gap - 6}
+              class:list={['stroke-muted', i === networkHop && 'sync-dashed']}
+              stroke-width="1.25"
+              marker-end="url(#sync-arrow)"
+            />
+          )}
+          {i === networkHop && (
+            <text
+              x={arrowX + 16}
+              y={y + box.height + box.gap / 2 + 4}
+              class="fill-accent font-mono text-[11px]"
+            >
+              {syncDiagram.network}
+            </text>
+          )}
+        </g>
+      );
+    })}
+  </svg>
+  <figcaption class="mt-4 text-sm text-muted">{syncDiagram.caption}</figcaption>
+</figure>
+
+<style>
+  .sync-dashed {
+    stroke-dasharray: 4 4;
+  }
+</style>
